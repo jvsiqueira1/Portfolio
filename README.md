@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfólio Pessoal - João Vitor de Siqueira Campos
 
-## Getting Started
+Este repositório contém o código-fonte do meu portfólio pessoal desenvolvido em React utilizando **Next.js** como framework para build e deploy. O projeto segue integralmente as especificações do **Template 02** disponível no Figma, garantindo um design moderno, responsivo e alinhado às melhores práticas de desenvolvimento frontend.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📄 Documentação do Projeto
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Escolha do Template
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+O design do portfólio foi baseado no **Template 02** do Figma, escolhido por sua estrutura clara e visual profissional que destaca informações essenciais como experiência, habilidades e projetos. Todo o desenvolvimento do layout, cores, tipografia e organização de conteúdo segue fielmente as diretrizes deste template para manter consistência e qualidade visual.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+[Template 02 do Figma](https://www.figma.com/file/O2j7uVVhXUnV6dadZc2MMw/Desafio-03%3A-Desenvolva-um-portf%C3%B3lio-com-React-hooks?type=design&node-id=0%3A1&mode=design&t=Hpl7aIhWt0vdutHj-1)
 
-## Learn More
+### Tecnologias Utilizadas
 
-To learn more about Next.js, take a look at the following resources:
+- **React**: para construção da interface de usuário com componentes reutilizáveis e gerenciadores de estado.
+- **Next.js**: framework React para renderização híbrida, otimização de performance e fácil deploy.
+- **Hooks do React**: uso de `useState` para gerenciamento de estados internos e `useEffect` para efeitos colaterais e manipulação do ciclo de vida dos componentes.
+- **Tailwind CSS** (se aplicável): para estilização eficiente e responsiva.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🌐 Acesso ao Portfólio Online
 
-## Deploy on Vercel
+Meu portfólio está publicado e disponível online no seguinte endereço personalizado:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+[https://portfolio.jvsdev.com.br](https://portfolio.jvsdev.com.br)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Sinta-se à vontade para visitar e conhecer meus projetos, experiências e habilidades.
+
+---
