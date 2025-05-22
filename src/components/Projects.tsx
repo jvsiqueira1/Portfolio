@@ -43,7 +43,6 @@ export default function Projects() {
     <section id="projects" className="py-24 bg-background">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-bold mb-10 text-foreground">Projetos</h2>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {projects.map((project) => (
             <Card key={project.id} className="border border-gray-800 bg-card overflow-hidden">
@@ -56,12 +55,10 @@ export default function Projects() {
                     priority
                     />
               </div>
-              
               <CardContent className="pt-6">
                 <h3 className="text-xl font-bold mb-2 text-foreground">{project.title}</h3>
                 <Badge className='bg-black dark:bg-primary mb-2 text-sm'>{project.status}</Badge>
                 <p className="text-muted-foreground mb-4 text-sm">{project.description}</p>
-               
                 <button className="bg-primary hover:bg-primary-600 text-white text-sm px-4 py-2 rounded-full flex items-center gap-1 transition-all w-max dark:text-black">
                   <a href={project.link} target='_blank' className='flex justify-center items-center'>
                     Saiba mais

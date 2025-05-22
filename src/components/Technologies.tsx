@@ -45,7 +45,6 @@ export default function Technologies() {
             Ferramentas e linguagens com as quais tenho experiência
           </p>
         </div>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {techCategories.map((category, index) => (
             <div key={index} className="bg-background p-6 rounded-xl shadow-md border border-gray-800 hover:border-primary/30 transition-all duration-300">

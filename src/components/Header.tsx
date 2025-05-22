@@ -64,8 +64,6 @@ export default function Header() {
       }`}>
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="text-primary font-bold text-lg mr-8">Portfolio</div>
-          
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex justify-center space-x-8">
             {navLinks.map((link) => (
               <button
@@ -77,8 +75,6 @@ export default function Header() {
               </button>
             ))}
           </nav>
-          
-          {/* Theme and Social Icons */}
           <div className="hidden md:flex space-x-4">
             <DarkModeToggle/>
             <a 
@@ -98,8 +94,6 @@ export default function Header() {
               <FaGithub size={24} />
             </a>
           </div>
-          
-          {/* Mobile Menu Button */}
           <button 
             className="md:hidden text-foreground hover:text-primary"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -107,8 +101,6 @@ export default function Header() {
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-        
-        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden bg-card shadow-md">
             <nav className="container mx-auto py-4 flex flex-col space-y-4">
