@@ -9,8 +9,8 @@ export default function Projects() {
           id: 1,
           title: 'Agilizei',
           description: 'Plataforma web que conecta clientes a profissionais de serviços gerais de forma prática e segura. O sistema permite que usuários encontrem, avaliem e contratem profissionais qualificados para diversas demandas residenciais e comerciais, facilitando o processo de orçamento, negociação e agendamento. Inspirado em modelos como o GetNinjas, o projeto prioriza usabilidade, transparência e eficiência na comunicação entre as partes, oferecendo uma solução completa para simplificar a contratação de serviços.',
-          image: '/wip.jpg',
-           link: 'https://github.com/jvsiqueira1/',
+          image: '/agilizei.png',
+           link: 'https://www.agilizei.net/sobre',
            status: 'Em andamento'
         },
         {
