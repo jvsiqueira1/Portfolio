@@ -93,7 +93,7 @@ export default function About() {
             <div className="flex items-center gap-2">
               <span className="font-medium text-foreground text-sm md:text-base">Email:</span>
               <a
-                href="mailto:xxx@xyz.com"
+                href="mailto:contato@jvsdev.com.br"
                 className="text-primary hover:underline text-sm md:text-base"
               >
                 contato@jvsdev.com.br
