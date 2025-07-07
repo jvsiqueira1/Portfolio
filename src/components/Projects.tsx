@@ -10,7 +10,7 @@ export default function Projects() {
           title: 'Agilizei',
           description: 'Plataforma web que conecta clientes a profissionais de serviços gerais de forma prática e segura. O sistema permite que usuários encontrem, avaliem e contratem profissionais qualificados para diversas demandas residenciais e comerciais, facilitando o processo de orçamento, negociação e agendamento. Inspirado em modelos como o GetNinjas, o projeto prioriza usabilidade, transparência e eficiência na comunicação entre as partes, oferecendo uma solução completa para simplificar a contratação de serviços.',
           image: '/agilizei.png',
-           link: 'https://www.agilizei.net/sobre',
+           link: 'https://www.agilizei.net/',
            status: 'Finalizado'
         },
         {
@@ -48,12 +48,12 @@ export default function Projects() {
             <Card key={project.id} className="border border-gray-800 bg-card overflow-hidden">
               <div className="relative w-full aspect-video">
                 <Image 
-                    src={project.image} 
-                    alt={project.title}
-                    fill
-                    style={{ objectFit: 'inherit' }} 
-                    priority
-                    />
+                  src={project.image} 
+                  alt={project.title}
+                  fill
+                  style={{ objectFit: 'inherit' }} 
+                  priority
+                />
               </div>
               <CardContent className="pt-6">
                 <h3 className="text-xl font-bold mb-2 text-foreground">{project.title}</h3>
