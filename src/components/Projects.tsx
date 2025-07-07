@@ -11,12 +11,12 @@ export default function Projects() {
           description: 'Plataforma web que conecta clientes a profissionais de serviços gerais de forma prática e segura. O sistema permite que usuários encontrem, avaliem e contratem profissionais qualificados para diversas demandas residenciais e comerciais, facilitando o processo de orçamento, negociação e agendamento. Inspirado em modelos como o GetNinjas, o projeto prioriza usabilidade, transparência e eficiência na comunicação entre as partes, oferecendo uma solução completa para simplificar a contratação de serviços.',
           image: '/agilizei.png',
            link: 'https://www.agilizei.net/sobre',
-           status: 'Em andamento'
+           status: 'Finalizado'
         },
         {
           id: 2,
           title: 'Gestão de Gastos',
-          description: 'Projeto de aprendizado focado na criação de uma aplicação web de gestão financeira pessoal utilizando a IA Lovable. A plataforma permite aos usuários cadastrar rendas e despesas, com funcionalidades completas de CRUD, e visualiza os dados através de gráficos que segmentam os gastos e ganhos por categorias. Além disso, gera relatórios financeiros comparativos entre rendas e despesas, facilitando o acompanhamento e planejamento financeiro. O uso da IA Lovable auxiliou na automação e otimização da criação da interface e funcionalidades, tornando o desenvolvimento mais ágil e intuitivo.',
+          description: 'Aplicação fullstack desenvolvida com Next.js (React) no frontend e Node.js/Express no backend, focada em controle financeiro pessoal. Permite cadastro de receitas, despesas, categorias, definição de metas e visualização de dashboard interativo. Possui sistema de autenticação, trial gratuito, assinatura mensal via Stripe, controle de acesso por status de assinatura e integração com e-mail (Zoho) para notificações automáticas. O projeto conta com UX moderna, dark mode, chatbot de suporte e arquitetura escalável, sendo ideal para demonstrar domínio em SaaS, integrações de pagamento e boas práticas de desenvolvimento web.',
           image: '/gestaodegastos.png',
             link: 'https://gestao.jvsdev.com.br/',
             status: 'Finalizado'
