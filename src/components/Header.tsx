@@ -5,11 +5,14 @@ import { Menu, X } from 'lucide-react';
 import { SiLinkedin } from 'react-icons/si';
 import { FaGithub } from "react-icons/fa";
 import DarkModeToggle from './DarkModeToggle'
+import LanguageToggle from './LanguageToggle'
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('hero');
     const [scrolled, setScrolled] = useState(false);
+    const { t } = useLanguage();
   
     useEffect(() => {
       const handleScroll = () => {
@@ -53,9 +56,10 @@ export default function Header() {
     };
     
     const navLinks = [
-      { id: 'projects', label: 'Projetos' },
-      { id: 'technologies', label: 'Tecnologias' },
-      { id: 'about', label: 'Sobre mim' },
+      { id: 'projects', labelKey: 'nav.projects' },
+      { id: 'technologies', labelKey: 'nav.technologies' },
+      { id: 'experience', labelKey: 'nav.experience' },
+      { id: 'about', labelKey: 'nav.about' },
     ];
 
   return (
@@ -71,11 +75,12 @@ export default function Header() {
                 onClick={() => handleLinkClick(link.id)}
                 className={`text-foreground hover:text-primary transition-colors ${activeSection === link.id ? 'font-medium' : ''}`}
               >
-                {link.label}
+                {t(link.labelKey)}
               </button>
             ))}
           </nav>
-          <div className="hidden md:flex space-x-4">
+          <div className="hidden md:flex space-x-4 items-center">
+            <LanguageToggle />
             <DarkModeToggle/>
             <a 
               href="https://www.linkedin.com/in/joaovitorsiqueira1/" 
@@ -110,10 +115,11 @@ export default function Header() {
                   onClick={() => handleLinkClick(link.id)}
                   className={`text-foreground hover:text-primary transition-colors ${activeSection === link.id ? 'font-medium' : ''} px-4`}
                 >
-                  {link.label}
+                  {t(link.labelKey)}
                 </button>
               ))}
               <div className="flex items-center space-x-4 px-4 pt-4 border-t border-gray-800">
+                <LanguageToggle />
                 <DarkModeToggle/>
                 <a 
                   href="https://www.linkedin.com/in/joaovitorsiqueira1" 
