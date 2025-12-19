@@ -196,6 +196,18 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         pt: "Atuo na manutenção e evolução de sistemas Full-Stack utilizando Java, Spring Boot e React.js. Desenvolvo automações estratégicas em Python para coleta e processamento de dados (web scraping) no setor de investimentos, colaborando em ambiente ágil.",
         en: "I work on maintaining and evolving Full-Stack systems using Java, Spring Boot and React.js. I develop strategic automations in Python for data collection and processing (web scraping) in the investment sector, collaborating in an agile environment.",
       },
+      "about.roadmap.graduation.title": {
+        pt: "Conclusão da Graduação",
+        en: "Graduation Completion",
+      },
+      "about.roadmap.graduation.subtitle": {
+        pt: "Engenharia da Computação - UFMT",
+        en: "Computer Engineering - UFMT",
+      },
+      "about.roadmap.graduation.description": {
+        pt: "Finalizei minha graduação em Engenharia da Computação na Universidade Federal de Mato Grosso, consolidando conhecimentos em desenvolvimento de software, arquitetura de sistemas, banco de dados e engenharia de software. A formação acadêmica complementou minha experiência prática, proporcionando uma base sólida para atuação profissional.",
+        en: "I completed my degree in Computer Engineering at the Federal University of Mato Grosso, consolidating knowledge in software development, systems architecture, databases and software engineering. Academic training complemented my practical experience, providing a solid foundation for professional practice.",
+      },
 
       // Projects descriptions
       "projects.marapp": {

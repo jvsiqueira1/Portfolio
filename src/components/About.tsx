@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   Briefcase,
   Code,
@@ -9,10 +10,18 @@ import {
   Phone,
   Rocket,
 } from "lucide-react";
-import { Card } from "./ui/card";
+import { Badge } from "./ui/badge";
+import {
+  Timeline,
+  TimelineItem,
+  TimelineItemDate,
+  TimelineItemDescription,
+  TimelineItemTitle,
+} from "./ui/timeline";
 
 export default function About() {
   const { t } = useLanguage();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const roadmap = [
     {
@@ -63,38 +72,26 @@ export default function About() {
       descriptionKey: "about.roadmap.fullstack2.description",
       icon: <Rocket className="w-6 h-6" />,
     },
+    {
+      year: "2025",
+      type: "education",
+      titleKey: "about.roadmap.graduation.title",
+      subtitleKey: "about.roadmap.graduation.subtitle",
+      descriptionKey: "about.roadmap.graduation.description",
+      icon: <GraduationCap className="w-6 h-6" />,
+    },
   ];
 
-  const getTypeStyles = (type: string) => {
+  const getVariantForType = (type: string) => {
     switch (type) {
       case "education":
-        return {
-          bg: "bg-blue-500/20",
-          text: "text-blue-400",
-          border: "border-blue-500/30",
-          dot: "bg-blue-500",
-        };
+        return "secondary";
       case "work":
-        return {
-          bg: "bg-green-500/20",
-          text: "text-green-400",
-          border: "border-green-500/30",
-          dot: "bg-green-500",
-        };
+        return "default";
       case "growth":
-        return {
-          bg: "bg-purple-500/20",
-          text: "text-purple-400",
-          border: "border-purple-500/30",
-          dot: "bg-purple-500",
-        };
+        return "secondary";
       default:
-        return {
-          bg: "bg-primary/20",
-          text: "text-primary",
-          border: "border-primary/30",
-          dot: "bg-primary",
-        };
+        return "default";
     }
   };
 
@@ -111,79 +108,62 @@ export default function About() {
         </div>
 
         {/* Timeline Vertical */}
-        <div className="relative">
-          {/* Linha vertical */}
-          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-primary transform md:-translate-x-1/2"></div>
-
-          {/* Itens do roadmap */}
-          <div className="space-y-12">
-            {roadmap.map((item, index) => (
-              <div
-                key={index}
-                className={`relative flex flex-col md:flex-row items-start gap-6 ${
-                  index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                }`}
-              >
-                {/* Ponto na linha */}
-                <div className="absolute left-8 md:left-1/2 transform -translate-x-1/2 md:-translate-x-1/2 z-10">
-                  <div
-                    className={`w-4 h-4 rounded-full border-4 border-background ${
-                      getTypeStyles(item.type).dot
-                    }`}
-                  ></div>
-                </div>
-
-                {/* Card do item */}
-                <Card
-                  className={`bg-card p-6 border shadow-lg hover:shadow-xl transition-all duration-300 flex-1 ml-12 md:ml-0 ${
-                    index % 2 === 0
-                      ? "md:mr-auto md:max-w-[45%]"
-                      : "md:ml-auto md:max-w-[45%]"
-                  } ${getTypeStyles(item.type).border}`}
-                >
-                  <div className="flex items-start gap-4 mb-3">
-                    <div
-                      className={`p-2 rounded-lg ${
-                        getTypeStyles(item.type).bg
-                      }`}
-                    >
-                      {item.icon}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-primary font-bold text-sm">
-                          {item.year}
-                        </span>
-                        <span
-                          className={`text-xs px-2 py-1 rounded-full ${
-                            getTypeStyles(item.type).bg
-                          } ${getTypeStyles(item.type).text} ${
-                            getTypeStyles(item.type).border
-                          }`}
-                        >
-                          {item.type === "education"
-                            ? t("about.types.education")
+        <Timeline
+          orientation="vertical"
+          alternating={isDesktop}
+          vertItemSpacing={80}
+          vertItemMaxWidth={isDesktop ? 450 : 320}
+          className="max-w-5xl mx-auto"
+        >
+          {roadmap.map((item, index) => (
+            <TimelineItem
+              key={index}
+              variant={
+                getVariantForType(item.type) as
+                  | "default"
+                  | "secondary"
+                  | "destructive"
+                  | "outline"
+              }
+            >
+              <TimelineItemDate>{item.year}</TimelineItemDate>
+              <TimelineItemTitle>
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                    {item.icon}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span>{t(item.titleKey)}</span>
+                      <Badge
+                        variant={
+                          item.type === "education"
+                            ? "secondary"
                             : item.type === "work"
-                            ? t("about.types.work")
-                            : t("about.types.growth")}
-                        </span>
-                      </div>
-                      <h3 className="text-lg font-bold text-foreground mb-1">
-                        {t(item.titleKey)}
-                      </h3>
-                      <p className="text-sm text-primary font-medium mb-3">
-                        {t(item.subtitleKey)}
-                      </p>
+                            ? "default"
+                            : "secondary"
+                        }
+                        className="text-xs"
+                      >
+                        {item.type === "education"
+                          ? t("about.types.education")
+                          : item.type === "work"
+                          ? t("about.types.work")
+                          : t("about.types.growth")}
+                      </Badge>
                     </div>
                   </div>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    {t(item.descriptionKey)}
-                  </p>
-                </Card>
-              </div>
-            ))}
-          </div>
-        </div>
+                </div>
+              </TimelineItemTitle>
+              <TimelineItemDescription>
+                <p className="text-primary font-medium mb-2">
+                  {t(item.subtitleKey)}
+                </p>
+                <p>{t(item.descriptionKey)}</p>
+              </TimelineItemDescription>
+            </TimelineItem>
+          ))}
+        </Timeline>
 
         {/* Seção de Contato */}
         <div className="mt-20 border-t border-gray-800 pt-12">
