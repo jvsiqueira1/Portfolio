@@ -134,7 +134,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       },
       "about.roadmap.education.description": {
         pt: "Iniciei minha jornada acadêmica em Engenharia da Computação na Universidade de Cuiabá, onde adquiri fundamentos sólidos em programação, algoritmos e arquitetura de sistemas.",
-        en: "I started my academic journey in Computer Engineering at the 'Universidade de Cuiabá', where I acquired solid foundations in programming, algorithms and systems architecture.",
+        en: "I started my academic journey in Computer Engineering at the Universidade de Cuiabá, where I acquired solid foundations in programming, algorithms and systems architecture.",
       },
       "about.roadmap.internship.title": {
         pt: "Primeiro Estágio",
