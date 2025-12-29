@@ -133,8 +133,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         en: "Computer Engineering - UNIC",
       },
       "about.roadmap.education.description": {
-        pt: "Iniciei minha jornada acadêmica em Engenharia da Computação na Universidade Federal de Mato Grosso, onde adquiri fundamentos sólidos em programação, algoritmos e arquitetura de sistemas.",
-        en: "I started my academic journey in Computer Engineering at the Federal University of Mato Grosso, where I acquired solid foundations in programming, algorithms and systems architecture.",
+        pt: "Iniciei minha jornada acadêmica em Engenharia da Computação na Universidade de Cuiabá, onde adquiri fundamentos sólidos em programação, algoritmos e arquitetura de sistemas.",
+        en: "I started my academic journey in Computer Engineering at the 'Universidade de Cuiabá', where I acquired solid foundations in programming, algorithms and systems architecture.",
       },
       "about.roadmap.internship.title": {
         pt: "Primeiro Estágio",
@@ -205,8 +205,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         en: "Computer Engineering - UNIC",
       },
       "about.roadmap.graduation.description": {
-        pt: "Finalizei minha graduação em Engenharia da Computação na Universidade Federal de Mato Grosso, consolidando conhecimentos em desenvolvimento de software, arquitetura de sistemas, banco de dados e engenharia de software. A formação acadêmica complementou minha experiência prática, proporcionando uma base sólida para atuação profissional.",
-        en: "I completed my degree in Computer Engineering at the Federal University of Mato Grosso, consolidating knowledge in software development, systems architecture, databases and software engineering. Academic training complemented my practical experience, providing a solid foundation for professional practice.",
+        pt: "Finalizei minha graduação em Engenharia da Computação na Universidade de Cuiabá, consolidando conhecimentos em desenvolvimento de software, arquitetura de sistemas, banco de dados e engenharia de software. A formação acadêmica complementou minha experiência prática, proporcionando uma base sólida para atuação profissional.",
+        en: "I completed my degree in Computer Engineering at the Universidade de Cuiabá, consolidating knowledge in software development, systems architecture, databases and software engineering. Academic training complemented my practical experience, providing a solid foundation for professional practice.",
       },
 
       // Projects descriptions
