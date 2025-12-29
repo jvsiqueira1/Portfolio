@@ -129,8 +129,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         en: "Start of Graduation",
       },
       "about.roadmap.education.subtitle": {
-        pt: "Engenharia da Computação - UFMT",
-        en: "Computer Engineering - UFMT",
+        pt: "Engenharia da Computação - UNIC",
+        en: "Computer Engineering - UNIC",
       },
       "about.roadmap.education.description": {
         pt: "Iniciei minha jornada acadêmica em Engenharia da Computação na Universidade Federal de Mato Grosso, onde adquiri fundamentos sólidos em programação, algoritmos e arquitetura de sistemas.",
@@ -201,8 +201,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         en: "Graduation Completion",
       },
       "about.roadmap.graduation.subtitle": {
-        pt: "Engenharia da Computação - UFMT",
-        en: "Computer Engineering - UFMT",
+        pt: "Engenharia da Computação - UNIC",
+        en: "Computer Engineering - UNIC",
       },
       "about.roadmap.graduation.description": {
         pt: "Finalizei minha graduação em Engenharia da Computação na Universidade Federal de Mato Grosso, consolidando conhecimentos em desenvolvimento de software, arquitetura de sistemas, banco de dados e engenharia de software. A formação acadêmica complementou minha experiência prática, proporcionando uma base sólida para atuação profissional.",
