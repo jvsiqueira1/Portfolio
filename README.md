@@ -25,7 +25,7 @@ O design do portfólio foi baseado no **Template 02** do Figma, escolhido por su
 
 Meu portfólio está publicado e disponível online no seguinte endereço personalizado:
 
-[https://portfolio.jvsdev.com.br](https://portfolio.jvsdev.com.br)
+[https://www.jvsdev.com.br](https://www.jvsdev.com.br)
 
 Sinta-se à vontade para visitar e conhecer meus projetos, experiências e habilidades.
 

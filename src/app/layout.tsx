@@ -14,8 +14,40 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Meu Portfolio",
-  description: "Portfólio pessoal criado com Next.js e Tailwind CSS",
+  metadataBase: new URL("https://www.jvsdev.com.br"),
+  title: "João Vitor de Siqueira Campos | Desenvolvedor Full Stack",
+  description:
+    "Desenvolvedor Full Stack (JavaScript/TypeScript, Node.js, Nest.js, React e Next.js). Portfólio com projetos, experiências e tecnologias.",
+  keywords: [
+    "Desenvolvedor Full Stack",
+    "JavaScript",
+    "TypeScript",
+    "Node.js",
+    "Nest.js",
+    "React",
+    "Next.js",
+    "PostgreSQL",
+    "João Vitor de Siqueira Campos",
+  ],
+  authors: [{ name: "João Vitor de Siqueira Campos" }],
+  alternates: { canonical: "https://www.jvsdev.com.br" },
+  openGraph: {
+    title: "João Vitor de Siqueira Campos | Desenvolvedor Full Stack",
+    description:
+      "Desenvolvedor Full Stack (JavaScript/TypeScript, Node.js, Nest.js, React e Next.js). Portfólio com projetos, experiências e tecnologias.",
+    url: "https://www.jvsdev.com.br",
+    siteName: "João Vitor de Siqueira Campos",
+    locale: "pt_BR",
+    type: "website",
+    images: [{ url: "/me-image.jpg", width: 1200, height: 630, alt: "João Vitor de Siqueira Campos" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "João Vitor de Siqueira Campos | Desenvolvedor Full Stack",
+    description:
+      "Desenvolvedor Full Stack (JavaScript/TypeScript, Node.js, Nest.js, React e Next.js).",
+    images: ["/me-image.jpg"],
+  },
 };
 
 export default function RootLayout({
