@@ -1,0 +1,50 @@
+name: Atualizar screenshots dos projetos
+
+# Roda trimestralmente (1º dia de jan/abr/jul/out, 06:00 UTC) e sob demanda.
+# Gera os PNGs via ScreenshotOne e, se algo mudou, commita na main.
+# O Vercel (conectado ao GitHub) faz o redeploy automaticamente a partir desse push.
+on:
+  schedule:
+    - cron: "0 6 1 1,4,7,10 *"
+  workflow_dispatch:
+
+# Necessário para o GITHUB_TOKEN conseguir dar push de volta no repositório.
+permissions:
+  contents: write
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Gerar screenshots
+        continue-on-error: true # não trava o commit dos que deram certo se um site estiver fora do ar
+        env:
+          SCREENSHOT_ONE_ACCESS_KEY: ${{ secrets.SCREENSHOT_ONE_ACCESS_KEY }}
+          SCREENSHOT_ONE_SECRET_KEY: ${{ secrets.SCREENSHOT_ONE_SECRET_KEY }}
+        run: npm run screenshots
+
+      - name: Commit e push (se houve mudança)
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain public)" ]; then
+            git add public/*.png
+            git commit -m "chore: atualiza screenshots dos projetos"
+            git push
+            echo "Screenshots atualizados e enviados para a main."
+          else
+            echo "Nenhuma mudança nos screenshots — nada a commitar."
+          fi
