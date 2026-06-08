@@ -275,6 +275,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         pt: "Site institucional e de listagem de imóveis desenvolvido para uma imobiliária, com front-end em Next.js e API em Fastify (Node.js). Apresenta os imóveis disponíveis com navegação fluida e layout responsivo, focado em performance e em uma experiência clara para o usuário final.",
         en: "Institutional and property-listing website built for a real estate agency, with a Next.js front-end and a Fastify (Node.js) API. It showcases available properties with smooth navigation and a responsive layout, focused on performance and a clear end-user experience.",
       },
+
+      // Cookies
+      "cookie.message": {
+        pt: "Usamos cookies para análise de tráfego (Google Analytics) e para melhorar sua experiência. Você pode aceitar ou recusar.",
+        en: "We use cookies for traffic analytics (Google Analytics) and to improve your experience. You can accept or decline.",
+      },
+      "cookie.accept": { pt: "Aceitar", en: "Accept" },
+      "cookie.decline": { pt: "Recusar", en: "Decline" },
     };
 
     return translations[key]?.[language] || key;

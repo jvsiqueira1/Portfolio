@@ -30,3 +30,12 @@ Meu portfólio está publicado e disponível online no seguinte endereço person
 Sinta-se à vontade para visitar e conhecer meus projetos, experiências e habilidades.
 
 ---
+
+## 🔧 Variáveis de Ambiente
+
+Copie `.env.example` para `.env` e preencha os valores:
+
+- `NEXT_PUBLIC_GA_ID`: Measurement ID do Google Analytics (ex.: `G-XXXXXXXXXX`). Em produção, configure-a nas **Environment Variables** do Vercel. O Google Analytics só é carregado depois que o visitante aceita o banner de cookies (opt-in); sem a variável, o banner continua funcionando, mas nenhum script de tracking é injetado.
+- `SCREENSHOT_ONE_ACCESS_KEY` / `SCREENSHOT_ONE_SECRET_KEY`: credenciais da [ScreenshotOne](https://screenshotone.com/) usadas por `npm run screenshots` para gerar os PNGs de preview dos projetos em `public/`. Só são necessárias localmente — em produção as imagens vêm do repositório.
+
+---
