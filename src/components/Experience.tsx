@@ -9,11 +9,41 @@ export default function Experience() {
 
   const experiences = [
     {
+      id: 0,
+      title: "Desenvolvedor Full Stack",
+      company: "DETRAN-MT",
+      location: { pt: "Cuiabá - MT", en: "Cuiabá - MT" },
+      period: { pt: "Jun. de 2026 - Presente", en: "Jun. 2026 - Present" },
+      descriptionKey: "experience.detran2026.description",
+      technologies: [
+        "TypeScript",
+        "Nest.js",
+        "Next.js",
+        "React",
+        "Node.js",
+        "PostgreSQL",
+      ],
+    },
+    {
       id: 1,
+      title: "Trainee",
+      company: "Carvalima",
+      location: { pt: "Cuiabá - MT", en: "Cuiabá - MT" },
+      period: { pt: "Mar. de 2026 - Abr. de 2026", en: "Mar. 2026 - Apr. 2026" },
+      descriptionKey: "experience.carvalima.description",
+      technologies: [
+        "Tecnologia (TI)",
+        "Operações",
+        "Mapeamento de Processos",
+        "Indicadores",
+      ],
+    },
+    {
+      id: 2,
       title: "Desenvolvedor Full Stack",
       company: "Grupo Optimus",
       locationKey: "experience.location.brazil",
-      period: { pt: "Set. de 2025 - Presente", en: "Sep. 2025 - Present" },
+      period: { pt: "Set. de 2025 - Jan. de 2026", en: "Sep. 2025 - Jan. 2026" },
       descriptionKey: "experience.optimus.description",
       technologies: [
         "Java",
@@ -24,7 +54,7 @@ export default function Experience() {
       ],
     },
     {
-      id: 2,
+      id: 3,
       title: "Desenvolvedor Full Stack",
       company: "Agilizei",
       locationKey: "experience.location.brazil",
@@ -44,7 +74,7 @@ export default function Experience() {
       ],
     },
     {
-      id: 3,
+      id: 4,
       title: "Desenvolvedor Front End",
       company: "Central IT",
       locationKey: "experience.location.brazil",
@@ -63,7 +93,7 @@ export default function Experience() {
       ],
     },
     {
-      id: 4,
+      id: 5,
       title: "Estagiário de Suporte",
       company: "Detran MT",
       location: { pt: "Cuiabá - MT", en: "Cuiabá - MT" },

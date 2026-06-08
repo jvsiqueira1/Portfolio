@@ -14,6 +14,14 @@ export default function Projects() {
 
   const projects = [
     {
+      id: 6,
+      title: "Maramores Imóveis",
+      descriptionKey: "projects.maramores",
+      // TODO: substituir public/maramores.png pelo print real do site (hoje e um placeholder)
+      image: "/maramores.png",
+      link: "https://maramores.com.br/",
+    },
+    {
       id: 1,
       title: "MarApp",
       descriptionKey: "projects.marapp",
@@ -41,13 +49,6 @@ export default function Projects() {
       image: "/credencial.png",
       link: "https://credencialdoautista.detran.mt.gov.br/",
     },
-    {
-      id: 5,
-      title: "Board de Tarefas",
-      descriptionKey: "projects.board",
-      image: "/board.png",
-      link: "https://github.com/jvsiqueira1/RID148558_Desafio03",
-    },
   ];
 
   return (
@@ -68,13 +69,13 @@ export default function Projects() {
                 key={project.id}
                 className="border border-gray-800 bg-card overflow-hidden"
               >
-                <div className="relative w-full aspect-video">
+                <div className="relative w-full aspect-video overflow-hidden bg-muted">
                   <Image
                     src={project.image}
                     alt={project.title}
                     fill
-                    style={{ objectFit: "inherit" }}
-                    priority
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover object-top"
                   />
                 </div>
                 <CardContent className="pt-6">

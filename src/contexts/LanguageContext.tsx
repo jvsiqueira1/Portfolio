@@ -44,8 +44,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         en: "Full Stack Developer",
       },
       "hero.description": {
-        pt: "Desenvolvedor Full Stack especializado em Node.js, TypeScript e React.js. Com vivência em metodologias ágeis e projetos reais, transformo requisitos complexos em soluções web acessíveis e performáticas. Foco constante em qualidade de código e novas tecnologias.",
-        en: "Full Stack Developer specializing in Node.js, TypeScript, and React.js. Experienced with agile methodologies and real-world projects, I transform complex requirements into accessible, high-performance web solutions. Constantly focused on code quality and emerging technologies.",
+        pt: "Desenvolvedor Full Stack no ecossistema JavaScript/TypeScript (Node.js, Nest.js, React e Next.js), atualmente construindo sistemas para o setor público no DETRAN-MT. Transformo requisitos complexos em soluções web acessíveis e performáticas, com foco constante em qualidade de código e boas práticas.",
+        en: "Full Stack Developer in the JavaScript/TypeScript ecosystem (Node.js, Nest.js, React and Next.js), currently building public-sector systems at DETRAN-MT. I turn complex requirements into accessible, high-performance web solutions, with a constant focus on code quality and best practices.",
       },
       "hero.cta": { pt: "Saiba mais", en: "Learn more" },
 
@@ -91,9 +91,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         pt: "Minha trajetória profissional e contribuições em projetos reais",
         en: "My professional journey and contributions to real projects",
       },
+      "experience.detran2026.description": {
+        pt: "Desenvolvimento de aplicações web e mobile de ponta a ponta para sistemas internos do órgão: front-end com React e Next.js e back-end (APIs e serviços) com Node.js, Nest.js e PostgreSQL. Atuo também na modelagem de banco de dados, integração de APIs e documentação técnica, além de apoiar a padronização e gestão do parque tecnológico do estado.",
+        en: "End-to-end development of web and mobile applications for the agency's internal systems: front-end with React and Next.js and back-end (APIs and services) with Node.js, Nest.js and PostgreSQL. I also handle database modeling, API integration and technical documentation, while supporting the standardization and management of the state's technology infrastructure.",
+      },
+      "experience.carvalima.description": {
+        pt: "Programa Trainee com foco em Tecnologia (Qualidade – TI) e Operações. Vivência prática nos setores da operação logística, com mapeamento de processos, acompanhamento de indicadores e identificação de melhorias sob uma ótica técnica, consolidadas em relatórios e em um case técnico final conectando desenvolvimento de software à realidade operacional.",
+        en: "Trainee program focused on Technology (Quality – IT) and Operations. Hands-on experience across logistics operation sectors, with process mapping, KPI tracking and improvement identification from a technical perspective, consolidated in reports and a final technical case connecting software development to the operational reality.",
+      },
       "experience.optimus.description": {
-        pt: "Atuo na manutenção e evolução de sistemas Full-Stack utilizando Java, Spring Boot e React.js. Desenvolvo automações estratégicas em Python para coleta e processamento de dados (web scraping) no setor de investimentos, colaborando ativamente em ambiente ágil para otimizar a arquitetura e o desempenho das aplicações.",
-        en: "I work on maintaining and evolving Full-Stack systems using Java, Spring Boot and React.js. I develop strategic automations in Python for data collection and processing (web scraping) in the investment sector, actively collaborating in an agile environment to optimize architecture and application performance.",
+        pt: "Atuei na manutenção e evolução de sistemas Full-Stack utilizando Java, Spring Boot e React.js. Desenvolvi automações estratégicas em Python para coleta e processamento de dados (web scraping) no setor de investimentos, colaborando ativamente em ambiente ágil para otimizar a arquitetura e o desempenho das aplicações.",
+        en: "I worked on maintaining and evolving Full-Stack systems using Java, Spring Boot and React.js. I developed strategic automations in Python for data collection and processing (web scraping) in the investment sector, actively collaborating in an agile environment to optimize architecture and application performance.",
       },
       "experience.agilizei.description": {
         pt: "Desenvolvi aplicações completas utilizando React, TypeScript e Node.js, criando interfaces responsivas e APIs RESTful robustas. Implementei arquiteturas de banco de dados com PostgreSQL e Prisma ORM, garantindo a integridade dos dados e a qualidade do código através de versionamento com Git e testes de integração.",
@@ -189,12 +197,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         en: "Full Stack Developer",
       },
       "about.roadmap.fullstack2.subtitle": {
-        pt: "Grupo Optimus - Set. 2025 (Atual)",
-        en: "Grupo Optimus - Sep. 2025 (Current)",
+        pt: "Grupo Optimus - Set. 2025 a Jan. 2026",
+        en: "Grupo Optimus - Sep. 2025 to Jan. 2026",
       },
       "about.roadmap.fullstack2.description": {
-        pt: "Atuo na manutenção e evolução de sistemas Full-Stack utilizando Java, Spring Boot e React.js. Desenvolvo automações estratégicas em Python para coleta e processamento de dados (web scraping) no setor de investimentos, colaborando em ambiente ágil.",
-        en: "I work on maintaining and evolving Full-Stack systems using Java, Spring Boot and React.js. I develop strategic automations in Python for data collection and processing (web scraping) in the investment sector, collaborating in an agile environment.",
+        pt: "Atuei na manutenção e evolução de sistemas Full-Stack utilizando Java, Spring Boot e React.js. Desenvolvi automações estratégicas em Python para coleta e processamento de dados (web scraping) no setor de investimentos, colaborando em ambiente ágil.",
+        en: "I worked on maintaining and evolving Full-Stack systems using Java, Spring Boot and React.js. I developed strategic automations in Python for data collection and processing (web scraping) in the investment sector, collaborating in an agile environment.",
       },
       "about.roadmap.graduation.title": {
         pt: "Conclusão da Graduação",
@@ -207,6 +215,43 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       "about.roadmap.graduation.description": {
         pt: "Finalizei minha graduação em Engenharia da Computação na Universidade de Cuiabá, consolidando conhecimentos em desenvolvimento de software, arquitetura de sistemas, banco de dados e engenharia de software. A formação acadêmica complementou minha experiência prática, proporcionando uma base sólida para atuação profissional.",
         en: "I completed my degree in Computer Engineering at the Universidade de Cuiabá, consolidating knowledge in software development, systems architecture, databases and software engineering. Academic training complemented my practical experience, providing a solid foundation for professional practice.",
+      },
+
+      "about.roadmap.pos.title": {
+        pt: "Pós-graduação",
+        en: "Postgraduate",
+      },
+      "about.roadmap.pos.subtitle": {
+        pt: "Desenvolvimento Full-Stack - Rocketseat",
+        en: "Full-Stack Development - Rocketseat",
+      },
+      "about.roadmap.pos.description": {
+        pt: "Iniciei a pós-graduação em Desenvolvimento Full-Stack na Faculdade de Tecnologia Rocketseat, aprofundando arquitetura de software, TypeScript e práticas modernas de desenvolvimento web.",
+        en: "I started a postgraduate program in Full-Stack Development at Faculdade de Tecnologia Rocketseat, deepening software architecture, TypeScript and modern web development practices.",
+      },
+      "about.roadmap.carvalima.title": {
+        pt: "Programa Trainee",
+        en: "Trainee Program",
+      },
+      "about.roadmap.carvalima.subtitle": {
+        pt: "Carvalima - Mar. a Abr. 2026",
+        en: "Carvalima - Mar. to Apr. 2026",
+      },
+      "about.roadmap.carvalima.description": {
+        pt: "Participei de um programa trainee com foco em Tecnologia (Qualidade – TI) e Operações, com vivência prática na operação logística, mapeamento de processos e um case técnico final conectando software à realidade operacional da empresa.",
+        en: "I took part in a trainee program focused on Technology (Quality – IT) and Operations, with hands-on experience in logistics operations, process mapping and a final technical case connecting software to the company's operational reality.",
+      },
+      "about.roadmap.detran2026.title": {
+        pt: "Desenvolvedor Full Stack",
+        en: "Full Stack Developer",
+      },
+      "about.roadmap.detran2026.subtitle": {
+        pt: "DETRAN-MT - Jun. 2026 (Atual)",
+        en: "DETRAN-MT - Jun. 2026 (Current)",
+      },
+      "about.roadmap.detran2026.description": {
+        pt: "Aprovado em processo seletivo, passei a atuar como desenvolvedor no DETRAN-MT, construindo aplicações web e mobile para sistemas internos com TypeScript, Nest.js, Next.js e PostgreSQL, do front-end ao back-end.",
+        en: "Approved in a public selection process, I joined DETRAN-MT as a developer, building web and mobile applications for internal systems with TypeScript, Nest.js, Next.js and PostgreSQL, from front-end to back-end.",
       },
 
       // Projects descriptions
@@ -226,9 +271,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         pt: "Atuando no DETRAN-MT por meio da empresa contratada Central IT, participei da equipe responsável pelo desenvolvimento de um sistema para emissão de credenciais destinadas a pessoas autistas. O projeto consistiu na criação de um documento oficial, semelhante às credenciais para idosos e pessoas com deficiência física, que permite aos portadores estacionar em vagas reservadas para esse público. A iniciativa visa promover inclusão e acessibilidade, assegurando um processo seguro e eficiente para o cadastro, emissão e controle dessas credenciais, contribuindo para a melhoria da mobilidade e o respeito aos direitos das pessoas autistas.",
         en: "Working at DETRAN-MT through the contracted company Central IT, I participated in the team responsible for developing a system for issuing credentials for autistic people. The project consisted of creating an official document, similar to credentials for the elderly and people with physical disabilities, which allows holders to park in spaces reserved for this audience. The initiative aims to promote inclusion and accessibility, ensuring a safe and efficient process for registration, issuance and control of these credentials, contributing to improved mobility and respect for the rights of autistic people.",
       },
-      "projects.board": {
-        pt: "Desenvolvi um board de tarefas simples como desafio prático durante o curso, visando aplicar conceitos de gerenciamento de estado, manipulação de listas e interação com o usuário. O sistema permite criar, editar e remover tarefas, facilitando a organização e o acompanhamento das atividades diárias de forma intuitiva e responsiva.",
-        en: "I developed a simple task board as a practical challenge during the course, aiming to apply concepts of state management, list manipulation and user interaction. The system allows creating, editing and removing tasks, facilitating the organization and tracking of daily activities in an intuitive and responsive way.",
+      "projects.maramores": {
+        pt: "Site institucional e de listagem de imóveis desenvolvido para uma imobiliária, com front-end em Next.js e API em Fastify (Node.js). Apresenta os imóveis disponíveis com navegação fluida e layout responsivo, focado em performance e em uma experiência clara para o usuário final.",
+        en: "Institutional and property-listing website built for a real estate agency, with a Next.js front-end and a Fastify (Node.js) API. It showcases available properties with smooth navigation and a responsive layout, focused on performance and a clear end-user experience.",
       },
     };
 

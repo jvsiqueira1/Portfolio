@@ -80,6 +80,30 @@ export default function About() {
       descriptionKey: "about.roadmap.graduation.description",
       icon: <GraduationCap className="w-6 h-6" />,
     },
+    {
+      year: "2026",
+      type: "education",
+      titleKey: "about.roadmap.pos.title",
+      subtitleKey: "about.roadmap.pos.subtitle",
+      descriptionKey: "about.roadmap.pos.description",
+      icon: <GraduationCap className="w-6 h-6" />,
+    },
+    {
+      year: "2026",
+      type: "growth",
+      titleKey: "about.roadmap.carvalima.title",
+      subtitleKey: "about.roadmap.carvalima.subtitle",
+      descriptionKey: "about.roadmap.carvalima.description",
+      icon: <Rocket className="w-6 h-6" />,
+    },
+    {
+      year: "2026",
+      type: "work",
+      titleKey: "about.roadmap.detran2026.title",
+      subtitleKey: "about.roadmap.detran2026.subtitle",
+      descriptionKey: "about.roadmap.detran2026.description",
+      icon: <Code className="w-6 h-6" />,
+    },
   ];
 
   const getVariantForType = (type: string) => {
