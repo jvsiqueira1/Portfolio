@@ -15,7 +15,7 @@ export default function Projects() {
   const projects = [
     {
       id: 6,
-      title: "Maramores Imóveis",
+      title: "TAMARAS",
       descriptionKey: "projects.maramores",
       // TODO: substituir public/maramores.png pelo print real do site (hoje e um placeholder)
       image: "/maramores.png",
