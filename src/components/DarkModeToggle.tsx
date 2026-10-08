@@ -1,33 +1,33 @@
-"use client"
+"use client";
+
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function DarkModeToggle() {
-    function toggle() {
-        if (document.documentElement.classList.contains("dark")) {
-          document.documentElement.classList.remove("dark");
-          localStorage.setItem("theme", "light");
-        } else {
-          document.documentElement.classList.add("dark");
-          localStorage.setItem("theme", "dark");
-        }
-      }
+  const { copy } = useLanguage();
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    setDark(document.documentElement.dataset.theme === "dark");
+  }, []);
+
+  function toggle() {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.dataset.theme = next ? "dark" : "light";
+    window.localStorage.setItem("theme", next ? "dark" : "light");
+  }
 
   return (
     <button
+      type="button"
+      className="icon-button"
       onClick={toggle}
-      className="cursor-pointer"
-      aria-label="Toggle Dark Mode"
+      aria-label={dark ? copy.theme.light : copy.theme.dark}
+      title={dark ? copy.theme.light : copy.theme.dark}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
+      {dark ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
     </button>
-  )
+  );
 }

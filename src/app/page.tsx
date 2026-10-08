@@ -1,17 +1,29 @@
-"use client"
-
-import { About, Experience, Footer, Header, Hero, Projects, Technologies } from '@/components';
+import {
+  About,
+  Education,
+  Experience,
+  Footer,
+  Header,
+  Hero,
+  Projects,
+  SkipLink,
+  Technologies,
+} from "@/components";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SkipLink />
       <Header />
-      <Hero />
-      <Projects />
-      <Technologies />
-      <Experience />
-      <About />
+      <main id="main">
+        <Hero />
+        <About />
+        <Projects />
+        <Experience />
+        <Technologies />
+        <Education />
+      </main>
       <Footer />
-    </div>
+    </>
   );
 }

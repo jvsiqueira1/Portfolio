@@ -1,121 +1,72 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowUpRight, Github } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import Reveal from "./Reveal";
 
 export default function Projects() {
-  const { t } = useLanguage();
-  const [showAll, setShowAll] = useState(false);
-  const INITIAL_PROJECTS_COUNT = 4;
-
-  const projects = [
-    {
-      id: 6,
-      title: "TAMARAS",
-      descriptionKey: "projects.maramores",
-      // TODO: substituir public/maramores.png pelo print real do site (hoje e um placeholder)
-      image: "/maramores.png",
-      link: "https://maramores.com.br/",
-    },
-    {
-      id: 1,
-      title: "MarApp",
-      descriptionKey: "projects.marapp",
-      image: "/marapp.png",
-      link: "https://www.marapp.fun/",
-    },
-    {
-      id: 2,
-      title: "Agilizei",
-      descriptionKey: "projects.agilizei",
-      image: "/agilizei.png",
-      link: null,
-    },
-    {
-      id: 3,
-      title: "Gestão de Gastos",
-      descriptionKey: "projects.gestao",
-      image: "/gestaodegastos.png",
-      link: "https://gestao.jvsdev.com.br/",
-    },
-    {
-      id: 4,
-      title: "Credencial do Autista",
-      descriptionKey: "projects.credencial",
-      image: "/credencial.png",
-      link: "https://credencialdoautista.detran.mt.gov.br/",
-    },
-  ];
-
+  const { copy } = useLanguage();
   return (
-    <section id="projects" className="py-24 bg-background">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
-            {t("projects.title")}
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            {t("projects.subtitle")}
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-          {(showAll ? projects : projects.slice(0, INITIAL_PROJECTS_COUNT)).map(
-            (project) => (
-              <Card
-                key={project.id}
-                className="border border-gray-800 bg-card overflow-hidden"
-              >
-                <div className="relative w-full aspect-video overflow-hidden bg-muted">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    sizes="(min-width: 768px) 50vw, 100vw"
-                    className="object-cover object-top"
-                  />
-                </div>
-                <CardContent className="pt-6">
-                  <h3 className="text-xl font-bold mb-2 text-foreground">
-                    {project.title}
-                  </h3>
-                  <Badge className="bg-black dark:bg-primary mb-2 text-sm">
-                    {t("projects.status.finished")}
-                  </Badge>
-                  <p className="text-muted-foreground mb-4 text-sm">
-                    {t(project.descriptionKey)}
-                  </p>
-                  {project.link && (
-                    <button className="bg-primary hover:bg-primary-600 text-white text-sm px-4 py-2 rounded-full flex items-center gap-1 transition-all w-max dark:text-black">
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        className="flex justify-center items-center"
-                      >
-                        {t("projects.seeMore")}
-                        <ArrowRight size={14} />
-                      </a>
-                    </button>
-                  )}
-                </CardContent>
-              </Card>
-            )
-          )}
-        </div>
-        {projects.length > INITIAL_PROJECTS_COUNT && (
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={() => setShowAll(!showAll)}
-              className="bg-primary hover:bg-primary-600 text-white px-6 py-3 rounded-full flex items-center gap-2 transition-all dark:text-black font-medium"
+    <section id="projects" className="section projects-section">
+      <div className="shell">
+        <Reveal className="section-heading">
+          <h2>{copy.projects.title}</h2>
+          <p>{copy.projects.intro}</p>
+        </Reveal>
+
+        <div className="projects-grid">
+          {copy.projects.items.map((project, index) => (
+            <Reveal
+              key={project.title}
+              delay={(index % 2) * 80}
+              className={`project-card project-card-${index + 1}`}
             >
-              {showAll ? t("projects.showLess") : t("projects.showMore")}
-              {showAll ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </button>
+              <div className="project-media">
+                <Image
+                  src={project.image}
+                  alt={project.imageAlt}
+                  fill
+                  sizes={index === 0 ? "(max-width: 767px) 100vw, 68vw" : "(max-width: 767px) 100vw, 45vw"}
+                  className="project-image"
+                />
+              </div>
+              <div className="project-body">
+                <div>
+                  <h3>{project.title}</h3>
+                  <p>{project.description}</p>
+                </div>
+                <div className="tag-list" aria-label="Stack">
+                  {project.stack.map((technology) => <span key={technology}>{technology}</span>)}
+                </div>
+                {project.note && <p className="project-note">{project.note}</p>}
+                {project.href ? (
+                  <a className="text-link" href={project.href} target="_blank" rel="noreferrer">
+                    {copy.projects.visit}<ArrowUpRight aria-hidden="true" />
+                  </a>
+                ) : (
+                  <span className="project-private">{copy.projects.privateLabel}</span>
+                )}
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal className="other-projects">
+          <div>
+            <h3>{copy.projects.othersTitle}</h3>
+            <p>{copy.projects.othersIntro}</p>
           </div>
-        )}
+          <div className="repo-grid">
+            {copy.projects.others.map((project) => (
+              <a href={project.href} target="_blank" rel="noreferrer" key={project.name}>
+                <Github aria-hidden="true" />
+                <span>{project.name}</span>
+                <small>{project.language}</small>
+              </a>
+            ))}
+          </div>
+        </Reveal>
       </div>
     </section>
   );

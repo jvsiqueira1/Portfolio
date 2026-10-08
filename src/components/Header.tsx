@@ -1,146 +1,64 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
-import { SiLinkedin } from 'react-icons/si';
-import { FaGithub } from "react-icons/fa";
-import DarkModeToggle from './DarkModeToggle'
-import LanguageToggle from './LanguageToggle'
-import { useLanguage } from '@/contexts/LanguageContext';
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import DarkModeToggle from "./DarkModeToggle";
+import LanguageToggle from "./LanguageToggle";
 
 export default function Header() {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState('hero');
-    const [scrolled, setScrolled] = useState(false);
-    const { t } = useLanguage();
-  
-    useEffect(() => {
-      const handleScroll = () => {
-        const sections = document.querySelectorAll('section[id]');
-        
-        if (window.scrollY > 50) {
-          setScrolled(true);
-        } else {
-          setScrolled(false);
-        }
-        
-        let current = '';
-        
-        sections.forEach((section) => {
-          const sectionTop = (section as HTMLElement).offsetTop - 100;
-          const sectionId = section.getAttribute('id') || '';
-          
-          if (window.scrollY >= sectionTop) {
-            current = sectionId;
-          }
-        });
-        
-        setActiveSection(current || 'hero');
-      };
-      
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-    
-    const handleLinkClick = (sectionId: string) => {
-      setIsMenuOpen(false);
-      setActiveSection(sectionId);
-      
-      const element = document.getElementById(sectionId);
-      if (element) {
-        window.scrollTo({
-          top: element.offsetTop - 80,
-          behavior: 'smooth'
-        });
-      }
-    };
-    
-    const navLinks = [
-      { id: 'projects', labelKey: 'nav.projects' },
-      { id: 'technologies', labelKey: 'nav.technologies' },
-      { id: 'experience', labelKey: 'nav.experience' },
-      { id: 'about', labelKey: 'nav.about' },
-    ];
+  const { copy } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const links = [
+    ["#about", copy.nav.about],
+    ["#projects", copy.nav.projects],
+    ["#experience", copy.nav.experience],
+    ["#technologies", copy.nav.stack],
+    ["#education", copy.nav.education],
+  ];
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-background border-b border-gray-800 py-3' : 'bg-transparent py-5'
-      }`}>
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <div className="text-primary font-bold text-lg mr-8">Portfolio</div>
-          <nav className="hidden md:flex justify-center space-x-8">
-            {navLinks.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => handleLinkClick(link.id)}
-                className={`text-foreground hover:text-primary transition-colors ${activeSection === link.id ? 'font-medium' : ''}`}
-              >
-                {t(link.labelKey)}
-              </button>
-            ))}
-          </nav>
-          <div className="hidden md:flex space-x-4 items-center">
-            <LanguageToggle />
-            <DarkModeToggle/>
-            <a 
-              href="https://www.linkedin.com/in/joaovitorsiqueira1/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-foreground hover:text-primary"
-            >
-              <SiLinkedin size={24} />
-            </a>
-            <a 
-              href="https://github.com/jvsiqueira1" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-foreground hover:text-primary"
-            >
-              <FaGithub size={24} />
-            </a>
-          </div>
-          <button 
-            className="md:hidden text-foreground hover:text-primary"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+    <header className="site-header">
+      <div className="shell nav-shell">
+        <a href="#top" className="brand">
+          <span className="brand-mark" aria-hidden="true" />
+          <span className="brand-name">João Vitor</span>
+        </a>
+
+        <nav className="desktop-nav" aria-label={copy.nav.mainLabel}>
+          {links.map(([href, label]) => (
+            <a href={href} key={href}>{label}</a>
+          ))}
+          <a className="nav-contact" href="#contact">{copy.nav.contact}</a>
+        </nav>
+
+        <div className="nav-actions">
+          <LanguageToggle />
+          <DarkModeToggle />
+          <button
+            type="button"
+            className="icon-button menu-button"
+            onClick={() => setOpen((value) => !value)}
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
+            aria-label={open ? copy.nav.close : copy.nav.menu}
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
           </button>
         </div>
-        {isMenuOpen && (
-          <div className="md:hidden bg-card shadow-md">
-            <nav className="container mx-auto py-4 flex flex-col space-y-4">
-              {navLinks.map((link) => (
-                <button
-                  key={link.id}
-                  onClick={() => handleLinkClick(link.id)}
-                  className={`text-foreground hover:text-primary transition-colors ${activeSection === link.id ? 'font-medium' : ''} px-4`}
-                >
-                  {t(link.labelKey)}
-                </button>
-              ))}
-              <div className="flex items-center space-x-4 px-4 pt-4 border-t border-gray-800">
-                <LanguageToggle />
-                <DarkModeToggle/>
-                <a 
-                  href="https://www.linkedin.com/in/joaovitorsiqueira1" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-foreground hover:text-primary"
-                >
-                  <SiLinkedin size={20} />
-                </a>
-                <a 
-              href="https://github.com/jvsiqueira1" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-foreground hover:text-primary"
-                >
-                <FaGithub size={24} />
-                </a>
-              </div>
-            </nav>
-          </div>
-        )}
-      </header>
-  )
+      </div>
+
+      <nav
+        id="mobile-navigation"
+        className="mobile-nav"
+        data-open={open}
+        aria-label={copy.nav.mobileLabel}
+      >
+        {links.map(([href, label]) => (
+          <a href={href} key={href} onClick={() => setOpen(false)}>{label}</a>
+        ))}
+        <a href="#contact" onClick={() => setOpen(false)}>{copy.nav.contact}</a>
+      </nav>
+    </header>
+  );
 }

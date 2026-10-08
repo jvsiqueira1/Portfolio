@@ -1,177 +1,62 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Briefcase, Calendar, MapPin } from "lucide-react";
-import { Card } from "./ui/card";
 
 export default function Experience() {
-  const { t, language } = useLanguage();
+  const { copy } = useLanguage();
+  const [active, setActive] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
 
-  const experiences = [
-    {
-      id: 0,
-      title: "Desenvolvedor Full Stack",
-      company: "DETRAN-MT",
-      location: { pt: "Cuiabá - MT", en: "Cuiabá - MT" },
-      period: { pt: "Jun. de 2026 - Presente", en: "Jun. 2026 - Present" },
-      descriptionKey: "experience.detran2026.description",
-      technologies: [
-        "TypeScript",
-        "Nest.js",
-        "Next.js",
-        "React",
-        "Node.js",
-        "PostgreSQL",
-      ],
-    },
-    {
-      id: 1,
-      title: "Trainee",
-      company: "Carvalima",
-      location: { pt: "Cuiabá - MT", en: "Cuiabá - MT" },
-      period: { pt: "Mar. de 2026 - Abr. de 2026", en: "Mar. 2026 - Apr. 2026" },
-      descriptionKey: "experience.carvalima.description",
-      technologies: [
-        "Tecnologia (TI)",
-        "Operações",
-        "Mapeamento de Processos",
-        "Indicadores",
-      ],
-    },
-    {
-      id: 2,
-      title: "Desenvolvedor Full Stack",
-      company: "Grupo Optimus",
-      locationKey: "experience.location.brazil",
-      period: { pt: "Set. de 2025 - Jan. de 2026", en: "Sep. 2025 - Jan. 2026" },
-      descriptionKey: "experience.optimus.description",
-      technologies: [
-        "Java",
-        "Spring Boot",
-        "React.js",
-        "Python",
-        "Web Scraping",
-      ],
-    },
-    {
-      id: 3,
-      title: "Desenvolvedor Full Stack",
-      company: "Agilizei",
-      locationKey: "experience.location.brazil",
-      period: {
-        pt: "Mar. de 2025 - Jun. de 2025",
-        en: "Mar. 2025 - Jun. 2025",
+  useEffect(() => {
+    const items = listRef.current?.querySelectorAll<HTMLElement>("[data-experience]");
+    if (!items?.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(Number((visible.target as HTMLElement).dataset.experience));
       },
-      descriptionKey: "experience.agilizei.description",
-      technologies: [
-        "React",
-        "TypeScript",
-        "Node.js",
-        "PostgreSQL",
-        "Prisma ORM",
-        "Git",
-        "APIs RESTful",
-      ],
-    },
-    {
-      id: 4,
-      title: "Desenvolvedor Front End",
-      company: "Central IT",
-      locationKey: "experience.location.brazil",
-      period: {
-        pt: "Out. de 2023 - Dez. de 2024",
-        en: "Oct. 2023 - Dec. 2024",
-      },
-      descriptionKey: "experience.centralit.description",
-      technologies: [
-        "React.js",
-        "Tailwind CSS",
-        "APIs RESTful",
-        "Git",
-        "GitLab",
-        "Scrum",
-      ],
-    },
-    {
-      id: 5,
-      title: "Estagiário de Suporte",
-      company: "Detran MT",
-      location: { pt: "Cuiabá - MT", en: "Cuiabá - MT" },
-      period: {
-        pt: "Set. de 2021 - Set. de 2023",
-        en: "Sep. 2021 - Sep. 2023",
-      },
-      descriptionKey: "experience.detran.description",
-      technologies: [
-        "Suporte Técnico",
-        "Redes",
-        "Manutenção de Hardware",
-        "Sistemas Internos",
-      ],
-    },
-  ];
+      { rootMargin: "-24% 0px -55%", threshold: [0.15, 0.45, 0.75] }
+    );
+    items.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, [copy.experience.items]);
 
   return (
-    <section id="experience" className="py-24 bg-card">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Briefcase className="w-8 h-8 text-primary" />
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              {t("experience.title")}
-            </h2>
+    <section id="experience" className="section experience-section">
+      <div className="shell experience-grid">
+        <div className="experience-intro">
+          <h2>{copy.experience.title}</h2>
+          <p>{copy.experience.intro}</p>
+          <div className="route-progress" aria-hidden="true">
+            <span style={{ transform: `scaleY(${(active + 1) / copy.experience.items.length})` }} />
           </div>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            {t("experience.subtitle")}
-          </p>
         </div>
-        <div className="space-y-6">
-          {experiences.map((experience) => (
-            <Card
-              key={experience.id}
-              className="bg-background p-6 md:p-8 border border-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary/30"
+
+        <div className="experience-list" ref={listRef}>
+          {copy.experience.items.map((item, index) => (
+            <article
+              className="experience-item"
+              data-active={active === index}
+              data-experience={index}
+              key={`${item.company}-${item.period}`}
             >
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4 gap-4">
-                <div className="flex-1">
-                  <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">
-                    {experience.title}
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-4 text-sm md:text-base">
-                    <div className="flex items-center gap-2 text-primary font-semibold">
-                      <Briefcase className="w-4 h-4" />
-                      {experience.company}
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="w-4 h-4" />
-                      {experience.locationKey
-                        ? t(experience.locationKey)
-                        : typeof experience.location === "object"
-                        ? experience.location[language]
-                        : experience.location}
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      {typeof experience.period === "object"
-                        ? experience.period[language]
-                        : experience.period}
-                    </div>
-                  </div>
-                </div>
+              <div className="experience-meta">
+                <span>{item.period}</span>
+                <span>{item.location}</span>
               </div>
-              <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-4">
-                {t(experience.descriptionKey)}
-              </p>
-              <div className="flex flex-wrap gap-2 mt-4">
-                {experience.technologies.map((tech, index) => (
-                  <span
-                    key={index}
-                    className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs md:text-sm font-medium"
-                  >
-                    {tech}
-                  </span>
-                ))}
+              <h3>{item.role}</h3>
+              <p className="experience-company">{item.company}</p>
+              <p className="experience-summary">{item.summary}</p>
+              <ul>
+                {item.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+              </ul>
+              <div className="tag-list" aria-label="Stack">
+                {item.stack.map((technology) => <span key={technology}>{technology}</span>)}
               </div>
-            </Card>
+            </article>
           ))}
         </div>
       </div>
