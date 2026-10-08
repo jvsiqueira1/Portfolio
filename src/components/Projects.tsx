@@ -1,75 +1,131 @@
 "use client";
 
-import { ArrowUpRight, Github } from "lucide-react";
-import Image from "next/image";
+import { useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  localizeProject,
+  projects,
+  projectsSection,
+  type ProjectCategory,
+} from "@/content/projects";
 import Reveal from "./Reveal";
+import ProjectCard from "./projects/ProjectCard";
+import ProjectDetail from "./projects/ProjectDetail";
+import "./projects/projects.css";
+
+type Filter = "all" | ProjectCategory;
+
+const categoryOrder: Filter[] = [
+  "all",
+  "imobiliario",
+  "saas",
+  "pessoal",
+  "landing",
+  "publico",
+];
 
 export default function Projects() {
-  const { copy } = useLanguage();
+  const { language } = useLanguage();
+  const copy = projectsSection[language];
+  const [filter, setFilter] = useState<Filter>("all");
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const openerRef = useRef<HTMLButtonElement | null>(null);
+
+  const localizedProjects = useMemo(
+    () => projects.map((project) => localizeProject(project, language)),
+    [language]
+  );
+  const featuredProjects = localizedProjects.filter((project) => project.featured);
+  const archiveProjects = localizedProjects.filter(
+    (project) =>
+      !project.featured && (filter === "all" || project.category === filter)
+  );
+  const selectedProject = localizedProjects.find(
+    (project) => project.slug === selectedSlug
+  );
+
+  const openProject = (slug: string, trigger: HTMLButtonElement) => {
+    openerRef.current = trigger;
+    setSelectedSlug(slug);
+  };
+
+  const closeProject = () => {
+    setSelectedSlug(null);
+    window.requestAnimationFrame(() => openerRef.current?.focus());
+  };
+
   return (
-    <section id="projects" className="section projects-section">
-      <div className="shell">
-        <Reveal className="section-heading">
-          <h2>{copy.projects.title}</h2>
-          <p>{copy.projects.intro}</p>
+    <section id="projects" className="section portfolio-projects-section">
+      <div className="shell portfolio-projects-shell">
+        <Reveal className="portfolio-projects-heading">
+          <h2>{copy.title}</h2>
+          <p>{copy.intro}</p>
         </Reveal>
 
-        <div className="projects-grid">
-          {copy.projects.items.map((project, index) => (
-            <Reveal
-              key={project.title}
-              delay={(index % 2) * 80}
-              className={`project-card project-card-${index + 1}`}
-            >
-              <div className="project-media">
-                <Image
-                  src={project.image}
-                  alt={project.imageAlt}
-                  fill
-                  sizes={index === 0 ? "(max-width: 767px) 100vw, 68vw" : "(max-width: 767px) 100vw, 45vw"}
-                  className="project-image"
-                />
-              </div>
-              <div className="project-body">
-                <div>
-                  <h3>{project.title}</h3>
-                  <p>{project.description}</p>
-                </div>
-                <div className="tag-list" aria-label="Stack">
-                  {project.stack.map((technology) => <span key={technology}>{technology}</span>)}
-                </div>
-                {project.note && <p className="project-note">{project.note}</p>}
-                {project.href ? (
-                  <a className="text-link" href={project.href} target="_blank" rel="noreferrer">
-                    {copy.projects.visit}<ArrowUpRight aria-hidden="true" />
-                  </a>
-                ) : (
-                  <span className="project-private">
-                    {project.linkStatus ?? copy.projects.privateLabel}
-                  </span>
-                )}
-              </div>
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal className="other-projects">
-          <div>
-            <h3>{copy.projects.othersTitle}</h3>
-            <p>{copy.projects.othersIntro}</p>
+        <div className="featured-projects-block">
+          <div className="projects-subhead">
+            <h3>{copy.featuredTitle}</h3>
+            <span aria-hidden="true">{String(featuredProjects.length).padStart(2, "0")}</span>
           </div>
-          <div className="repo-grid">
-            {copy.projects.others.map((project) => (
-              <a href={project.href} target="_blank" rel="noreferrer" key={project.name}>
-                <Github aria-hidden="true" />
-                <span>{project.name}</span>
-                <small>{project.language}</small>
-              </a>
+          <div className="featured-projects-grid">
+            {featuredProjects.map((project, index) => (
+              <Reveal key={project.slug} delay={(index % 2) * 70}>
+                <ProjectCard
+                  project={project}
+                  copy={copy}
+                  featured
+                  onOpen={openProject}
+                />
+              </Reveal>
             ))}
           </div>
-        </Reveal>
+        </div>
+
+        <div className="projects-archive">
+          <div className="projects-archive-heading">
+            <div>
+              <h3>{copy.allTitle}</h3>
+              <p>{copy.allIntro}</p>
+            </div>
+            <span className="projects-count" aria-live="polite">
+              {String(archiveProjects.length).padStart(2, "0")}
+            </span>
+          </div>
+
+          <div className="project-filters" aria-label={copy.filterLabel}>
+            {categoryOrder.map((category) => (
+              <button
+                key={category}
+                type="button"
+                className={filter === category ? "is-active" : undefined}
+                aria-pressed={filter === category}
+                onClick={() => setFilter(category)}
+              >
+                {copy.filters[category]}
+              </button>
+            ))}
+          </div>
+
+          <div className="projects-archive-grid">
+            {archiveProjects.map((project) => (
+              <ProjectCard
+                key={project.slug}
+                project={project}
+                copy={copy}
+                onOpen={openProject}
+              />
+            ))}
+          </div>
+        </div>
       </div>
+
+      {selectedProject && (
+        <ProjectDetail
+          project={selectedProject}
+          copy={copy}
+          onClose={closeProject}
+        />
+      )}
     </section>
   );
 }

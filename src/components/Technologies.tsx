@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import Reveal from "./Reveal";
+import { ScrollHeading, VelocityMarquee } from "./motion";
 
 export default function Technologies() {
   const { copy } = useLanguage();
@@ -9,19 +10,12 @@ export default function Technologies() {
 
   return (
     <section id="technologies" className="section technologies-section">
-      <div className="stack-marquee" aria-hidden="true">
-        <div className="stack-track">
-          {[...marquee, ...marquee].map((item, index) => <span key={`${item}-${index}`}>{item}</span>)}
-        </div>
-      </div>
+      <VelocityMarquee items={marquee} />
       <div className="shell">
-        <Reveal className="section-heading">
-          <h2>{copy.stack.title}</h2>
-          <p>{copy.stack.intro}</p>
-        </Reveal>
+        <ScrollHeading title={copy.stack.title} description={copy.stack.intro} />
         <div className="technology-grid">
           {copy.stack.categories.map((category, index) => (
-            <Reveal key={category.title} delay={(index % 3) * 60} className={`technology-group technology-group-${index + 1}`}>
+            <Reveal key={category.title} delay={(index % 3) * 75} variant={index % 2 ? "slide" : "scale"} className={`technology-group technology-group-${index + 1}`}>
               <h3>{category.title}</h3>
               <div className="technology-list">
                 {category.items.map((item) => <span key={item}>{item}</span>)}

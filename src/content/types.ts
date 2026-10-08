@@ -1,16 +1,5 @@
 export type Language = "pt" | "en";
 
-export type Project = {
-  title: string;
-  description: string;
-  image: string;
-  imageAlt: string;
-  href: string | null;
-  linkStatus?: string;
-  stack: string[];
-  note?: string;
-};
-
 export type ExperienceItem = {
   role: string;
   company: string;
@@ -61,16 +50,6 @@ export type SiteContent = {
     lead: string;
     body: string;
     pillars: Array<{ title: string; text: string }>;
-  };
-  projects: {
-    title: string;
-    intro: string;
-    visit: string;
-    privateLabel: string;
-    items: Project[];
-    othersTitle: string;
-    othersIntro: string;
-    others: Array<{ name: string; language: string; href: string }>;
   };
   experience: {
     title: string;

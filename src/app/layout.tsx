@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Azeret_Mono } from "next/font/google";
 import CookieConsent from "@/components/CookieConsent";
+import { MotionProvider } from "@/components/motion";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import "./globals.css";
 
@@ -76,8 +77,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body className={`${archivo.variable} ${azeretMono.variable}`}>
         <LanguageProvider>
-          {children}
-          <CookieConsent />
+          <MotionProvider>
+            {children}
+            <CookieConsent />
+          </MotionProvider>
         </LanguageProvider>
       </body>
     </html>

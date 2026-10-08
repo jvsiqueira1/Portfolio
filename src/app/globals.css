@@ -48,6 +48,19 @@ html[data-theme="dark"] {
   color-scheme: dark;
 }
 
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -169,6 +182,16 @@ button {
   border-bottom: 1px solid color-mix(in srgb, var(--line) 74%, transparent);
   background: color-mix(in srgb, var(--page) 88%, transparent);
   backdrop-filter: blur(18px) saturate(130%);
+  transition:
+    height 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 220ms ease,
+    box-shadow 320ms ease;
+}
+
+.site-header[data-scrolled="true"] {
+  height: 60px;
+  background: color-mix(in srgb, var(--page) 82%, transparent);
+  box-shadow: 0 12px 42px rgba(13, 25, 17, 0.09);
 }
 
 .nav-shell {
@@ -216,7 +239,27 @@ button {
 }
 
 .desktop-nav a {
+  position: relative;
   text-decoration: none;
+}
+
+.desktop-nav a::after {
+  position: absolute;
+  right: 0;
+  bottom: -7px;
+  left: 0;
+  height: 1px;
+  background: currentColor;
+  content: "";
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.desktop-nav a:hover::after,
+.desktop-nav a[data-active="true"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 .desktop-nav a:not(.nav-contact) {
@@ -257,6 +300,10 @@ button {
   height: 18px;
 }
 
+.toggle-icon {
+  display: inline-flex;
+}
+
 .language-button {
   font-family: var(--font-mono), monospace;
   font-size: 0.73rem;
@@ -269,10 +316,43 @@ button {
 }
 
 .hero-section {
+  position: relative;
+  isolation: isolate;
   display: flex;
   min-height: calc(100dvh - var(--header-height));
   align-items: center;
   padding-block: clamp(36px, 5vw, 72px);
+  overflow: hidden;
+}
+
+.hero-section::before {
+  position: absolute;
+  z-index: -2;
+  width: min(72vw, 980px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 19%, transparent) 0, transparent 66%);
+  content: "";
+  inset: -46% -16% auto auto;
+  animation: hero-breathe 8s ease-in-out infinite alternate;
+}
+
+.hero-glow {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent), transparent 68%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.hero-grid {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-grid {
@@ -305,7 +385,7 @@ button {
   text-wrap: balance;
 }
 
-.hero-copy h1 span {
+.hero-copy h1 .hero-name {
   display: block;
   margin-bottom: 12px;
   color: var(--accent-strong);
@@ -314,6 +394,38 @@ button {
   font-weight: 650;
   letter-spacing: 0;
   line-height: 1.3;
+}
+
+.hero-headline {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.22em;
+}
+
+.hero-word {
+  display: inline-flex;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.hero-word > span {
+  display: inline-block;
+}
+
+.hero-availability {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.hero-availability > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 13%, transparent);
+  animation: availability-pulse 2.4s ease-in-out infinite;
 }
 
 .hero-summary {
@@ -361,6 +473,7 @@ button {
 
 .button-primary:hover {
   background: var(--accent-strong);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
 .button-secondary {
@@ -382,6 +495,18 @@ button {
   border-radius: var(--radius);
   background: var(--surface-soft);
   box-shadow: var(--shadow);
+  will-change: transform;
+}
+
+.portrait-frame::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 18%, rgba(255, 255, 255, 0.2) 48%, transparent 68%);
+  content: "";
+  pointer-events: none;
+  transform: translateX(-130%);
+  animation: portrait-sheen 6.5s 1.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
 .portrait-image {
@@ -425,6 +550,18 @@ button {
   font-size: 0.68rem;
 }
 
+.portrait-orbit {
+  position: absolute;
+  z-index: 3;
+  top: 18px;
+  right: 18px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  border-radius: 50%;
+  box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.14);
+}
+
 .about-section {
   border-top: 1px solid var(--line);
   background: var(--surface);
@@ -464,8 +601,31 @@ button {
 }
 
 .pillar {
+  position: relative;
   border-top: 1px solid var(--line);
   padding-top: 20px;
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), color 220ms ease;
+}
+
+.pillar::before {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pillar:hover {
+  transform: translateY(-5px);
+}
+
+.pillar:hover::before {
+  transform: scaleX(1);
 }
 
 .pillar h3,
@@ -499,6 +659,12 @@ button {
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: 0 12px 36px rgba(30, 46, 36, 0.08);
+  transition: box-shadow 420ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 24px 58px rgba(30, 46, 36, 0.14);
 }
 
 .project-card-1 {
@@ -678,9 +844,25 @@ button {
 }
 
 .experience-item {
+  position: relative;
   border-bottom: 1px solid var(--line);
   padding-block: 44px;
   transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.experience-item::before {
+  position: absolute;
+  top: 50%;
+  left: -30px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 24%, transparent);
+  content: "";
+  opacity: 0;
+  transform: translateY(-50%) scale(0.5);
+  transition: opacity 260ms ease, transform 360ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 360ms ease;
 }
 
 .experience-item:first-child {
@@ -689,6 +871,12 @@ button {
 
 .experience-item[data-active="true"] {
   transform: translateX(8px);
+}
+
+.experience-item[data-active="true"]::before {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  box-shadow: 0 0 0 9px color-mix(in srgb, var(--accent) 13%, transparent);
 }
 
 .experience-item[data-active="true"] h3 {
@@ -746,6 +934,11 @@ button {
   color: var(--accent-ink);
 }
 
+.stack-marquee .stack-track + .stack-track {
+  border-top: 1px solid color-mix(in srgb, var(--accent-ink) 24%, transparent);
+  background: color-mix(in srgb, var(--accent) 82%, #111c16);
+}
+
 .stack-track {
   display: flex;
   width: max-content;
@@ -754,6 +947,7 @@ button {
   font-family: var(--font-mono), monospace;
   font-size: 0.75rem;
   font-weight: 650;
+  will-change: transform;
 }
 
 .stack-track span::after {
@@ -778,6 +972,12 @@ button {
   border-radius: var(--radius);
   background: var(--surface);
   padding: clamp(24px, 3vw, 36px);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 420ms ease;
+}
+
+.technology-group:hover {
+  transform: translateY(-7px) rotate(-0.35deg);
+  box-shadow: 0 20px 48px rgba(30, 46, 36, 0.1);
 }
 
 .technology-group-2,
@@ -818,11 +1018,29 @@ button {
 }
 
 .education-item {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 30px;
   border-bottom: 1px solid var(--line);
   padding-block: 28px;
+}
+
+.education-item::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  background: var(--accent);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.education-item:hover::after {
+  transform: scaleX(1);
 }
 
 .education-item:first-child {
@@ -922,6 +1140,7 @@ button {
   padding-block: 18px;
   text-decoration: none;
   font-weight: 650;
+  transition: color 220ms ease, transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .contact-links a:hover {
@@ -986,10 +1205,98 @@ button {
     filter 650ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
 }
 
+.js .reveal[data-reveal="mask"] {
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(34px);
+}
+
+.js .reveal[data-reveal="slide"] {
+  transform: translateX(38px);
+}
+
+.js .reveal[data-reveal="scale"] {
+  transform: translateY(24px) scale(0.955);
+}
+
+.js .projects-grid .reveal {
+  clip-path: inset(12% 0 0 0 round var(--radius));
+  transform: translateY(44px) scale(0.97);
+}
+
 .js .reveal[data-visible="true"] {
   opacity: 1;
   transform: none;
   filter: none;
+  clip-path: inset(0 0 0 0 round 0);
+}
+
+.scroll-heading {
+  overflow: clip;
+}
+
+.custom-cursor {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
+.custom-cursor[data-visible="true"] {
+  opacity: 1;
+}
+
+.cursor-ring,
+.cursor-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #fff;
+  mix-blend-mode: difference;
+  scale: 1;
+  transition: scale 180ms ease, background-color 180ms ease;
+}
+
+.cursor-dot {
+  width: 5px;
+  height: 5px;
+  background: #fff;
+  mix-blend-mode: difference;
+}
+
+.custom-cursor[data-active="true"] .cursor-ring {
+  scale: 1.58;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .has-custom-cursor,
+  .has-custom-cursor a,
+  .has-custom-cursor button {
+    cursor: none;
+  }
+}
+
+@keyframes hero-breathe {
+  to { transform: translate3d(-7%, 5%, 0) scale(1.08); }
+}
+
+@keyframes portrait-sheen {
+  0%, 72% { transform: translateX(-130%); }
+  92%, 100% { transform: translateX(130%); }
+}
+
+@keyframes availability-pulse {
+  50% { opacity: 0.58; transform: scale(0.76); }
 }
 
 @media (prefers-reduced-transparency: reduce) {
@@ -1004,10 +1311,6 @@ button {
     scroll-behavior: smooth;
   }
 
-  .stack-track {
-    animation: marquee 36s linear infinite;
-  }
-
   .button,
   .icon-button,
   .language-button,
@@ -1018,10 +1321,6 @@ button {
 
   .repo-grid a:hover {
     transform: translateY(-2px);
-  }
-
-  @keyframes marquee {
-    to { transform: translateX(-50%); }
   }
 }
 
@@ -1044,6 +1343,22 @@ button {
   .experience-item {
     opacity: 1;
     transform: none !important;
+  }
+
+  .hero-glow,
+  .custom-cursor,
+  .portrait-frame::before {
+    display: none !important;
+  }
+
+  .hero-section::before,
+  .hero-availability > span {
+    animation: none !important;
+  }
+
+  .stack-track {
+    transform: none !important;
+    will-change: auto;
   }
 }
 

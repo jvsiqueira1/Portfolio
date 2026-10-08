@@ -9,21 +9,24 @@ import {
   SkipLink,
   Technologies,
 } from "@/components";
+import { LanguageTransition } from "@/components/motion";
 
 export default function Home() {
   return (
     <>
       <SkipLink />
       <Header />
-      <main id="main">
-        <Hero />
-        <About />
-        <Projects />
-        <Experience />
-        <Technologies />
-        <Education />
-      </main>
-      <Footer />
+      <LanguageTransition>
+        <main id="main">
+          <Hero />
+          <About />
+          <Projects />
+          <Experience />
+          <Technologies />
+          <Education />
+        </main>
+        <Footer />
+      </LanguageTransition>
     </>
   );
 }
