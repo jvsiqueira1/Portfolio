@@ -1,70 +1,86 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { LanguageProvider } from "@/contexts/LanguageContext";
+import type { Metadata, Viewport } from "next";
+import { Archivo, Azeret_Mono } from "next/font/google";
 import CookieConsent from "@/components/CookieConsent";
+import { MotionProvider } from "@/components/motion";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const archivo = Archivo({
+  variable: "--font-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const azeretMono = Azeret_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
+  display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4f6f4" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c100e" },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.jvsdev.com.br"),
-  title: "João Vitor de Siqueira Campos | Desenvolvedor Full Stack",
+  title: "João Vitor | Desenvolvedor Full-Stack",
   description:
-    "Desenvolvedor Full Stack (JavaScript/TypeScript, Node.js, Nest.js, React e Next.js). Portfólio com projetos, experiências e tecnologias.",
+    "Portfólio de João Vitor, desenvolvedor full-stack e Analista de TI no DETRAN-MT. Projetos, experiência, stack e CV em português e inglês.",
   keywords: [
-    "Desenvolvedor Full Stack",
-    "JavaScript",
-    "TypeScript",
+    "João Vitor",
+    "Desenvolvedor Full-Stack",
     "Node.js",
     "Nest.js",
     "React",
     "Next.js",
     "PostgreSQL",
-    "João Vitor de Siqueira Campos",
+    "Cuiabá",
   ],
   authors: [{ name: "João Vitor de Siqueira Campos" }],
-  alternates: { canonical: "https://www.jvsdev.com.br" },
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "João Vitor de Siqueira Campos | Desenvolvedor Full Stack",
-    description:
-      "Desenvolvedor Full Stack (JavaScript/TypeScript, Node.js, Nest.js, React e Next.js). Portfólio com projetos, experiências e tecnologias.",
+    title: "João Vitor | Desenvolvedor Full-Stack",
+    description: "Sistemas que conectam produto, dados e operação.",
     url: "https://www.jvsdev.com.br",
-    siteName: "João Vitor de Siqueira Campos",
+    siteName: "João Vitor",
     locale: "pt_BR",
     type: "website",
-    images: [{ url: "/me-image.jpg", width: 1200, height: 630, alt: "João Vitor de Siqueira Campos" }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "João Vitor, Desenvolvedor Full-Stack" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "João Vitor de Siqueira Campos | Desenvolvedor Full Stack",
-    description:
-      "Desenvolvedor Full Stack (JavaScript/TypeScript, Node.js, Nest.js, React e Next.js).",
-    images: ["/me-image.jpg"],
+    title: "João Vitor | Desenvolvedor Full-Stack",
+    description: "Sistemas que conectam produto, dados e operação.",
+    images: ["/opengraph-image"],
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const themeScript = `
+  document.documentElement.classList.add('js');
+  try {
+    var saved = localStorage.getItem('theme');
+    var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  } catch (_) {}
+`;
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        suppressHydrationWarning
-      >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className={`${archivo.variable} ${azeretMono.variable}`}>
         <LanguageProvider>
-          {children}
-          <CookieConsent />
+          <MotionProvider>
+            {children}
+            <CookieConsent />
+          </MotionProvider>
         </LanguageProvider>
       </body>
     </html>

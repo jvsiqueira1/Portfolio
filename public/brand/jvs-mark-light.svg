@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 610 355" role="img" aria-labelledby="title">
+  <title id="title">Monograma JVS Development</title>
+  <defs>
+    <linearGradient id="slate" x1="0" y1="0" x2="0.82" y2="1">
+      <stop offset="0" stop-color="#465166"/>
+      <stop offset="1" stop-color="#293246"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="0.75" y2="1">
+      <stop offset="0" stop-color="#0879ff"/>
+      <stop offset="1" stop-color="#075ee9"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#14c5f5"/>
+      <stop offset="1" stop-color="#0799d6"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#slate)" d="M119 52 186 131v126c0 64-38 98-94 98S0 317 0 257h68c0 25 8 31 24 31 17 0 27-10 27-30V52Z"/>
+  <path fill="url(#slate)" d="m202 165 79 113h238c11 0 17-8 17-16 0-9-7-16-19-16h-76c-40 0-71-19-82-50l74-101h176l-50 68H444c-11 0-14 6-14 14 0 7 7 12 17 12h72c49 0 84 34 84 77 0 46-35 78-84 78H254l-52-55V165Z"/>
+  <path fill="url(#blue)" d="M93 0h101l98 152L400 0h95L292 263 93 0Z"/>
+  <path fill="url(#cyan)" d="M506 0h55l-55 77h-57L506 0Z"/>
+</svg>
