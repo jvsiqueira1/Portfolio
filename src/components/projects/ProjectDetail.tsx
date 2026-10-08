@@ -4,6 +4,7 @@ import { ArrowUpRight, LockKeyhole, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
+import { usePageScrollLock } from "@/components/motion";
 import type { LocalizedProject, projectsSection } from "@/content/projects";
 
 type ProjectCopy = (typeof projectsSection)[keyof typeof projectsSection];
@@ -31,14 +32,33 @@ function statusLabel(project: LocalizedProject, copy: ProjectCopy) {
 
 export default function ProjectDetail({ project, copy, onClose }: ProjectDetailProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const scrollPositionRef = useRef<{ x: number; y: number } | null>(null);
   const titleId = useId();
   const descriptionId = useId();
+  const acquirePageScrollLock = usePageScrollLock();
 
   useEffect(() => {
     const panel = panelRef.current;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    panel?.querySelector<HTMLElement>(focusableSelector)?.focus();
+    const body = document.body;
+    const previouslyFocusedElement = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+    const root = document.documentElement;
+    const scrollPosition = scrollPositionRef.current ?? { x: window.scrollX, y: window.scrollY };
+    scrollPositionRef.current = scrollPosition;
+    const releasePageScrollLock = acquirePageScrollLock();
+    const previousBodyStyles = {
+      overflow: body.style.overflow,
+      paddingRight: body.style.paddingRight,
+    };
+    const previousRootOverflow = root.style.overflow;
+    const scrollbarGap = window.innerWidth - document.documentElement.clientWidth;
+    const bodyPaddingRight = Number.parseFloat(window.getComputedStyle(body).paddingRight) || 0;
+
+    root.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    if (scrollbarGap > 0) body.style.paddingRight = `${bodyPaddingRight + scrollbarGap}px`;
+    panel?.focus({ preventScroll: true });
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -47,35 +67,86 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
         return;
       }
 
-      if (event.key !== "Tab" || !panel) return;
-      const focusable = Array.from(
-        panel.querySelectorAll<HTMLElement>(focusableSelector)
-      ).filter((element) => !element.hasAttribute("disabled"));
-      if (!focusable.length) return;
+      if (!panel) return;
 
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
+      if (event.key === "Tab") {
+        const focusable = Array.from(
+          panel.querySelectorAll<HTMLElement>(focusableSelector)
+        ).filter((element) => !element.hasAttribute("disabled"));
+        if (!focusable.length) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && (document.activeElement === first || document.activeElement === panel)) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+        return;
+      }
+
+      if (
+        !panel.contains(document.activeElement) ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey
+      ) return;
+
+      const scrollContainer = window.matchMedia("(max-width: 820px)").matches
+        ? panel
+        : panel.querySelector<HTMLElement>(".project-detail-content");
+      if (!scrollContainer || scrollContainer.scrollHeight <= scrollContainer.clientHeight) return;
+
+      const target = event.target instanceof Element ? event.target : null;
+      const spaceActivatesControl = event.key === " " && Boolean(
+        target?.closest("button, input, select, textarea, [role='button']")
+      );
+      if (spaceActivatesControl) return;
+
+      const pageStep = Math.max(1, scrollContainer.clientHeight * 0.85);
+      const scrollAmounts: Record<string, number> = {
+        ArrowDown: 48,
+        ArrowUp: -48,
+        PageDown: pageStep,
+        PageUp: -pageStep,
+        " ": event.shiftKey ? -pageStep : pageStep,
+      };
+
+      if (event.key === "Home" || event.key === "End") {
         event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
+        scrollContainer.scrollTo({
+          top: event.key === "Home" ? 0 : scrollContainer.scrollHeight,
+          behavior: "auto",
+        });
+      } else if (event.key in scrollAmounts) {
         event.preventDefault();
-        first.focus();
+        scrollContainer.scrollBy({ top: scrollAmounts[event.key], behavior: "auto" });
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
+      root.style.overflow = previousRootOverflow;
+      body.style.overflow = previousBodyStyles.overflow;
+      body.style.paddingRight = previousBodyStyles.paddingRight;
+      previouslyFocusedElement?.focus({ preventScroll: true });
+      window.scrollTo(scrollPosition.x, scrollPosition.y);
+      window.requestAnimationFrame(() => {
+        window.scrollTo(scrollPosition.x, scrollPosition.y);
+      });
+      releasePageScrollLock(scrollPosition.y);
     };
-  }, [onClose, project.slug]);
+  }, [acquirePageScrollLock, onClose, project.slug]);
 
   return createPortal(
-    <div className="project-detail-layer" onMouseDown={onClose}>
+    <div className="project-detail-layer" data-lenis-prevent onMouseDown={onClose}>
       <div
         ref={panelRef}
         className="project-detail-panel"
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}

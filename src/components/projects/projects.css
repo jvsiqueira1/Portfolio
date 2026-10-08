@@ -359,6 +359,7 @@
   display: grid;
   place-items: center;
   overflow-y: auto;
+  overscroll-behavior: contain;
   background: color-mix(in srgb, #050806 72%, transparent);
   padding: clamp(12px, 3vw, 42px);
   backdrop-filter: blur(12px) saturate(80%);
@@ -369,9 +370,12 @@
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(390px, 0.95fr);
+  grid-template-rows: minmax(0, 1fr);
   width: min(1180px, 100%);
+  height: min(900px, calc(100dvh - 32px));
   max-height: min(900px, calc(100dvh - 32px));
   overflow: hidden;
+  overscroll-behavior: contain;
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.4);
@@ -402,16 +406,20 @@
 .project-detail-media {
   position: sticky;
   top: 0;
-  min-height: 680px;
+  min-height: 0;
   background: var(--surface-soft);
 }
 
 .project-detail-content {
   display: grid;
+  min-height: 0;
   align-content: start;
   gap: 30px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: clamp(70px, 6vw, 88px) clamp(28px, 4vw, 52px) 52px;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
 }
 
 .project-detail-title-row {
@@ -595,6 +603,8 @@
 
   .project-detail-panel {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    height: auto;
     max-height: calc(100dvh - 24px);
     overflow-y: auto;
   }
@@ -657,6 +667,7 @@
 
   .project-detail-panel {
     width: 100%;
+    height: 100dvh;
     max-height: 100dvh;
     border-radius: 0;
   }
