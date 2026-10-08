@@ -1247,14 +1247,14 @@ button {
 
 .custom-cursor {
   position: fixed;
-  z-index: 120;
+  z-index: 9999;
   inset: 0;
   opacity: 0;
   pointer-events: none;
   transition: opacity 160ms ease;
 }
 
-.custom-cursor[data-visible="true"] {
+.custom-cursor[data-visible="true"][data-native="false"] {
   opacity: 1;
 }
 
@@ -1264,36 +1264,93 @@ button {
   top: 0;
   left: 0;
   display: block;
+  width: 0;
+  height: 0;
+}
+
+.cursor-ring-visual,
+.cursor-dot-visual {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
   border-radius: 50%;
   translate: -50% -50%;
 }
 
-.cursor-ring {
-  width: 34px;
-  height: 34px;
-  border: 1px solid #fff;
-  mix-blend-mode: difference;
+.cursor-ring-visual {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 0 0 1.5px rgba(7, 11, 9, 0.9),
+    inset 0 0 0 1px rgba(7, 11, 9, 0.38);
   scale: 1;
-  transition: scale 180ms ease, background-color 180ms ease;
+  transition:
+    scale 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 150ms ease,
+    background-color 150ms ease;
 }
 
-.cursor-dot {
-  width: 5px;
-  height: 5px;
+.cursor-dot-visual {
+  width: 8px;
+  height: 8px;
   background: #fff;
-  mix-blend-mode: difference;
+  box-shadow:
+    0 0 0 2px rgba(7, 11, 9, 0.96),
+    0 0 0 3px rgba(255, 255, 255, 0.92);
+  scale: 1;
+  transition: scale 100ms ease, opacity 150ms ease;
 }
 
-.custom-cursor[data-active="true"] .cursor-ring {
-  scale: 1.58;
-  background: rgba(255, 255, 255, 0.16);
+.custom-cursor[data-state="interactive"] .cursor-ring-visual {
+  scale: 1.48;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.custom-cursor[data-state="card"] .cursor-ring-visual {
+  scale: 1.9;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.custom-cursor[data-state="disabled"] .cursor-ring-visual {
+  opacity: 0.58;
+  scale: 0.86;
+}
+
+.custom-cursor[data-state="disabled"] .cursor-dot-visual {
+  opacity: 0.62;
+}
+
+.custom-cursor[data-pressed="true"] .cursor-ring-visual {
+  scale: 0.72;
+}
+
+.custom-cursor[data-pressed="true"] .cursor-dot-visual {
+  scale: 0.78;
 }
 
 @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .has-custom-cursor,
-  .has-custom-cursor a,
-  .has-custom-cursor button {
+  .has-custom-cursor body,
+  .has-custom-cursor body * {
     cursor: none;
+  }
+
+  .has-custom-cursor [data-native-cursor-active="text"],
+  .has-custom-cursor :is(input, textarea, [contenteditable]:not([contenteditable="false"])) {
+    cursor: text;
+  }
+
+  .has-custom-cursor [data-native-cursor-active="default"],
+  .has-custom-cursor :is(select, iframe, [data-cursor="native"]) {
+    cursor: auto;
+  }
+
+  .has-custom-cursor ::-webkit-scrollbar,
+  .has-custom-cursor ::-webkit-scrollbar-thumb,
+  .has-custom-cursor ::-webkit-scrollbar-track {
+    cursor: auto;
   }
 }
 
