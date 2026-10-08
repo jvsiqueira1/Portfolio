@@ -57,7 +57,7 @@ export const projectsSection = {
     visit: "Visitar projeto",
     publicLabel: "Site público",
     privateLabel: "Sem link público",
-    unavailableLabel: "Link temporariamente indisponível",
+    unavailableLabel: "Fora do ar",
     privateCodeLabel: "Código privado",
   },
   en: {
@@ -86,7 +86,7 @@ export const projectsSection = {
     visit: "Visit project",
     publicLabel: "Public website",
     privateLabel: "No public link",
-    unavailableLabel: "Link temporarily unavailable",
+    unavailableLabel: "Offline",
     privateCodeLabel: "Private code",
   },
 } as const;
@@ -362,8 +362,8 @@ export const projects: PortfolioProject[] = [
       ],
     },
     stack: ["Next.js", "TypeScript", "Drizzle", "PostgreSQL", "Serwist"],
-    linkStatus: "public",
-    url: "https://cartracker.jvsdev.com.br/",
+    linkStatus: "private",
+    url: null,
     image: "/projects/cartracker.webp",
     alt: {
       pt: "Painel do CarTracker com veículo e histórico sintéticos de consumo e manutenção",
@@ -442,8 +442,8 @@ export const projects: PortfolioProject[] = [
       ],
     },
     stack: ["Next.js", "TypeScript", "Node.js", "PostgreSQL", "Docker"],
-    linkStatus: "public",
-    url: "https://eqi-one.bdntech.com.br/",
+    linkStatus: "private",
+    url: null,
     image: "/projects/eqi-one.webp",
     alt: {
       pt: "Visão consolidada do EQI One com patrimônio fictício de uma família de demonstração",
@@ -480,8 +480,8 @@ export const projects: PortfolioProject[] = [
       ],
     },
     stack: ["React", "TypeScript", "Node.js", "PostgreSQL"],
-    linkStatus: "public",
-    url: "https://gestao-frontend.vercel.app/",
+    linkStatus: "private",
+    url: null,
     image: "/projects/patrimonio.webp",
     alt: {
       pt: "Carteira do Patrimônio com ativos, aportes e rentabilidade sintéticos",
@@ -634,7 +634,7 @@ export const projects: PortfolioProject[] = [
       ],
     },
     stack: ["React", "Vite", "CSS"],
-    linkStatus: "private",
+    linkStatus: "unavailable",
     url: null,
     image: "/projects/the-x-prime.webp",
     alt: {
@@ -656,8 +656,8 @@ export const projects: PortfolioProject[] = [
       en: "Project management with workspaces, tasks, collaboration, documents and analytics.",
     },
     longDescription: {
-      pt: "Produto inspirado em ferramentas de gestão colaborativa, com espaços e listas hierárquicos, tarefas reordenáveis, comentários, permissões, documentos e gráficos por workspace.",
-      en: "A collaborative project-management product with hierarchical spaces and lists, reorderable tasks, comments, permissions, documents and workspace analytics.",
+      pt: "Produto inspirado em ferramentas de gestão colaborativa, com espaços e listas hierárquicos, tarefas reordenáveis, comentários, permissões, documentos e gráficos por workspace. O produto foi descontinuado.",
+      en: "A collaborative project-management product with hierarchical spaces and lists, reorderable tasks, comments, permissions, documents and workspace analytics. The product has been discontinued.",
     },
     highlights: {
       pt: [
@@ -696,8 +696,8 @@ export const projects: PortfolioProject[] = [
       en: "A marketplace connecting clients and professionals from request to accepted quote.",
     },
     longDescription: {
-      pt: "Aplicação com jornadas separadas para cliente, parceiro e administração. Clientes acompanham serviços e orçamentos; profissionais enviam propostas; a operação administra categorias e solicitações.",
-      en: "An application with separate client, partner and admin journeys. Clients track services and quotes, professionals submit proposals, and operations manage categories and requests.",
+      pt: "Aplicação com jornadas separadas para cliente, parceiro e administração. A versão atual da plataforma foi refeita pela empresa Agilizei sem participação do autor deste portfólio; o trabalho apresentado aqui se refere à versão original em que ele atuou.",
+      en: "An application with separate client, partner and admin journeys. Agilizei rebuilt the platform’s current version without the participation of this portfolio’s author; the work presented here refers to the original version he contributed to.",
     },
     highlights: {
       pt: [
@@ -752,8 +752,8 @@ export const projects: PortfolioProject[] = [
       ],
     },
     stack: ["React", "TypeScript", "Vite", "Tailwind CSS"],
-    linkStatus: "public",
-    url: "https://gestao.jvsdev.com.br/",
+    linkStatus: "private",
+    url: null,
     image: "/projects/gestao-gastos.webp",
     alt: {
       pt: "Dashboard do Gestão de Gastos com receitas, despesas e saldo fictícios",
