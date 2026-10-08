@@ -10,6 +10,7 @@ const execFileAsync = promisify(execFile);
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(SCRIPT_DIR, "..");
 const OUTPUT_DIR = path.join(ROOT, "public", "cv");
+const CV_REF = process.env.CV_REF;
 const CHROME_CANDIDATES = [
   process.env.CHROME_PATH,
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -42,7 +43,8 @@ async function resolveChrome() {
 }
 
 async function fetchSource(source, destination) {
-  const endpoint = `repos/jvsiqueira1/curriculum/contents/${source}`;
+  const refQuery = CV_REF ? `?ref=${encodeURIComponent(CV_REF)}` : "";
+  const endpoint = `repos/jvsiqueira1/curriculum/contents/${source}${refQuery}`;
   const { stdout } = await execFileAsync("gh", [
     "api",
     endpoint,

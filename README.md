@@ -45,6 +45,12 @@ gh auth status
 npm run build:cv
 ```
 
+Por padrão, o script usa a branch padrão do repositório. Para gerar os PDFs a partir de outra branch, tag ou commit, informe `CV_REF`:
+
+```bash
+CV_REF=atualiza-datas-cargos npm run build:cv
+```
+
 Arquivos gerados:
 
 - `public/cv/joao-vitor-siqueira-cv-pt.pdf`
@@ -66,6 +72,7 @@ Copie `.env.example` para `.env` quando precisar destes recursos:
 - `SCREENSHOT_ONE_ACCESS_KEY`: chave da ScreenshotOne para atualizar imagens de projetos.
 - `SCREENSHOT_ONE_SECRET_KEY`: segredo opcional para assinar as requisições da ScreenshotOne.
 - `CHROME_PATH`: caminho alternativo para Chrome, Edge ou Chromium nos scripts locais.
+- `CV_REF`: branch, tag ou commit opcional do repositório `jvsiqueira1/curriculum` usado para gerar os PDFs.
 - `PORTFOLIO_URL`: URL usada por `screenshots:portfolio`; o padrão é `http://127.0.0.1:3000`.
 
 Nenhum segredo deve ser versionado.

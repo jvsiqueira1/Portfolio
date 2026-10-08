@@ -85,7 +85,7 @@ export const pt: SiteContent = {
       {
         role: "Desenvolvedor Full-Stack",
         company: "Freelance / PJ",
-        period: "Mar 2025 - Mai 2026",
+        period: "Mar 2025 - Jan 2026",
         location: "Brasil",
         summary:
           "Produtos digitais sob demanda para fintechs, varejo e serviços, incluindo Grupo Optimus e Agilizei.",
@@ -97,7 +97,7 @@ export const pt: SiteContent = {
         stack: ["Node.js", "Java", "Python", "React", "PostgreSQL"],
       },
       {
-        role: "Desenvolvedor Front-End",
+        role: "Desenvolvedor Front-End Júnior",
         company: "Central IT, alocado no DETRAN-MT",
         period: "Out 2023 - Dez 2024",
         location: "Cuiabá, MT",
@@ -162,7 +162,7 @@ export const pt: SiteContent = {
       {
         course: "Desenvolvedor Front-End",
         institution: "Escola DNC",
-        period: "Out 2024 - Jun 2025",
+        period: "Ago 2024 - Jun 2025",
         status: "Concluído",
       },
     ],
