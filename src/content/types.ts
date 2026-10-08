@@ -6,6 +6,7 @@ export type Project = {
   image: string;
   imageAlt: string;
   href: string | null;
+  linkStatus?: string;
   stack: string[];
   note?: string;
 };

@@ -45,7 +45,9 @@ export default function Projects() {
                     {copy.projects.visit}<ArrowUpRight aria-hidden="true" />
                   </a>
                 ) : (
-                  <span className="project-private">{copy.projects.privateLabel}</span>
+                  <span className="project-private">
+                    {project.linkStatus ?? copy.projects.privateLabel}
+                  </span>
                 )}
               </div>
             </Reveal>

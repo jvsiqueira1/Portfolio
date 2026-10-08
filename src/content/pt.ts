@@ -72,6 +72,7 @@ export const pt: SiteContent = {
         image: "/marapp.png",
         imageAlt: "Interface do sistema MarApp",
         href: null,
+        linkStatus: "Link temporariamente indisponível",
         stack: ["Next.js 15", "React 19", "TypeScript", "Prisma"],
       },
       {

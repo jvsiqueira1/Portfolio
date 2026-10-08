@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "eslint . --ignore-pattern .next --ignore-pattern out --ignore-pattern node_modules",
     "build:cv": "node scripts/build-cv.mjs",
     "screenshots": "node scripts/screenshots.mjs",
     "screenshots:portfolio": "node scripts/capture-portfolio.mjs"
