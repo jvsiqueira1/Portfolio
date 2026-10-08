@@ -178,7 +178,7 @@
 
 .portfolio-project-badges .status-public,
 .project-detail-status .status-public {
-  background: color-mix(in srgb, #2f9d68 84%, var(--surface));
+  background: color-mix(in srgb, #1f714a 92%, var(--surface));
   color: #fff;
 }
 

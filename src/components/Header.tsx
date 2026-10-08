@@ -2,6 +2,7 @@
 
 import { Menu, X } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "motion/react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import DarkModeToggle from "./DarkModeToggle";
@@ -44,7 +45,10 @@ export default function Header() {
     <header className="site-header" data-scrolled={scrolled}>
       <div className="shell nav-shell">
         <a href="#top" className="brand">
-          <span className="brand-mark" aria-hidden="true" />
+          <span className="brand-mark" aria-hidden="true">
+            <Image className="brand-logo brand-logo-light" src="/brand/jvs-mark-light.svg" alt="" width={610} height={355} priority />
+            <Image className="brand-logo brand-logo-dark" src="/brand/jvs-mark.svg" alt="" width={610} height={355} priority />
+          </span>
           <span className="brand-name">João Vitor</span>
         </a>
 

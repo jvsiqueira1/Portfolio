@@ -1,4 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#4b69ff"/>
-  <path d="M18 16v22c0 7 3 10 10 10h2v-8h-2c-2 0-3-1-3-4V16h-7Zm13 0 9 32h8l9-32h-8l-5 21-5-21h-8Z" fill="#f7f9f7"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">JVS Development</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101723"/>
+      <stop offset="1" stop-color="#070a10"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <g transform="translate(6 17) scale(.08525)">
+    <path fill="#566176" d="M119 52 186 131v126c0 64-38 98-94 98S0 317 0 257h68c0 25 8 31 24 31 17 0 27-10 27-30V52Z"/>
+    <path fill="#4b5568" d="m202 165 79 113h238c11 0 17-8 17-16 0-9-7-16-19-16h-76c-40 0-71-19-82-50l74-101h176l-50 68H444c-11 0-14 6-14 14 0 7 7 12 17 12h72c49 0 84 34 84 77 0 46-35 78-84 78H254l-52-55V165Z"/>
+    <path fill="#0b6cff" d="M93 0h101l98 152L400 0h95L292 263 93 0Z"/>
+    <path fill="#11b5f5" d="M506 0h55l-55 77h-57L506 0Z"/>
+  </g>
 </svg>
