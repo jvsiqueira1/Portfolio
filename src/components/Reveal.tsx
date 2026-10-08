@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView } from "motion/react";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 
 export default function Reveal({
   children,
@@ -17,16 +17,31 @@ export default function Reveal({
   const ref = useRef<HTMLDivElement>(null);
   const visible = useInView(ref, { once: true, margin: "-8% 0px -8% 0px", amount: 0.12 });
 
-  useEffect(() => {
-    const node = ref.current;
-    if (node && visible) node.dataset.visible = "true";
-  }, [visible]);
+  const reveal = (
+    <motion.div
+      className={`reveal ${className}`}
+      data-reveal={variant}
+      data-visible={visible ? "true" : undefined}
+      style={{ "--reveal-delay": `${delay}ms` } as React.CSSProperties}
+    >
+      {children}
+    </motion.div>
+  );
+
+  if (variant === "mask") {
+    return (
+      <div ref={ref} className="reveal-observer">
+        {reveal}
+      </div>
+    );
+  }
 
   return (
     <motion.div
       ref={ref}
       className={`reveal ${className}`}
       data-reveal={variant}
+      data-visible={visible ? "true" : undefined}
       style={{ "--reveal-delay": `${delay}ms` } as React.CSSProperties}
     >
       {children}

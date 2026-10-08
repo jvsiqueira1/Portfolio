@@ -579,7 +579,8 @@ button {
   top: calc(var(--header-height) + 50px);
 }
 
-.about-copy > .reveal > p {
+.about-copy > .reveal > p,
+.about-copy > .reveal-observer > .reveal > p {
   max-width: 70ch;
   margin: 0 0 28px;
   color: var(--muted);
@@ -1299,6 +1300,11 @@ button {
   50% { opacity: 0.58; transform: scale(0.76); }
 }
 
+@keyframes experience-wipe {
+  from { clip-path: inset(0 0 0 0); }
+  to { clip-path: inset(0 0 100% 0); }
+}
+
 @media (prefers-reduced-transparency: reduce) {
   .site-header {
     background: var(--page);
@@ -1309,6 +1315,24 @@ button {
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+
+  .experience-item {
+    opacity: 1 !important;
+  }
+
+  @supports (animation-timeline: view()) {
+    .js .experience-item::after {
+      position: absolute;
+      z-index: 2;
+      inset: -1px 0;
+      background: var(--surface);
+      content: "";
+      pointer-events: none;
+      animation: experience-wipe 1ms linear both;
+      animation-range: entry 5% entry 44%;
+      animation-timeline: view(block);
+    }
   }
 
   .button,
@@ -1334,15 +1358,39 @@ button {
     transition-duration: 0.01ms !important;
   }
 
-  .js .reveal {
+  .js .reveal,
+  .js .reveal[data-reveal],
+  .js .projects-grid .reveal {
     opacity: 1;
     transform: none;
     filter: none;
+    clip-path: none;
+  }
+
+  .language-transition,
+  .hero-copy,
+  .hero-availability,
+  .hero-name,
+  .hero-word > span,
+  .hero-summary,
+  .hero-actions,
+  .portrait-frame {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
   }
 
   .experience-item {
-    opacity: 1;
+    opacity: 1 !important;
     transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+  }
+
+  .experience-item::after {
+    display: none !important;
+    animation: none !important;
   }
 
   .hero-glow,
