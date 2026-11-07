@@ -1,55 +1,36 @@
 "use client";
 
 import { content, type Language, type SiteContent } from "@/content";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 
 type LanguageContextValue = {
   language: Language;
   copy: SiteContent;
-  setLanguage: (language: Language) => void;
-  toggleLanguage: () => void;
   cvHref: string;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, updateLanguage] = useState<Language>("pt");
+// Before the language had its own URL, the choice was kept under this key.
+const LEGACY_LANGUAGE_KEY = "language";
 
+/** The language comes from the route ("/" or "/en"); nothing stored in the browser can change it. */
+export function LanguageProvider({ language, children }: { language: Language; children: React.ReactNode }) {
   useEffect(() => {
-    const saved = window.localStorage.getItem("language");
-    if (saved === "pt" || saved === "en") updateLanguage(saved);
+    try {
+      window.localStorage.removeItem(LEGACY_LANGUAGE_KEY);
+    } catch {
+      // Storage can be blocked; there is nothing to clean up then.
+    }
   }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = language === "pt" ? "pt-BR" : "en";
-  }, [language]);
-
-  const setLanguage = useCallback((next: Language) => {
-    updateLanguage(next);
-    window.localStorage.setItem("language", next);
-  }, []);
-
-  const toggleLanguage = useCallback(() => {
-    setLanguage(language === "pt" ? "en" : "pt");
-  }, [language, setLanguage]);
 
   const value = useMemo(
     () => ({
       language,
       copy: content[language],
-      setLanguage,
-      toggleLanguage,
       cvHref: `/cv/joao-vitor-siqueira-cv-${language}.pdf`,
     }),
-    [language, setLanguage, toggleLanguage]
+    [language]
   );
 
   return (

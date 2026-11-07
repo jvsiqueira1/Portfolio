@@ -45,11 +45,11 @@ export default function Education() {
                   <div className="certificate-meta"><span>{certificate.issuer}</span><span>{certificate.date}</span></div>
                   <strong className="certificate-value">{certificate.value}</strong>
                   <h3>{certificate.title}</h3>
-                  <span className="certificate-code">{certificate.href ? `[ ${certificates.verify} ↗ ] ` : ""}{certificate.code}</span>
+                  <span className="certificate-code">{certificate.href && <>[ {certificates.verify} <span aria-hidden="true">↗</span> ] </>}{certificate.code}</span>
                 </>
               );
               return certificate.href ? (
-                <a key={certificate.title} className={`certificate-card ${index === 7 ? "is-accent" : ""}`} href={certificate.href} target="_blank" rel="noreferrer" aria-label={`${certificates.verify}: ${certificate.title}, ${certificate.issuer}`}>{content}<ArrowUpRight aria-hidden="true" /></a>
+                <a key={certificate.title} className={`certificate-card ${index === 7 ? "is-accent" : ""}`} href={certificate.href} target="_blank" rel="noreferrer">{content}<ArrowUpRight aria-hidden="true" /></a>
               ) : (
                 <article key={certificate.title} className={`certificate-card ${index === 7 ? "is-accent" : ""}`}>{content}</article>
               );

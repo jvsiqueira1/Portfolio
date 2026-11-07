@@ -138,9 +138,10 @@ export default function HeroField() {
   return (
     <div className="hero-field" aria-hidden="true">
       <picture className="hero-field-poster">
-        <source media="(max-width: 700px)" srcSet="/effects/hero-field-mobile.png" />
-        {/* No priority: a preload would ignore the mobile <source>. The LCP is the hero text. */}
-        <Image src="/effects/hero-field.png" alt="" fill loading="eager" fetchPriority="low" sizes="100vw" />
+        <source media="(max-width: 700px)" srcSet="/effects/hero-field-mobile.webp" type="image/webp" />
+        {/* The poster is the LCP element, so it is fetched early and at high priority. No `priority`:
+            its preload would ignore the mobile <source> and fetch the desktop file on phones too. */}
+        <Image src="/effects/hero-field.png" alt="" fill loading="eager" fetchPriority="high" sizes="100vw" />
       </picture>
       <canvas ref={canvasRef} />
     </div>

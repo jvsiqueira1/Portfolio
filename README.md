@@ -20,6 +20,13 @@ npm run dev
 
 O servidor local abre em `http://localhost:3000`.
 
+## Idiomas, SEO e segurança
+
+- Cada idioma tem a própria URL, pré-renderizada estaticamente: `/` em português (`lang="pt-BR"`) e `/en` em inglês (`lang="en"`). São dois route groups com root layouts próprios (`src/app/(pt)` e `src/app/(en)`); a rota é a fonte da verdade do idioma e o seletor PT/EN navega entre elas, mantendo o `#` da seção.
+- Metadados por idioma (title, description, Open Graph, Twitter, canonical e `hreflang` recíproco com `x-default` → `/`) e o JSON-LD `ProfilePage`/`Person` ficam em `src/lib/site.ts`. A imagem social é importada estaticamente e ganha URL com hash de conteúdo.
+- `src/app/robots.ts` e `src/app/sitemap.ts` geram `/robots.txt` e `/sitemap.xml`; `src/app/global-not-found.tsx` atende URLs desconhecidas.
+- `next.config.ts` aplica CSP, `X-Frame-Options`, `Referrer-Policy`, `X-Content-Type-Options` e `Permissions-Policy` a todas as rotas. Se o site passar a carregar outra origem, inclua-a na diretiva correspondente da CSP.
+
 ## Scripts
 
 ```bash
@@ -33,8 +40,8 @@ npm run screenshots:portfolio -- /caminho/de/saida
 - `lint`: executa o ESLint em todo o projeto.
 - `build`: gera o build de produção do Next.js.
 - `build:cv`: baixa os HTMLs PT/EN do repositório privado `jvsiqueira1/curriculum` e gera os PDFs versionados em `public/cv/`.
-- `screenshots`: mantém o fluxo existente de atualização dos previews dos projetos via ScreenshotOne.
-- `screenshots:portfolio`: captura a primeira dobra e a página completa em PT/EN, 390×844 e 1440×900, usando uma instância local do site (`PORTFOLIO_URL`). Por padrão espera o boot e o glitch assentarem; `CAPTURE_MOTION=reduce` gera a versão com `prefers-reduced-motion`.
+- `screenshots`: fluxo legado de capturas via ScreenshotOne; grava PNGs na raiz de `public/` que o site atual não usa (os previews em uso ficam em `public/projects/`).
+- `screenshots:portfolio`: captura a primeira dobra e a página completa em PT/EN, 390×844 e 1440×900, usando uma instância local do site (`PORTFOLIO_URL`): PT em `/` e EN em `/en`. Por padrão espera o boot e o glitch assentarem; `CAPTURE_MOTION=reduce` gera a versão com `prefers-reduced-motion`.
 
 ## Geração dos CVs
 
