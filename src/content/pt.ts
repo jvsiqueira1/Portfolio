@@ -211,7 +211,7 @@ export const pt: SiteContent = {
     linkedinLabel: "LinkedIn",
     githubLabel: "GitHub",
     location: "Cuiabá, MT, Brasil",
-    email: "joaovitorsc@gmail.com",
+    email: "contato@jvsdev.com.br",
     backToTop: "Voltar ao topo",
   },
   ui: {

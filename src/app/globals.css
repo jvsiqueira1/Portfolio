@@ -32,7 +32,6 @@ html.lenis body { height: auto; }
 
 body {
   margin: 0;
-  min-width: 320px;
   overflow-x: clip;
   background: var(--bg);
   color: var(--ink);
@@ -645,6 +644,17 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
   .footer-bottom span:nth-child(2) { display: none; }
   .cookie-banner { right: 12px; bottom: 12px; width: calc(100% - 24px); }
   .custom-cursor { display: none; }
+}
+
+/* 320px phones (311px of usable width beside a classic scrollbar): the header row would run ~30px past
+   the shell. Tighten its gaps and the wordmark so brand, PT/EN and MENU fit with room to spare. */
+@media (max-width: 360px) {
+  .nav-shell { gap: 12px; }
+  .brand { gap: 8px; }
+  .brand-wordmark { width: 84px; }
+  .nav-actions { gap: 6px; }
+  .language-button { padding-inline: 8px; }
+  .menu-button { gap: 6px; padding-inline: 8px; }
 }
 
 @media (prefers-reduced-motion: no-preference) {

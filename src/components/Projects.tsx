@@ -22,12 +22,23 @@ const categoryOrder: Filter[] = ["all", "imobiliario", "saas", "pessoal", "landi
 
 const pad = (value: number) => String(value).padStart(3, "0");
 
+// The global focus ring reaches 6px past the chip (2px outline + 4px offset); keep 2px of air beyond it.
+const FOCUS_RING_EXTENT = 8;
+
 // On narrow screens the filters are a strip that scrolls sideways. Browsers skip the focus scroll for a
 // chip that is only partly visible, so its focus ring would sit under the strip's clipped edge.
+// The vertical scroll only looks at the chip's box, so a chip stopped at the viewport edge loses the
+// ring's outer band: nudge the page until the whole ring is inside, below the sticky header.
 const revealFocusedFilter = (event: FocusEvent<HTMLDivElement>) => {
-  if (event.target instanceof HTMLElement && event.target !== event.currentTarget) {
-    event.target.scrollIntoView({ block: "nearest", inline: "nearest" });
-  }
+  const chip = event.target;
+  if (!(chip instanceof HTMLElement) || chip === event.currentTarget) return;
+  chip.scrollIntoView({ block: "nearest", inline: "nearest" });
+  const { top, bottom } = chip.getBoundingClientRect();
+  const headerBottom = document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 0;
+  const overflowBelow = bottom + FOCUS_RING_EXTENT - window.innerHeight;
+  const overflowAbove = headerBottom - (top - FOCUS_RING_EXTENT);
+  if (overflowBelow > 0) window.scrollBy({ top: Math.ceil(overflowBelow), behavior: "instant" });
+  else if (overflowAbove > 0) window.scrollBy({ top: -Math.ceil(overflowAbove), behavior: "instant" });
 };
 
 export default function Projects() {
