@@ -106,7 +106,7 @@ export const en: SiteContent = {
         { value: "120H", title: "Full Stack, Cloud, DevOps and AI", issuer: "Rocketseat · Graduate", date: "11/2026", code: "c4fa9ef3-383d-4dee-b434-3f7df77974b7", href: "https://app.rocketseat.com.br/certificates/c4fa9ef3-383d-4dee-b434-3f7df77974b7" },
         { value: "110H", title: "Front-End Developer", issuer: "Escola DNC", date: "05/2025", code: "No public code" },
         { value: "60H", title: "Applied project: Agilizei platform", issuer: "DNC × Agilizei", date: "04/2025", code: "No public code" },
-        { value: "C1", title: "English · EF SET 68/100", issuer: "EF SET", date: "04/2025", code: "oFxWwy", href: "https://cert.efset.org/pt/oFxWwy" },
+        { value: "C1", title: "English · EF SET 68/100", issuer: "EF SET", date: "04/2025", code: "oFxWwy", href: "https://cert.efset.org/en/oFxWwy" },
       ],
     },
   },

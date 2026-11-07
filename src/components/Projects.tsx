@@ -2,7 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FocusEvent, type PointerEvent } from "react";
 import { createPortal } from "react-dom";
 import {
   localizeProject,
@@ -22,6 +22,14 @@ const categoryOrder: Filter[] = ["all", "imobiliario", "saas", "pessoal", "landi
 
 const pad = (value: number) => String(value).padStart(3, "0");
 
+// On narrow screens the filters are a strip that scrolls sideways. Browsers skip the focus scroll for a
+// chip that is only partly visible, so its focus ring would sit under the strip's clipped edge.
+const revealFocusedFilter = (event: FocusEvent<HTMLDivElement>) => {
+  if (event.target instanceof HTMLElement && event.target !== event.currentTarget) {
+    event.target.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+};
+
 export default function Projects() {
   const { language } = useLanguage();
   const copy = projectsSection[language];
@@ -39,9 +47,14 @@ export default function Projects() {
   const localizedProjects = useMemo(() => projects.map((project) => localizeProject(project, language)), [language]);
   const numberOf = (slug: string) => pad(localizedProjects.findIndex((project) => project.slug === slug) + 1);
   const featuredProjects = localizedProjects.filter((project) => project.featured);
-  const matchingProjects = localizedProjects.filter((project) => !project.featured && (filter === "all" || project.category === filter));
-  // A category filter always shows every match; "all" keeps the archive behind "view all".
-  const indexProjects = filter === "all" && !showArchive ? matchingProjects.filter((project) => !project.archive) : matchingProjects;
+  // "All": featured systems sit above the index and the archive waits behind "view all".
+  // A category: the featured block steps aside and the index lists every match, featured included.
+  const indexProjects = filter === "all"
+    ? localizedProjects.filter((project) => !project.featured && (showArchive || !project.archive))
+    : localizedProjects.filter((project) => project.category === filter);
+  const categoryCount = (category: Filter) => category === "all"
+    ? localizedProjects.length
+    : localizedProjects.filter((project) => project.category === category).length;
   const archiveCount = localizedProjects.filter((project) => project.archive).length;
   const selectedProject = localizedProjects.find((project) => project.slug === selectedSlug);
   const hoveredProject = localizedProjects.find((project) => project.slug === hoveredSlug);
@@ -56,9 +69,23 @@ export default function Projects() {
     window.requestAnimationFrame(() => openerRef.current?.focus());
   };
 
+  // Follows the pointer and flips left/up when the preview would leave the viewport.
   const movePreview = (event: PointerEvent<HTMLButtonElement>) => {
-    if (!previewRef.current || event.pointerType !== "mouse") return;
-    previewRef.current.style.transform = `translate3d(${event.clientX + 28}px, ${event.clientY - 110}px, 0)`;
+    const preview = previewRef.current;
+    if (!preview || event.pointerType !== "mouse") return;
+    const gap = 28;
+    const margin = 12;
+    const width = preview.offsetWidth;
+    const height = preview.offsetHeight;
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = document.documentElement.clientHeight;
+    let x = event.clientX + gap;
+    if (x + width > viewportWidth - margin) x = event.clientX - gap - width;
+    let y = event.clientY - 110;
+    if (y + height > viewportHeight - margin) y = event.clientY - gap - height;
+    x = Math.min(Math.max(margin, x), Math.max(margin, viewportWidth - width - margin));
+    y = Math.min(Math.max(margin, y), Math.max(margin, viewportHeight - height - margin));
+    preview.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
   };
 
   return (
@@ -71,17 +98,17 @@ export default function Projects() {
           </div>
           <div className="systems-copy">
             <p>{copy.intro}</p>
-            <div className="project-filters" role="group" aria-label={copy.filterLabel}>
+            <div className="project-filters" role="group" aria-label={copy.filterLabel} onFocus={revealFocusedFilter}>
               {categoryOrder.map((category) => (
                 <button key={category} type="button" aria-pressed={filter === category} onClick={() => setFilter(category)}>
-                  {category === "all" ? `${copy.filters[category]} ${projects.length}` : copy.filters[category]}
+                  {copy.filters[category]} <span className="filter-count">{categoryCount(category)}</span>
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="featured-systems">
+        {filter === "all" && <div className="featured-systems">
           {featuredProjects.map((project) => (
             <Reveal key={project.slug} className="featured-system">
               <div className="featured-system-copy">
@@ -116,9 +143,9 @@ export default function Projects() {
               </button>
             </Reveal>
           ))}
-        </div>
+        </div>}
 
-        <div className="systems-index">
+        <div className="systems-index" data-filtered={filter !== "all"}>
           <div className="index-heading">
             <h3>{copy.indexTitle}</h3>
             <span aria-live="polite">[ {String(indexProjects.length).padStart(2, "0")} {copy.systemsUnit} ]</span>
@@ -132,13 +159,14 @@ export default function Projects() {
               <span>{copy.columns.year}</span>
               <span>{copy.columns.status}</span>
             </div>
+            {indexProjects.length === 0 && <p className="index-empty">{copy.emptyCategory}</p>}
             <ul className="index-list">
               {indexProjects.map((project) => (
                 <li key={project.slug}>
                   <button
                     type="button"
                     className="index-row"
-                    onPointerEnter={() => setHoveredSlug(project.slug)}
+                    onPointerEnter={(event) => { setHoveredSlug(project.slug); movePreview(event); }}
                     onPointerMove={movePreview}
                     onPointerLeave={() => setHoveredSlug(null)}
                     onClick={(event) => openProject(project.slug, event.currentTarget)}

@@ -139,7 +139,8 @@ export default function HeroField() {
     <div className="hero-field" aria-hidden="true">
       <picture className="hero-field-poster">
         <source media="(max-width: 700px)" srcSet="/effects/hero-field-mobile.png" />
-        <Image src="/effects/hero-field.png" alt="" fill priority sizes="100vw" />
+        {/* No priority: a preload would ignore the mobile <source>. The LCP is the hero text. */}
+        <Image src="/effects/hero-field.png" alt="" fill loading="eager" fetchPriority="low" sizes="100vw" />
       </picture>
       <canvas ref={canvasRef} />
     </div>

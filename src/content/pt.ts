@@ -223,7 +223,7 @@ export const pt: SiteContent = {
     subject: "Sujeito: JVS · Cuiabá/MT",
     terminalPath: "~/jvs/carreira — zsh — 120×40",
     commits: "commits",
-    running: "RUNNING",
+    running: "EM CURSO",
     certificatesCount: "8 de 25 certificados · sem PDFs públicos",
     writeTo: "> escreva para",
     build: "Build 26.11.06 · Next.js · feito em Cuiabá/MT",

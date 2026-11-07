@@ -53,8 +53,8 @@ export default function Header() {
     <header className="site-header">
       <div className="shell nav-shell">
         <a href="#top" className="brand" aria-label="JVS//SYS">
-          <Image src="/brand/jvs-mark.svg" alt="" width={36} height={36} priority />
-          <Image className="brand-wordmark" src="/brand/jvs-wordmark.svg" alt="JVS//SYS" width={138} height={28} priority />
+          <Image src="/brand/jvs-mark.svg" alt="" width={36} height={36} />
+          <Image className="brand-wordmark" src="/brand/jvs-wordmark.svg" alt="JVS//SYS" width={138} height={28} />
           <span className="brand-version" aria-hidden="true">v26.11</span>
         </a>
 
@@ -88,7 +88,7 @@ export default function Header() {
 
       <nav id="mobile-navigation" className="mobile-nav" data-open={open} aria-label={copy.nav.mobileLabel}>
         {links.map(([href, label], index) => (
-          <a href={href} key={href} onClick={() => setOpen(false)} data-active={activeSection === href}>
+          <a href={href} key={href} onClick={() => setOpen(false)} data-active={activeSection === href} aria-current={activeSection === href ? "location" : undefined}>
             <span>{String(index + 1).padStart(2, "0")}</span>{label}
           </a>
         ))}
