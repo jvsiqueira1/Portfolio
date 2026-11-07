@@ -28,14 +28,19 @@ const FOCUS_RING_EXTENT = 8;
 // On narrow screens the filters are a strip that scrolls sideways. Browsers skip the focus scroll for a
 // chip that is only partly visible, so its focus ring would sit under the strip's clipped edge.
 // The vertical scroll only looks at the chip's box, so a chip stopped at the viewport edge loses the
-// ring's outer band: nudge the page until the whole ring is inside, below the sticky header.
+// ring's outer band: nudge the page until the whole ring is inside, below the sticky header and above
+// the cookie banner.
 const revealFocusedFilter = (event: FocusEvent<HTMLDivElement>) => {
   const chip = event.target;
   if (!(chip instanceof HTMLElement) || chip === event.currentTarget) return;
+  // Keyboard focus only: scrolling between mousedown and mouseup would lose a pointer click.
+  if (!chip.matches(":focus-visible")) return;
   chip.scrollIntoView({ block: "nearest", inline: "nearest" });
   const { top, bottom } = chip.getBoundingClientRect();
   const headerBottom = document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 0;
-  const overflowBelow = bottom + FOCUS_RING_EXTENT - window.innerHeight;
+  // While the cookie banner is up it publishes its footprint as --cookie-offset: stop above it too.
+  const cookieOffset = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--cookie-offset")) || 0;
+  const overflowBelow = bottom + FOCUS_RING_EXTENT - (window.innerHeight - cookieOffset);
   const overflowAbove = headerBottom - (top - FOCUS_RING_EXTENT);
   if (overflowBelow > 0) window.scrollBy({ top: Math.ceil(overflowBelow), behavior: "instant" });
   else if (overflowAbove > 0) window.scrollBy({ top: -Math.ceil(overflowAbove), behavior: "instant" });
