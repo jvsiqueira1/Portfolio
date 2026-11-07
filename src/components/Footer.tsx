@@ -1,32 +1,32 @@
 "use client";
 
-import { ArrowUpRight, Github, Linkedin, Mail } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import SectionLabel from "./SectionLabel";
 
 export default function Footer() {
-  const { copy } = useLanguage();
-  const reduceMotion = useReducedMotion();
+  const { copy, cvHref } = useLanguage();
   return (
     <footer id="contact" className="site-footer">
       <div className="shell footer-main">
-        <div>
-          <motion.h2
-            initial={reduceMotion ? false : { opacity: 0, y: 46, clipPath: "inset(0 0 100% 0)" }}
-            whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" }}
-            viewport={{ once: true, amount: 0.55 }}
-          >{copy.contact.title}</motion.h2>
-          <motion.p initial={reduceMotion ? false : { opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>{copy.contact.text}</motion.p>
-        </div>
-        <div className="contact-links">
-          <motion.a whileHover={reduceMotion ? undefined : { x: 8 }} href="mailto:contato@jvsdev.com.br"><Mail aria-hidden="true" />{copy.contact.emailLabel}<ArrowUpRight aria-hidden="true" /></motion.a>
-          <motion.a whileHover={reduceMotion ? undefined : { x: 8 }} href="https://www.linkedin.com/in/joaovitorsiqueira1/" target="_blank" rel="noreferrer"><Linkedin aria-hidden="true" />{copy.contact.linkedinLabel}<ArrowUpRight aria-hidden="true" /></motion.a>
-          <motion.a whileHover={reduceMotion ? undefined : { x: 8 }} href="https://github.com/jvsiqueira1" target="_blank" rel="noreferrer"><Github aria-hidden="true" />{copy.contact.githubLabel}<ArrowUpRight aria-hidden="true" /></motion.a>
+        <SectionLabel text={copy.contact.label} />
+        <h2>{copy.contact.title}<span className="block-cursor" aria-hidden="true" /></h2>
+        <div className="footer-contact-row">
+          <div className="footer-email-block">
+            <p>{copy.ui.writeTo}</p>
+            <a className="footer-email" href={`mailto:${copy.contact.email}`}>{copy.contact.email}<ArrowUpRight aria-hidden="true" /></a>
+          </div>
+          <div className="footer-links">
+            <a href="https://www.linkedin.com/in/joaovitorsiqueira1/" target="_blank" rel="noreferrer">[ {copy.contact.linkedinLabel} ↗ ]</a>
+            <a href="https://github.com/jvsiqueira1" target="_blank" rel="noreferrer">[ {copy.contact.githubLabel} ↗ ]</a>
+            <a className="button button-primary" href={cvHref} download>{copy.hero.cvLabel}<ArrowDown aria-hidden="true" /></a>
+          </div>
         </div>
       </div>
       <div className="shell footer-bottom">
-        <span>{copy.footer}</span>
-        <span>{copy.contact.location}</span>
+        <span>© 2026 JVS DEVELOPMENT</span>
+        <span>{copy.ui.build}</span>
+        <a href="#top">↑ {copy.contact.backToTop}</a>
       </div>
     </footer>
   );

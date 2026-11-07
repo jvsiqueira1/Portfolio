@@ -33,7 +33,7 @@ function MarqueeRow({ items, direction }: { items: string[]; direction: 1 | -1 }
   });
 
   return (
-    <motion.div className="stack-track" style={reduceMotion ? undefined : { x }}>
+    <motion.div className="stack-track" style={{ x: reduceMotion ? "0%" : x }}>
       {[...items, ...items].map((item, index) => (
         <span key={`${direction}-${item}-${index}`}>{item}</span>
       ))}
@@ -45,7 +45,6 @@ export default function VelocityMarquee({ items }: { items: string[] }) {
   return (
     <div className="stack-marquee" aria-hidden="true">
       <MarqueeRow items={items} direction={-1} />
-      <MarqueeRow items={[...items].reverse()} direction={1} />
     </div>
   );
 }

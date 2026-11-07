@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-labelledby="title description">
+  <title id="title">Resumo de Reunião</title>
+  <desc id="description">Forma de onda abstrata em uma retícula escura</desc>
+  <defs>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#1f2328" stroke-width="2"/>
+    </pattern>
+    <linearGradient id="fade" x1="0" x2="1">
+      <stop offset="0" stop-color="#c8ff2e" stop-opacity="0"/>
+      <stop offset=".2" stop-color="#c8ff2e"/>
+      <stop offset=".8" stop-color="#c8ff2e"/>
+      <stop offset="1" stop-color="#c8ff2e" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="#07080a"/>
+  <rect width="1600" height="1000" fill="url(#grid)"/>
+  <g fill="#e9ecef" opacity=".9">
+    <rect x="190" y="465" width="14" height="70"/>
+    <rect x="235" y="420" width="14" height="160"/>
+    <rect x="280" y="350" width="14" height="300"/>
+    <rect x="325" y="440" width="14" height="120"/>
+    <rect x="370" y="290" width="14" height="420"/>
+    <rect x="415" y="390" width="14" height="220"/>
+    <rect x="460" y="240" width="14" height="520"/>
+    <rect x="505" y="445" width="14" height="110"/>
+    <rect x="550" y="320" width="14" height="360"/>
+    <rect x="595" y="205" width="14" height="590"/>
+    <rect x="640" y="370" width="14" height="260"/>
+    <rect x="685" y="455" width="14" height="90"/>
+    <rect x="730" y="290" width="14" height="420"/>
+    <rect x="775" y="160" width="14" height="680" fill="#c8ff2e"/>
+    <rect x="820" y="315" width="14" height="370"/>
+    <rect x="865" y="425" width="14" height="150"/>
+    <rect x="910" y="260" width="14" height="480"/>
+    <rect x="955" y="350" width="14" height="300"/>
+    <rect x="1000" y="430" width="14" height="140"/>
+    <rect x="1045" y="300" width="14" height="400"/>
+    <rect x="1090" y="390" width="14" height="220"/>
+    <rect x="1135" y="445" width="14" height="110"/>
+    <rect x="1180" y="335" width="14" height="330"/>
+    <rect x="1225" y="410" width="14" height="180"/>
+    <rect x="1270" y="465" width="14" height="70"/>
+  </g>
+  <path d="M120 500H1480" stroke="url(#fade)" stroke-width="4"/>
+  <g font-family="monospace" font-size="26" fill="#7a818b">
+    <text x="90" y="90">AUDIO.INPUT // TRANSCRIPT // SUMMARY.MD</text>
+    <text x="90" y="930">WHISPER · GROQ · OPENROUTER</text>
+    <text x="1255" y="930" fill="#c8ff2e">■ READY</text>
+  </g>
+</svg>

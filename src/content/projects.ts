@@ -26,7 +26,9 @@ export type PortfolioProject = {
   url: string | null;
   image: string;
   alt: Localized;
+  status?: Localized;
   featured: boolean;
+  archive?: boolean;
   codePrivate: boolean;
 };
 
@@ -34,7 +36,7 @@ export const projectsSection = {
   pt: {
     title: "Projetos que chegaram ao mundo real.",
     intro:
-      "Produtos públicos, operações privadas e experimentos próprios — do primeiro fluxo ao sistema em produção.",
+      "Produtos públicos, operações privadas e infraestrutura própria. Projetos privados aparecem só com dados fictícios.",
     featuredTitle: "Trabalho em destaque",
     allTitle: "Arquivo de projetos",
     allIntro: "Filtre por contexto e abra cada projeto para ver decisões, escopo e stack.",
@@ -59,11 +61,21 @@ export const projectsSection = {
     privateLabel: "Sem link público",
     unavailableLabel: "Fora do ar",
     privateCodeLabel: "Código privado",
+    sectionLabel: "[02] // SISTEMAS",
+    heading: "Sistemas em produção_",
+    indexTitle: "Índice",
+    columns: { number: "Nº", project: "Projeto", context: "Contexto", stack: "Stack", year: "Ano", status: "Status" },
+    systemsUnit: "sistemas",
+    viewAll: "Ver todos os sistemas",
+    viewFewer: "Mostrar só os principais",
+    status: { live: "NO AR", private: "PRIVADO", offline: "FORA DO AR" },
+    syntheticData: "DADOS FICTÍCIOS",
+    emptyCategory: "Nenhum sistema nesta categoria por enquanto.",
   },
   en: {
     title: "Projects built for the real world.",
     intro:
-      "Public products, private operations and independent experiments — from the first flow to production software.",
+      "Public products, private operations and my own infrastructure. Private projects appear with synthetic data only.",
     featuredTitle: "Featured work",
     allTitle: "Project archive",
     allIntro: "Filter by context and open each project for its decisions, scope and stack.",
@@ -88,16 +100,26 @@ export const projectsSection = {
     privateLabel: "No public link",
     unavailableLabel: "Offline",
     privateCodeLabel: "Private code",
+    sectionLabel: "[02] // SYSTEMS",
+    heading: "Systems in production_",
+    indexTitle: "Index",
+    columns: { number: "No.", project: "Project", context: "Context", stack: "Stack", year: "Year", status: "Status" },
+    systemsUnit: "systems",
+    viewAll: "View all systems",
+    viewFewer: "Show highlights only",
+    status: { live: "LIVE", private: "PRIVATE", offline: "OFFLINE" },
+    syntheticData: "SYNTHETIC DATA",
+    emptyCategory: "No systems in this category yet.",
   },
 } as const;
 
-export const projects: PortfolioProject[] = [
+const legacyProjects: PortfolioProject[] = [
   {
     slug: "tamaras",
     name: "TAMARAS",
     context: { pt: "Tamaras Imobiliária · Maramores", en: "Tamaras Real Estate · Maramores" },
     category: "imobiliario",
-    period: "2025–2026",
+    period: "2025-2026",
     role: { pt: "Desenvolvimento full-stack", en: "Full-stack development" },
     shortDescription: {
       pt: "Ecossistema imobiliário com vitrine pública, operação interna, jurídico e entrega de mídia.",
@@ -177,7 +199,7 @@ export const projects: PortfolioProject[] = [
     name: "BDN CRM",
     context: { pt: "BDN Tech · CRM multi-tenant", en: "BDN Tech · Multi-tenant CRM" },
     category: "saas",
-    period: "2025–2026",
+    period: "2025-2026",
     role: { pt: "Arquitetura e desenvolvimento full-stack", en: "Architecture and full-stack development" },
     shortDescription: {
       pt: "CRM multi-tenant com contatos, negócios, agenda, automações e plano de controle administrativo.",
@@ -729,7 +751,7 @@ export const projects: PortfolioProject[] = [
     name: "Gestão de Gastos",
     context: { pt: "Finanças pessoais", en: "Personal finance" },
     category: "pessoal",
-    period: "2025–2026",
+    period: "2025-2026",
     role: { pt: "Desenvolvimento front-end", en: "Front-end development" },
     shortDescription: {
       pt: "Aplicação para organizar receitas, despesas e a leitura cotidiana das finanças.",
@@ -802,6 +824,194 @@ export const projects: PortfolioProject[] = [
   },
 ];
 
+const newProjects: PortfolioProject[] = [
+  {
+    slug: "orchestration",
+    name: "ORCHESTRATION",
+    context: { pt: "Política e runtime multiagente · jvs-development", en: "Multi-agent policy and runtime · jvs-development" },
+    category: "pessoal",
+    period: "2026",
+    role: { pt: "Arquitetura, produto e desenvolvimento", en: "Architecture, product and development" },
+    shortDescription: {
+      pt: "Coordenação de agentes de código por evidência, com política versionada, runtime e app desktop.",
+      en: "Evidence-driven coding-agent coordination with versioned policy, runtime services and a desktop app.",
+    },
+    longDescription: {
+      pt: "O ecossistema classifica tarefas, qualifica workers pelo tuple efetivo, registra cada Dispatch e exige revisão independente conforme o risco. Reúne política em Python, app desktop Tauri/Rust e uma Model Intelligence API com PostgreSQL e RLS.",
+      en: "The ecosystem classifies tasks, qualifies workers against their effective tuple, records every Dispatch and requires independent review based on risk. It combines Python policy, a Tauri/Rust desktop app and a Model Intelligence API backed by PostgreSQL and RLS.",
+    },
+    highlights: {
+      pt: [
+        "Seleção de workers por capacidade e evidência, sem lista fechada de modelos.",
+        "Runs fixam release e digest; Tasks e Dispatches mantêm escopo, tuple e histórico.",
+        "App desktop Tauri/Rust representa projetos, agentes e decisões humanas.",
+        "API de inteligência ranqueia apenas candidatos já elegíveis e isola dados com RLS.",
+      ],
+      en: [
+        "Worker selection by capability and evidence, without a closed model allowlist.",
+        "Runs pin release and digest; Tasks and Dispatches preserve scope, tuple and history.",
+        "A Tauri/Rust desktop app represents projects, agents and human decisions.",
+        "The intelligence API ranks only already-eligible candidates and isolates data with RLS.",
+      ],
+    },
+    stack: ["Python", "Rust", "Tauri", "PostgreSQL", "Next.js"],
+    linkStatus: "private",
+    url: null,
+    image: "/projects/orchestration.png",
+    alt: { pt: "Mapa generativo de nós do ecossistema Orchestration", en: "Generative node map for the Orchestration ecosystem" },
+    featured: true,
+    codePrivate: true,
+  },
+  {
+    slug: "espaco-leve",
+    name: "Espaço Leve",
+    context: { pt: "Aplicativo desktop multiplataforma", en: "Cross-platform desktop application" },
+    category: "pessoal",
+    period: "2026",
+    role: { pt: "Produto e desenvolvimento", en: "Product and development" },
+    shortDescription: {
+      pt: "Manutenção segura de armazenamento para Windows, macOS e Linux.",
+      en: "Safe storage maintenance for Windows, macOS and Linux.",
+    },
+    longDescription: {
+      pt: "Aplicativo .NET com interface Avalonia que identifica caches e arquivos antigos, explica cada limpeza e mantém uma rotina semanal local. As ações são limitadas por plataforma, validam novamente o alvo e nunca apagam pastas recursivamente.",
+      en: "A .NET desktop app with an Avalonia interface that identifies caches and old files, explains each cleanup and runs a local weekly routine. Actions are platform-scoped, revalidate targets and never delete directories recursively.",
+    },
+    highlights: {
+      pt: ["Releases para Windows, macOS e Linux com runtime incluído.", "Proteções contra links, arquivos sensíveis e disputas de escrita.", "Inventário local de Docker sem system prune ou remoções destrutivas.", "Histórico local e rotina semanal configurável."],
+      en: ["Windows, macOS and Linux releases with the runtime bundled.", "Protection against links, sensitive files and concurrent writes.", "Local Docker inventory without system prune or destructive removals.", "Local history and a configurable weekly routine."],
+    },
+    stack: [".NET 10", "C#", "Avalonia", "GitHub Actions"],
+    linkStatus: "public",
+    url: "https://github.com/jvsiqueira1/espaco-leve/releases",
+    image: "/projects/espaco-leve.png",
+    alt: { pt: "Composição generativa do aplicativo Espaço Leve", en: "Generative composition for the Espaço Leve app" },
+    status: { pt: "LANÇADO", en: "RELEASE" },
+    featured: false,
+    codePrivate: false,
+  },
+  {
+    slug: "projeto-adv",
+    name: "projeto-adv",
+    context: { pt: "Revisão contratual a partir da negociação", en: "Contract review from negotiation" },
+    category: "saas",
+    period: "2026",
+    role: { pt: "Arquitetura e desenvolvimento", en: "Architecture and development" },
+    shortDescription: { pt: "Fluxo rastreável de negociação até minuta revisada.", en: "A traceable flow from negotiation to reviewed draft." },
+    longDescription: {
+      pt: "Monorepo em construção com interface Vite/React, API NestJS multi-tenant protegida por RLS e serviço FastAPI que gera documentos DOCX a partir de contratos Zod e Pydantic sincronizados.",
+      en: "A work-in-progress monorepo with a Vite/React interface, a multi-tenant NestJS API protected by RLS, and a FastAPI service that generates DOCX files from synchronized Zod and Pydantic contracts.",
+    },
+    highlights: {
+      pt: ["Contratos Zod como fonte única para JSON Schema e Pydantic.", "Isolamento por escritório com PostgreSQL RLS forçado.", "Autenticação e papéis separados para domínio e identidade.", "Geração de DOCX com marcas de revisão rastreáveis."],
+      en: ["Zod contracts as the single source for JSON Schema and Pydantic.", "Firm isolation with forced PostgreSQL RLS.", "Separate roles for domain data and identity.", "DOCX generation with traceable revision marks."],
+    },
+    stack: ["React", "NestJS", "FastAPI", "PostgreSQL"],
+    linkStatus: "private",
+    url: null,
+    image: "/projects/projeto-adv.png",
+    alt: { pt: "Composição generativa do fluxo projeto-adv", en: "Generative composition for the projeto-adv workflow" },
+    status: { pt: "EM CONSTRUÇÃO", en: "IN PROGRESS" },
+    featured: false,
+    codePrivate: true,
+  },
+  {
+    slug: "languages-chart",
+    name: "Languages Chart",
+    context: { pt: "GitHub Action de estatísticas de linguagens", en: "GitHub Action for language statistics" },
+    category: "pessoal",
+    period: "2026",
+    role: { pt: "Produto open source", en: "Open-source product" },
+    shortDescription: { pt: "Gráfico SVG de linguagens, incluindo repositórios privados.", en: "An SVG language chart that can include private repositories." },
+    longDescription: {
+      pt: "Action sem dependências que consulta os metadados de linguagem visíveis ao token, agrega os bytes e mantém SVGs claro/escuro no README sem expor nomes de repositórios privados.",
+      en: "A dependency-free Action that reads language metadata visible to the token, aggregates byte counts and maintains light/dark SVGs in a README without exposing private repository names.",
+    },
+    highlights: {
+      pt: ["Inclui privados com permissão Metadata: Read-only.", "Temas claro, escuro e automático.", "Retentativas limitadas e falha isolada por repositório.", "Sem commit vazio quando o gráfico não muda."],
+      en: ["Includes private repositories with Metadata: Read-only permission.", "Light, dark and automatic themes.", "Bounded retries and per-repository failure isolation.", "No empty commit when the chart is unchanged."],
+    },
+    stack: ["Node.js", "GitHub Actions", "SVG"],
+    linkStatus: "public",
+    url: "https://github.com/jvsiqueira1/gh-stats",
+    image: "/projects/languages-chart.png",
+    alt: { pt: "Gráfico generativo de linguagens do Languages Chart", en: "Generative language chart for Languages Chart" },
+    status: { pt: "CÓDIGO ABERTO", en: "OPEN SOURCE" },
+    featured: false,
+    codePrivate: false,
+  },
+  {
+    slug: "resumo-reuniao",
+    name: "Resumo de Reunião",
+    context: { pt: "Transcrição e resumo local assistido por IA", en: "AI-assisted local transcription and summaries" },
+    category: "pessoal",
+    period: "2026",
+    role: { pt: "Produto e desenvolvimento full-stack", en: "Product and full-stack development" },
+    shortDescription: { pt: "Transcrição Whisper/Groq e resumo estruturado com IA.", en: "Whisper/Groq transcription and structured AI summaries." },
+    longDescription: {
+      pt: "Aplicação web para áudio e vídeo com fila em background, transcrição via Groq, resumo opcional via OpenRouter, histórico SQLite e download em Markdown. Arquivos enviados são removidos após o processamento.",
+      en: "A web app for audio and video with a background queue, Groq transcription, optional OpenRouter summaries, SQLite history and Markdown downloads. Uploaded files are removed after processing.",
+    },
+    highlights: {
+      pt: ["Vários arquivos com resumo separado ou combinado.", "Fatiamento automático para áudios e transcrições longas.", "Histórico local persistente e uploads transitórios.", "Docker multi-stage com React e FastAPI na mesma porta."],
+      en: ["Multiple files with separate or combined summaries.", "Automatic chunking for long audio and transcripts.", "Persistent local history with transient uploads.", "Multi-stage Docker build serving React and FastAPI on one port."],
+    },
+    stack: ["Python", "FastAPI", "React", "Docker"],
+    linkStatus: "public",
+    url: "https://github.com/jvsiqueira1/audio-to-text",
+    image: "/projects/resumo-reuniao.svg",
+    alt: { pt: "Forma de onda para o projeto Resumo de Reunião", en: "Waveform for the Meeting Summary project" },
+    status: { pt: "CÓDIGO ABERTO", en: "OPEN SOURCE" },
+    featured: false,
+    codePrivate: false,
+  },
+];
+
+const projectOrder = [
+  "tamaras",
+  "jipsy",
+  "orchestration",
+  "espaco-leve",
+  "bdn-crm",
+  "cartracker",
+  "projeto-adv",
+  "cdr-prospeccao",
+  "medpay",
+  "languages-chart",
+  "resumo-reuniao",
+  "credencial-autista",
+  "atlas-fai",
+] as const;
+
+// Shown after "view all": earlier work kept from the previous portfolio.
+// "orca-agent-office" is not listed: it was the first desktop office of the
+// same ecosystem and is now covered by ORCHESTRATION (orchestration-desktop).
+const archiveOrder = [
+  "opengym",
+  "eqi-one",
+  "patrimonio",
+  "gestao-gastos",
+  "agilizei",
+  "baco-producoes",
+  "bdn-tech",
+  "the-x-prime",
+  "marapp",
+] as const;
+
+const featuredSlugs = new Set(["tamaras", "jipsy", "orchestration"]);
+const projectPool = [...newProjects, ...legacyProjects];
+
+function pick(slug: string) {
+  const project = projectPool.find((item) => item.slug === slug);
+  if (!project) throw new Error(`Missing project: ${slug}`);
+  return project;
+}
+
+export const projects: PortfolioProject[] = [
+  ...projectOrder.map((slug) => ({ ...pick(slug), featured: featuredSlugs.has(slug), archive: false })),
+  ...archiveOrder.map((slug) => ({ ...pick(slug), featured: false, archive: true })),
+];
+
 export function localizeProject(project: PortfolioProject, language: Language) {
   return {
     ...project,
@@ -811,7 +1021,17 @@ export function localizeProject(project: PortfolioProject, language: Language) {
     longDescription: project.longDescription[language],
     highlights: project.highlights[language],
     alt: project.alt[language],
+    status: project.status?.[language],
   };
 }
 
 export type LocalizedProject = ReturnType<typeof localizeProject>;
+
+export type ProjectSectionCopy = (typeof projectsSection)[keyof typeof projectsSection];
+
+export function projectStatus(project: LocalizedProject, copy: ProjectSectionCopy) {
+  if (project.status) return project.status;
+  if (project.linkStatus === "public") return copy.status.live;
+  if (project.linkStatus === "unavailable") return copy.status.offline;
+  return copy.status.private;
+}

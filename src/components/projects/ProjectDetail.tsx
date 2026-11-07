@@ -5,9 +5,7 @@ import Image from "next/image";
 import { useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import { usePageScrollLock } from "@/components/motion";
-import type { LocalizedProject, projectsSection } from "@/content/projects";
-
-type ProjectCopy = (typeof projectsSection)[keyof typeof projectsSection];
+import { projectStatus, type LocalizedProject, type ProjectSectionCopy as ProjectCopy } from "@/content/projects";
 
 type ProjectDetailProps = {
   project: LocalizedProject;
@@ -25,12 +23,35 @@ const focusableSelector = [
 ].join(",");
 
 function statusLabel(project: LocalizedProject, copy: ProjectCopy) {
-  if (project.linkStatus === "public") return copy.publicLabel;
-  if (project.linkStatus === "unavailable") return copy.unavailableLabel;
-  return copy.privateLabel;
+  return projectStatus(project, copy);
+}
+
+// Hides everything behind the dialog from focus and assistive tech; returns the restore step.
+function isolateLayer(layer: HTMLElement | null) {
+  if (!layer?.parentElement) return () => {};
+  const siblings = Array.from(layer.parentElement.children).filter(
+    (element): element is HTMLElement => element !== layer && element instanceof HTMLElement && element.tagName !== "SCRIPT"
+  );
+  const previous = siblings.map((element) => ({
+    element,
+    inert: element.inert,
+    ariaHidden: element.getAttribute("aria-hidden"),
+  }));
+  siblings.forEach((element) => {
+    element.inert = true;
+    element.setAttribute("aria-hidden", "true");
+  });
+  return () => {
+    previous.forEach(({ element, inert, ariaHidden }) => {
+      element.inert = inert;
+      if (ariaHidden === null) element.removeAttribute("aria-hidden");
+      else element.setAttribute("aria-hidden", ariaHidden);
+    });
+  };
 }
 
 export default function ProjectDetail({ project, copy, onClose }: ProjectDetailProps) {
+  const layerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<{ x: number; y: number } | null>(null);
   const titleId = useId();
@@ -58,6 +79,7 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
     root.style.overflow = "hidden";
     body.style.overflow = "hidden";
     if (scrollbarGap > 0) body.style.paddingRight = `${bodyPaddingRight + scrollbarGap}px`;
+    const restoreBackground = isolateLayer(layerRef.current);
     panel?.focus({ preventScroll: true });
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -77,10 +99,13 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
 
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
-        if (event.shiftKey && (document.activeElement === first || document.activeElement === panel)) {
+        const current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        // From the panel itself (initial focus) or anything outside the list, Tab enters at the edges.
+        const outsideList = !current || !focusable.includes(current);
+        if (event.shiftKey && (outsideList || current === first)) {
           event.preventDefault();
           last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
+        } else if (!event.shiftKey && (outsideList || current === last)) {
           event.preventDefault();
           first.focus();
         }
@@ -94,7 +119,7 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
         event.altKey
       ) return;
 
-      const scrollContainer = window.matchMedia("(max-width: 820px)").matches
+      const scrollContainer = window.matchMedia("(max-width: 900px)").matches
         ? panel
         : panel.querySelector<HTMLElement>(".project-detail-content");
       if (!scrollContainer || scrollContainer.scrollHeight <= scrollContainer.clientHeight) return;
@@ -129,6 +154,7 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      restoreBackground();
       root.style.overflow = previousRootOverflow;
       body.style.overflow = previousBodyStyles.overflow;
       body.style.paddingRight = previousBodyStyles.paddingRight;
@@ -142,7 +168,7 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
   }, [acquirePageScrollLock, onClose, project.slug]);
 
   return createPortal(
-    <div className="project-detail-layer" data-lenis-prevent onMouseDown={onClose}>
+    <div ref={layerRef} className="project-detail-layer" data-lenis-prevent onMouseDown={onClose}>
       <div
         ref={panelRef}
         className="project-detail-panel"
@@ -167,7 +193,7 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
             src={project.image}
             alt={project.alt}
             fill
-            sizes="(max-width: 767px) 100vw, 56vw"
+            sizes="(max-width: 820px) 100vw, 50vw"
             className="portfolio-project-image"
             priority
           />
