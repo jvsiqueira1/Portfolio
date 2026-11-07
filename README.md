@@ -1,6 +1,6 @@
 # Portfólio - João Vitor
 
-Portfólio bilíngue de João Vitor de Siqueira Campos, desenvolvido com Next.js e publicado em [jvsdev.com.br](https://www.jvsdev.com.br). A página apresenta projetos, experiência profissional, tecnologias, formação e contato, com temas claro e escuro e download do CV no idioma ativo.
+Portfólio bilíngue de João Vitor de Siqueira Campos, desenvolvido com Next.js e publicado em [jvsdev.com.br](https://www.jvsdev.com.br). A identidade JVS//SYS apresenta 22 sistemas (13 em destaque no índice e o arquivo completo sob demanda), carreira, stack, formação, certificados e contato numa interface escura, com download do CV no idioma ativo.
 
 ## Stack
 
@@ -34,7 +34,7 @@ npm run screenshots:portfolio -- /caminho/de/saida
 - `build`: gera o build de produção do Next.js.
 - `build:cv`: baixa os HTMLs PT/EN do repositório privado `jvsiqueira1/curriculum` e gera os PDFs versionados em `public/cv/`.
 - `screenshots`: mantém o fluxo existente de atualização dos previews dos projetos via ScreenshotOne.
-- `screenshots:portfolio`: captura a página completa em claro/escuro, 375 e 1440 px, usando uma instância local do site.
+- `screenshots:portfolio`: captura a primeira dobra e a página completa em PT/EN, 390×844 e 1440×900, usando uma instância local do site (`PORTFOLIO_URL`). Por padrão espera o boot e o glitch assentarem; `CAPTURE_MOTION=reduce` gera a versão com `prefers-reduced-motion`.
 
 ## Geração dos CVs
 

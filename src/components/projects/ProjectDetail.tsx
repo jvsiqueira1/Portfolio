@@ -5,9 +5,7 @@ import Image from "next/image";
 import { useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import { usePageScrollLock } from "@/components/motion";
-import type { LocalizedProject, projectsSection } from "@/content/projects";
-
-type ProjectCopy = (typeof projectsSection)[keyof typeof projectsSection];
+import { projectStatus, type LocalizedProject, type ProjectSectionCopy as ProjectCopy } from "@/content/projects";
 
 type ProjectDetailProps = {
   project: LocalizedProject;
@@ -25,9 +23,7 @@ const focusableSelector = [
 ].join(",");
 
 function statusLabel(project: LocalizedProject, copy: ProjectCopy) {
-  if (project.linkStatus === "public") return copy.publicLabel;
-  if (project.linkStatus === "unavailable") return copy.unavailableLabel;
-  return copy.privateLabel;
+  return projectStatus(project, copy);
 }
 
 export default function ProjectDetail({ project, copy, onClose }: ProjectDetailProps) {
@@ -167,7 +163,7 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
             src={project.image}
             alt={project.alt}
             fill
-            sizes="(max-width: 767px) 100vw, 56vw"
+            sizes="(max-width: 820px) 100vw, 50vw"
             className="portfolio-project-image"
             priority
           />

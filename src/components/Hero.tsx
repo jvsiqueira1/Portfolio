@@ -1,118 +1,133 @@
 "use client";
 
-import { ArrowDownToLine, ArrowUpRight } from "lucide-react";
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
-import Image from "next/image";
-import { useRef, type PointerEvent } from "react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MagneticLink } from "./motion";
+import HeroField from "./HeroField";
+import { MagneticLink, VelocityMarquee } from "./motion";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+const STACK = ["NODE.JS", "NEST.JS", "REACT", "NEXT.JS", "POSTGRESQL", "FASTIFY", "PRISMA", "DOCKER"];
+const NAME_LINES = ["JOÃO", "VITOR"];
+const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#/%&";
+
+// Scrambles each line into the real name; the server render (and LCP) is the real text.
+function useScramble(lines: string[], enabled: boolean) {
+  const [output, setOutput] = useState(lines);
+  const frameRef = useRef(0);
+
+  useEffect(() => {
+    if (!enabled || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setOutput(lines);
+      return;
+    }
+    const start = performance.now();
+    const duration = 900;
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      setOutput(lines.map((line) => line.split("").map((char, index) => {
+        const settleAt = (index + 1) / (line.length + 1);
+        return progress >= settleAt ? char : GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+      }).join("")));
+      if (progress < 1) frameRef.current = window.requestAnimationFrame(tick);
+    };
+    frameRef.current = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frameRef.current);
+  }, [enabled, lines]);
+
+  return output;
+}
 
 export default function Hero() {
   const { copy, cvHref } = useLanguage();
-  const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
-  const pointerX = useMotionValue(-520);
-  const pointerY = useMotionValue(-520);
-  const glowX = useSpring(pointerX, { stiffness: 95, damping: 24 });
-  const glowY = useSpring(pointerY, { stiffness: 95, damping: 24 });
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
-  const portraitY = useTransform(scrollYProgress, [0, 1], [0, 74]);
-  const copyY = useTransform(scrollYProgress, [0, 1], [0, -28]);
-  const words = copy.hero.headline.split(" ");
+  const fullBoot = useMemo(() => copy.hero.boot.join("\n"), [copy.hero.boot]);
+  const [boot, setBoot] = useState(() => fullBoot);
+  const name = useScramble(NAME_LINES, !reduceMotion);
 
-  function trackGlow(event: PointerEvent<HTMLElement>) {
-    if (reduceMotion) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    pointerX.set(event.clientX - bounds.left - 260);
-    pointerY.set(event.clientY - bounds.top - 260);
-  }
-
-  const wordContainer = {
-    hidden: {},
-    visible: { transition: { delayChildren: 0.22, staggerChildren: 0.055 } },
-  };
-  const word = {
-    hidden: { y: "112%", filter: "blur(9px)" },
-    visible: { y: "0%", filter: "blur(0px)", transition: { duration: 0.74, ease: EASE } },
-  };
+  useEffect(() => {
+    if (reduceMotion || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setBoot(fullBoot);
+      return;
+    }
+    let cursor = 0;
+    setBoot("");
+    const timer = window.setInterval(() => {
+      cursor += 1;
+      setBoot(fullBoot.slice(0, cursor));
+      if (cursor >= fullBoot.length) window.clearInterval(timer);
+    }, 40);
+    return () => window.clearInterval(timer);
+  }, [fullBoot, reduceMotion]);
 
   return (
-    <section id="top" className="hero-section" ref={sectionRef} onPointerMove={trackGlow}>
-      <motion.div className="hero-glow" aria-hidden="true" style={{ x: glowX, y: glowY }} />
-      <div className="shell hero-grid">
-        <motion.div className="hero-copy" style={reduceMotion ? undefined : { y: copyY }}>
-          <motion.p
-            className="hero-availability"
-            initial={reduceMotion ? false : { opacity: 0, x: -18 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.08, duration: 0.55 }}
-          >
-            <span aria-hidden="true" />{copy.hero.availability}
-          </motion.p>
-          <motion.h1
-            aria-label={`${copy.hero.name}. ${copy.hero.headline}`}
-            variants={wordContainer}
-            initial={reduceMotion ? false : "hidden"}
-            animate="visible"
-          >
-            <motion.span className="hero-name" aria-hidden="true" variants={word}>{copy.hero.name}</motion.span>
-            <span className="hero-headline" aria-hidden="true">
-              {words.map((label, index) => (
-                <span className="hero-word" key={`${label}-${index}`}>
-                  <motion.span variants={word}>{label}</motion.span>
-                </span>
-              ))}
-            </span>
-          </motion.h1>
-          <motion.p
-            className="hero-summary"
-            initial={reduceMotion ? false : { opacity: 0, y: 20, filter: "blur(5px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 0.62, duration: 0.65 }}
-          >
-            {copy.hero.summary}
-          </motion.p>
-          <motion.div
-            className="hero-actions"
-            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.78, duration: 0.55 }}
-          >
-            <MagneticLink className="button button-primary" href={cvHref} download>
-              {copy.hero.cvLabel}
-              <ArrowDownToLine aria-hidden="true" />
-            </MagneticLink>
-            <MagneticLink className="button button-secondary" href="#contact">
-              {copy.hero.contactLabel}
-              <ArrowUpRight aria-hidden="true" />
-            </MagneticLink>
-          </motion.div>
-        </motion.div>
+    <section id="top" className="hero-section" aria-labelledby="hero-title">
+      <HeroField />
+      <div className="hero-scanlines" aria-hidden="true" />
+      <div className="shell hero-shell">
+        <div className="hero-top">
+          <div className="hero-console" aria-hidden="true">
+            {boot.split("\n").map((line, index) => (
+              <span key={index}>{line || " "}</span>
+            ))}
+          </div>
+
+          <div className="hero-hud">
+            <span aria-hidden="true">LAT -15.601 · LON -56.097</span>
+            <span aria-hidden="true">{copy.ui.heroRole}</span>
+            <strong>{copy.hero.availability}</strong>
+          </div>
+        </div>
 
         <motion.div
-          className="portrait-frame"
-          style={reduceMotion ? undefined : { y: portraitY }}
-          initial={reduceMotion ? false : { opacity: 0, scale: 1.08, clipPath: "inset(18% 0 82% 0 round 16px)" }}
-          animate={{ opacity: 1, scale: 1, clipPath: "inset(0% 0 0% 0 round 16px)" }}
-          transition={{ delay: 0.2, duration: 0.95, ease: EASE }}
+          className="hero-main"
+          initial={reduceMotion ? false : { opacity: 0, y: 32 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <Image
-            src="/me-image.jpg"
-            alt={copy.hero.portraitAlt}
-            fill
-            priority
-            sizes="(max-width: 767px) 100vw, 42vw"
-            className="portrait-image"
-          />
-          <div className="portrait-card">
-            <strong>{copy.hero.role}</strong>
-            <span>{copy.hero.location}</span>
-          </div>
-          <span className="portrait-orbit" aria-hidden="true" />
+          <p className="hero-id" aria-hidden="true">[ 00 ] JOÃO VITOR DE SIQUEIRA CAMPOS</p>
+          <h1 id="hero-title" className="glitch-title" aria-label={copy.hero.name}>
+            {NAME_LINES.map((line, index) => (
+              <span key={line} className="glitch-line" data-text={name[index]} aria-hidden="true">
+                {name[index]}
+              </span>
+            ))}
+          </h1>
         </motion.div>
+
+        <div className="hero-bottom">
+          <div className="hero-pitch">
+            <p className="hero-headline">{copy.hero.headline}</p>
+            <div className="hero-actions">
+              <MagneticLink className="button button-primary" href={cvHref} download>
+                {copy.hero.cvLabel}
+                <ArrowDown aria-hidden="true" />
+              </MagneticLink>
+              <MagneticLink className="button button-secondary" href={`mailto:${copy.contact.email}`}>
+                <span className="label-long">[ {copy.hero.contactLabel} ]</span>
+                <span className="label-short">[ {copy.ui.contactShort} ]</span>
+                <ArrowUpRight aria-hidden="true" />
+              </MagneticLink>
+            </div>
+          </div>
+
+          <div className="hero-meta">
+            <a className="hero-scroll" href="#about">
+              {copy.ui.scroll} <span aria-hidden="true">↓</span>
+              <span className="hero-scroll-count" aria-hidden="true">001 / 006</span>
+            </a>
+            <dl className="hero-stats" aria-label={copy.ui.statsLabel}>
+              {copy.hero.stats.map((stat) => (
+                <div key={stat.label}>
+                  <dt>{stat.label}</dt>
+                  <dd>{stat.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
       </div>
+      <VelocityMarquee items={STACK} />
     </section>
   );
 }
