@@ -127,7 +127,7 @@ export default function Header() {
         </div>
       </div>
 
-      <nav id="mobile-navigation" className="mobile-nav" data-open={open} aria-label={copy.nav.mobileLabel}>
+      <nav id="mobile-navigation" className="mobile-nav" data-open={open} aria-label={copy.nav.mobileLabel} data-lenis-prevent>
         {links.map(([href, label], index) => (
           <a href={href} key={href} onClick={() => { selectSection(href); setOpen(false); }} data-active={activeSection === href} aria-current={activeSection === href ? "location" : undefined}>
             <span>{String(index + 1).padStart(2, "0")}</span>{label}
