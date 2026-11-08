@@ -115,6 +115,20 @@ button, input, textarea, select { font: inherit; }
   background: rgb(7 8 10 / .94);
   backdrop-filter: blur(14px);
 }
+/* Focus inside the sticky header bar must never scroll the page. html's scroll-padding-top reserves the
+   bar's band, so a focused bar item (always inside that band) looks covered and the browser scrolls to
+   "reveal" it, which moves the page under a bar that never moves. Shifting the item's scroll area down
+   by the same padding puts it just below the band, where it already counts as visible. Only the bar
+   (brand, desktop nav, PT/EN, Menu) gets this: the open mobile panel hangs below the band, and the
+   shift would push its last links past a short viewport. The panel's first link starts right at the
+   bar's edge, inside the padding's 16px gap, so the panel links only need to lift their scroll area
+   out of that gap. Everything outside the header keeps the padding, so it still scrolls clear of the
+   header and the cookie banner (WCAG 2.4.11). */
+.nav-shell :is(a, button) {
+  scroll-margin-top: calc(-1 * (var(--header-height) + 16px));
+  scroll-margin-bottom: calc(var(--header-height) + 16px);
+}
+.mobile-nav a { scroll-margin-top: -24px; }
 .nav-shell { display: flex; height: 100%; align-items: center; gap: 26px; }
 .brand { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; text-decoration: none; }
 .brand > img:first-child { width: 30px; height: 30px; object-fit: contain; }

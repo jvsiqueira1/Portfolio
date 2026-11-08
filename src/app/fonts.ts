@@ -1,7 +1,9 @@
 import { JetBrains_Mono, Roboto } from "next/font/google";
 
-// Both families render above the fold (headline and body in Roboto; nav, HUD and boot log in
-// JetBrains Mono), so both keep their preload.
+// Both families render above the fold, but neither is preloaded: Safari flags a font preload as unused
+// when the first paint does not need the file in time. display "swap" paints the fallback first, and
+// the default adjustFontFallback sizes that fallback to the web font's metrics, so the swap moves no
+// layout (CLS stays ~0).
 
 // One variable family: body at normal width, display condensed through the wdth axis (75-100).
 export const sans = Roboto({
@@ -10,6 +12,7 @@ export const sans = Roboto({
   weight: "variable",
   axes: ["wdth"],
   display: "swap",
+  preload: false,
 });
 
 // Google serves JetBrains Mono as one variable file. Asking for it as a weight range declares that
@@ -19,4 +22,5 @@ export const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: "variable",
   display: "swap",
+  preload: false,
 });
