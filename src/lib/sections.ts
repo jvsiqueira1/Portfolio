@@ -30,9 +30,22 @@ const CHAIN_GAP = 150;
 const TRIGGER_WINDOW = 1000;
 const USER_QUIET = 500;
 
+// After an in-page link, the smooth scroll counts as settled once no scroll event came for this long.
+const SETTLE_GAP = 180;
+// A touch that moves less than this is a tap (opening the menu, pressing PT/EN), not a scroll.
+const TOUCH_SLOP = 10;
+// Controls that take the scroll keys for themselves.
+const CONTROLS = 'button, input, textarea, select, [contenteditable="true"], [role="button"]';
+
 export interface UserScroll {
   /** The scroll position the user chose: the current one, unless the latest movement came only from focus. */
   scrollY(): number;
+  /**
+   * The section an in-page link (menu, brand, page anchor) is taking the page to, without the "#": set
+   * by the click, kept through the smooth scroll and until the next scroll after it settles, dropped at
+   * once by the user's own wheel, touch drag or scroll key. Null when no such navigation is pending.
+   */
+  destination(): string | null;
   stop(): void;
 }
 
@@ -49,24 +62,73 @@ export function trackUserScroll(): UserScroll {
   let lastUserScrollAt = Number.NEGATIVE_INFINITY;
   let movement: "user" | "focus" = "user";
   let userY = window.scrollY;
+  // The in-page link destination: like the header's menu lock, it holds until the scroll settles and
+  // then until the next scroll.
+  let pending: { id: string; settled: boolean } | null = null;
+  let settleTimer = 0;
+  let touchY = 0;
 
+  const settle = () => {
+    window.clearTimeout(settleTimer);
+    settleTimer = window.setTimeout(() => {
+      if (pending) pending.settled = true;
+    }, SETTLE_GAP);
+  };
+  const drop = () => {
+    window.clearTimeout(settleTimer);
+    pending = null;
+  };
   // A user trigger cancels a pending focus, so the movement it starts is the user's.
   const user = () => {
     focusAt = Number.NEGATIVE_INFINITY;
   };
+  const wheel = () => {
+    user();
+    drop();
+  };
+  const touchStart = (event: TouchEvent) => {
+    user();
+    touchY = event.touches[0]?.clientY ?? 0;
+  };
+  const touchMove = (event: TouchEvent) => {
+    user();
+    if (Math.abs((event.touches[0]?.clientY ?? touchY) - touchY) > TOUCH_SLOP) drop();
+  };
   const focus = () => {
     focusAt = performance.now();
   };
+  // A press on the page's own scrollbar targets the root element.
+  const mouseDown = (event: MouseEvent) => {
+    user();
+    if (event.target === document.documentElement) drop();
+  };
   const key = (event: KeyboardEvent) => {
-    if (SCROLL_KEYS.has(event.key)) user();
+    if (!SCROLL_KEYS.has(event.key)) return;
+    user();
+    // Space on a button (reopening the menu) presses it instead of scrolling.
+    if (event.target instanceof Element && event.target.closest(CONTROLS)) return;
+    drop();
   };
   const click = (event: MouseEvent) => {
-    if (event.target instanceof Element && event.target.closest('a[href*="#"]')) user();
+    const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href*="#"]') : null;
+    if (!link) return;
+    user();
+    // Same-page section links only; a modified click opens elsewhere and leaves this page where it is.
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const id = link.getAttribute("href")?.startsWith("#") ? link.hash.slice(1) : "";
+    if (!(PAGE_SECTION_IDS as readonly string[]).includes(id) || !document.getElementById(id)) return;
+    pending = { id, settled: false };
+    settle();
   };
   const scroll = () => {
+    // The scroll an in-page link starts is the user's even if a focus lands before its first frame
+    // (reopening the menu right after the click).
+    const navigating = pending !== null && !pending.settled;
+    if (navigating) settle();
+    else drop();
     const now = performance.now();
     if (now - lastScrollAt > CHAIN_GAP) {
-      const byFocus = now - focusAt < TRIGGER_WINDOW && now - lastUserScrollAt > USER_QUIET;
+      const byFocus = !navigating && now - focusAt < TRIGGER_WINDOW && now - lastUserScrollAt > USER_QUIET;
       movement = byFocus ? "focus" : "user";
     }
     lastScrollAt = now;
@@ -78,10 +140,10 @@ export function trackUserScroll(): UserScroll {
 
   const options = { capture: true, passive: true } as const;
   const listeners: [string, EventListener][] = [
-    ["wheel", user],
-    ["touchstart", user],
-    ["touchmove", user],
-    ["mousedown", user],
+    ["wheel", wheel],
+    ["touchstart", touchStart as EventListener],
+    ["touchmove", touchMove as EventListener],
+    ["mousedown", mouseDown as EventListener],
     ["keydown", key as EventListener],
     ["click", click as EventListener],
     ["hashchange", user],
@@ -91,7 +153,9 @@ export function trackUserScroll(): UserScroll {
   for (const [type, listener] of listeners) window.addEventListener(type, listener, options);
   return {
     scrollY: () => (movement === "user" ? window.scrollY : userY),
+    destination: () => pending?.id ?? null,
     stop: () => {
+      drop();
       for (const [type, listener] of listeners) window.removeEventListener(type, listener, options);
     },
   };
