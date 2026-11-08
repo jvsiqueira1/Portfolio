@@ -703,6 +703,26 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
   .menu-button { gap: 6px; padding-inline: 8px; }
 }
 
+/* Short viewports (phones in landscape): the stacked banner takes ~155px of a 320px screen, which leaves
+   less room between the header and the banner than a certificate card and its focus ring need (WCAG
+   2.4.11). Here the banner is one low strip: text beside the buttons, tighter padding and slightly
+   smaller type (13px), with buttons still 44px tall. Only in landscape: a short portrait screen (320x480)
+   is too narrow for text beside the buttons, so it keeps the stacked card, as does desktop. */
+@media (orientation: landscape) and (max-height: 480px) {
+  .cookie-banner { right: 12px; bottom: 8px; width: min(720px, calc(100% - 24px)); grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 7px 8px 7px 14px; }
+  .cookie-banner p { font-size: .8125rem; line-height: 1.35; }
+  .cookie-banner > div { gap: 8px; }
+  .cookie-banner .button { width: auto; min-height: 44px; justify-content: center; padding: 8px 14px; }
+}
+
+/* Same screens with the two-column certificate grid (667x375, 740x360): a 245px card plus its focus ring
+   is taller than the ~230px between the header and that strip. Cap the card's minimum at the room the
+   small viewport leaves (header 64px + banner ~68px + ring 12px + margin); the content (~185px) still sets
+   the floor, so nothing is cut. Taller landscape screens keep 245px. */
+@media (orientation: landscape) and (max-height: 480px) and (min-width: 641px) {
+  .certificate-card { min-height: min(245px, calc(100svh - 160px)); }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   /* Switching language is a navigation between "/" and "/en": cross-fade it where supported. */
   @view-transition { navigation: auto; }

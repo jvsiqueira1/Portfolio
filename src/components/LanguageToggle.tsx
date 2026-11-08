@@ -30,12 +30,14 @@ export default function LanguageToggle() {
   }, []);
 
   // A normal navigation to the other route that lands on the section in view, by the header's
-  // reading-line rule at the position the user chose. That position wins over the URL hash, which
+  // reading-line rule at the position the user chose. While a menu or anchor link is still taking the
+  // page somewhere, that destination wins over the section passing by. Both win over the URL hash, which
   // may be left over from an earlier menu click. From the hero the plain href goes to the top, and
   // modified clicks (new tab, new window, download) keep the link's default behavior.
   const keepSection = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    const section = sectionAtReadingLine(PAGE_SECTION_IDS, userScroll.current?.scrollY() ?? window.scrollY);
+    const tracker = userScroll.current;
+    const section = tracker?.destination() ?? sectionAtReadingLine(PAGE_SECTION_IDS, tracker?.scrollY() ?? window.scrollY);
     if (section === PAGE_SECTION_IDS[0]) return;
     event.preventDefault();
     window.location.assign(`${href}#${section}`);
