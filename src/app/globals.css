@@ -53,8 +53,10 @@ body::before {
   pointer-events: none;
   content: "";
   opacity: .035;
-  background-image: url("/effects/overlay-scan.png");
-  background-size: 720px auto;
+  /* Scanlines: a 2x12 tile (one dark row every 3) drawn at half size, the same pattern the old
+     1440x900 overlay drew at 720px wide, for 96 bytes instead of 439 kB. */
+  background-image: url("/effects/overlay-scan-tile.png");
+  background-size: 1px 6px;
 }
 
 h1, h2, h3, .display-type { font-stretch: 75%; }
@@ -113,6 +115,20 @@ button, input, textarea, select { font: inherit; }
   background: rgb(7 8 10 / .94);
   backdrop-filter: blur(14px);
 }
+/* Focus inside the sticky header bar must never scroll the page. html's scroll-padding-top reserves the
+   bar's band, so a focused bar item (always inside that band) looks covered and the browser scrolls to
+   "reveal" it, which moves the page under a bar that never moves. Shifting the item's scroll area down
+   by the same padding puts it just below the band, where it already counts as visible. Only the bar
+   (brand, desktop nav, PT/EN, Menu) gets this: the open mobile panel hangs below the band, and the
+   shift would push its last links past a short viewport. The panel's first link starts right at the
+   bar's edge, inside the padding's 16px gap, so the panel links only need to lift their scroll area
+   out of that gap. Everything outside the header keeps the padding, so it still scrolls clear of the
+   header and the cookie banner (WCAG 2.4.11). */
+.nav-shell :is(a, button) {
+  scroll-margin-top: calc(-1 * (var(--header-height) + 16px));
+  scroll-margin-bottom: calc(var(--header-height) + 16px);
+}
+.mobile-nav a { scroll-margin-top: -24px; }
 .nav-shell { display: flex; height: 100%; align-items: center; gap: 26px; }
 .brand { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; text-decoration: none; }
 .brand > img:first-child { width: 30px; height: 30px; object-fit: contain; }
@@ -166,7 +182,7 @@ button, input, textarea, select { font: inherit; }
   content: "";
   transform: translate(-50%, -50%);
 }
-.language-button { gap: 6px; padding-inline: 10px; color: var(--mute); cursor: pointer; }
+.language-button { gap: 6px; padding-inline: 10px; color: var(--mute); cursor: pointer; text-decoration: none; }
 .language-button [data-active="true"] { color: var(--ink); }
 .language-button:hover, .icon-button:hover { border-color: var(--accent); color: var(--accent); }
 .language-button:hover [data-active="true"] { color: var(--accent); }
@@ -480,7 +496,7 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
 
 /* Footer */
 .site-footer { position: relative; overflow: hidden; border-top: 1px solid var(--line); background: var(--bg); padding-top: clamp(100px, 12vw, 176px); }
-.site-footer::before { position: absolute; inset: 0; opacity: .12; pointer-events: none; content: ""; background-image: url("/effects/overlay-scan.png"); background-size: 600px auto; }
+.site-footer::before { position: absolute; inset: 0; opacity: .12; pointer-events: none; content: ""; background-image: url("/effects/overlay-scan-tile.png"); background-size: 1px 5px; }
 .footer-main { position: relative; }
 .site-footer h2 { max-width: 10ch; margin: 0; font-size: clamp(4.6rem, 13vw, 13rem); font-weight: 900; letter-spacing: -.04em; line-height: .82; text-transform: uppercase; }
 .block-cursor { display: inline-block; width: .34em; height: .7em; margin-left: .14em; background: var(--accent); vertical-align: baseline; }
@@ -497,8 +513,7 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
 .footer-bottom a { margin-block: -6px; padding-block: 6px; text-decoration: none; }
 .footer-bottom a:hover { color: var(--accent); }
 
-/* Cookie, language transition and cursor */
-.language-transition { min-height: 100%; }
+/* Cookie and cursor */
 .cookie-banner { position: fixed; z-index: 95; right: 20px; bottom: 20px; display: grid; width: min(470px, calc(100% - 40px)); gap: 16px; border: 1px solid var(--line-strong); background: var(--raised); padding: 20px; box-shadow: 0 22px 70px rgb(0 0 0 / .45); }
 .cookie-banner p { margin: 0; color: var(--soft); font-size: .92rem; }
 .cookie-banner > div { display: flex; justify-content: end; gap: 10px; }
@@ -677,6 +692,10 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Switching language is a navigation between "/" and "/en": cross-fade it where supported. */
+  @view-transition { navigation: auto; }
+  /* CSS, not JS: the entrance runs from the first paint instead of waiting for hydration. */
+  .hero-main { animation: hero-rise .8s cubic-bezier(.16,1,.3,1) .2s both; }
   /* Residual chromatic offset stays after the entrance; slices pulse every few seconds. */
   .glitch-title { text-shadow: -1.5px 0 var(--glitch-r), 1.5px 0 var(--glitch-c); animation: glitch-settle 1.4s cubic-bezier(.16,1,.3,1) both; }
   .glitch-line::before, .glitch-line::after { animation: glitch-slice 5.2s steps(1, end) 1.4s infinite; }
@@ -700,6 +719,8 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
   94% { opacity: .9; transform: translateX(-3px); clip-path: inset(36% 0 44% 0); }
   96% { opacity: 0; }
 }
+
+@keyframes hero-rise { from { opacity: 0; transform: translateY(32px); } }
 
 @keyframes cursor-blink { 0%, 48% { opacity: 1; } 49%, 100% { opacity: 0; } }
 

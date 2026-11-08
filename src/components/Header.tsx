@@ -4,8 +4,10 @@ import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { sectionAtReadingLine } from "@/lib/sections";
 import LanguageToggle from "./LanguageToggle";
 
+// The sections the menu links to (Education has no menu entry, so its stretch keeps Technologies lit).
 const SECTION_IDS = ["top", "about", "projects", "experience", "technologies", "contact"];
 
 export default function Header() {
@@ -39,9 +41,8 @@ export default function Header() {
     return () => window.clearInterval(timer);
   }, []);
 
-  // Active section = the last one whose top has crossed a reading line at 35% of the viewport.
-  // At the page end the short last sections can never reach that line, so the end means the last one.
-  // After a menu click the target stays active through the smooth scroll and until the next scroll
+  // Active section = the one at the reading line (sectionAtReadingLine: 35% of the viewport, the page
+  // end means the last one). After a menu click the target stays active through the smooth scroll and until the next scroll
   // that follows it: a section near the page end may stop below the line and still be the destination.
   useEffect(() => {
     let frame = 0;
@@ -50,18 +51,7 @@ export default function Header() {
     const compute = () => {
       frame = 0;
       if (lockRef.current) return;
-      const root = document.documentElement;
-      if (Math.ceil(window.scrollY + window.innerHeight) >= root.scrollHeight - 2) {
-        setActiveSection(`#${SECTION_IDS[SECTION_IDS.length - 1]}`);
-        return;
-      }
-      const line = window.innerHeight * 0.35;
-      let current = `#${SECTION_IDS[0]}`;
-      for (const id of SECTION_IDS) {
-        const section = document.getElementById(id);
-        if (section && section.getBoundingClientRect().top <= line) current = `#${id}`;
-      }
-      setActiveSection(current);
+      setActiveSection(`#${sectionAtReadingLine(SECTION_IDS)}`);
     };
     const schedule = () => {
       if (!frame) frame = window.requestAnimationFrame(compute);
@@ -103,7 +93,7 @@ export default function Header() {
   return (
     <header className="site-header">
       <div className="shell nav-shell">
-        <a href="#top" className="brand" aria-label="JVS//SYS" onClick={() => selectSection("#top")}>
+        <a href="#top" className="brand" onClick={() => selectSection("#top")}>
           <Image src="/brand/jvs-mark.svg" alt="" width={36} height={36} />
           <Image className="brand-wordmark" src="/brand/jvs-wordmark.svg" alt="JVS//SYS" width={138} height={28} />
           <span className="brand-version" aria-hidden="true">v26.11</span>

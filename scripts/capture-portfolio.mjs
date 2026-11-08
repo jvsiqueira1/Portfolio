@@ -12,11 +12,12 @@ const executablePath = process.env.CHROME_PATH || "/Applications/Google Chrome.a
 const motion = process.env.CAPTURE_MOTION === "reduce" ? "reduce" : "no-preference";
 const suffix = motion === "reduce" ? "-reduced" : "";
 
+// The language comes from the route: "/" is Portuguese and "/en" is English.
 const captures = [
-  { name: "portfolio-pt-390", width: 390, height: 844, language: "pt" },
-  { name: "portfolio-en-390", width: 390, height: 844, language: "en" },
-  { name: "portfolio-pt-1440", width: 1440, height: 900, language: "pt" },
-  { name: "portfolio-en-1440", width: 1440, height: 900, language: "en" },
+  { name: "portfolio-pt-390", width: 390, height: 844, path: "/" },
+  { name: "portfolio-en-390", width: 390, height: 844, path: "/en" },
+  { name: "portfolio-pt-1440", width: 1440, height: 900, path: "/" },
+  { name: "portfolio-en-1440", width: 1440, height: 900, path: "/en" },
 ];
 
 await fs.mkdir(outputDir, { recursive: true });
@@ -25,13 +26,12 @@ const browser = await chromium.launch({ executablePath, headless: true });
 try {
   for (const capture of captures) {
     const context = await browser.newContext({ viewport: { width: capture.width, height: capture.height }, colorScheme: "dark" });
-    await context.addInitScript(({ language }) => {
-      localStorage.setItem("language", language);
+    await context.addInitScript(() => {
       localStorage.setItem("cookie-consent", "declined");
-    }, { language: capture.language });
+    });
     const page = await context.newPage();
     await page.emulateMedia({ reducedMotion: motion, colorScheme: "dark" });
-    await page.goto(url, { waitUntil: "networkidle" });
+    await page.goto(new URL(capture.path, url).href, { waitUntil: "networkidle" });
     // Let the boot log finish typing (40ms per character) before the first frame.
     if (motion !== "reduce") await page.waitForTimeout(6500);
     await page.screenshot({ path: path.join(outputDir, `${capture.name}${suffix}-hero.png`) });

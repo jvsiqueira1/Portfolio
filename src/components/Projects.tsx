@@ -148,8 +148,9 @@ export default function Projects() {
                 className="featured-system-media"
                 data-kind={project.image.endsWith(".webp") ? "capture" : "generated"}
                 onClick={(event) => openProject(project.slug, event.currentTarget)}
-                aria-label={`${copy.openDetails}: ${project.name}`}
               >
+                {/* Named by its content, not aria-label: the HUD text drawn over the capture is decoration. */}
+                <span className="sr-only">{copy.openDetails}: {project.name}. </span>
                 <Image src={project.image} alt={project.alt} fill sizes="(max-width: 900px) 100vw, 56vw" />
                 <span className="media-shade" aria-hidden="true" />
                 <span className="rec-label" aria-hidden="true">REC ● {numberOf(project.slug)}</span>
@@ -186,7 +187,6 @@ export default function Projects() {
                     onPointerMove={movePreview}
                     onPointerLeave={() => setHoveredSlug(null)}
                     onClick={(event) => openProject(project.slug, event.currentTarget)}
-                    aria-label={`${project.name}, ${projectStatus(project, copy)}. ${copy.openDetails}`}
                   >
                     <span className="index-number">{numberOf(project.slug)}</span>
                     <strong>{project.name}</strong>
@@ -196,6 +196,8 @@ export default function Projects() {
                     <span className="index-status" data-status={project.linkStatus}>
                       {projectStatus(project, copy)} <span aria-hidden="true">↗</span>
                     </span>
+                    {/* The name is the row as shown (WCAG 2.5.3), then what the button does. */}
+                    <span className="sr-only"> — {copy.openDetails}</span>
                   </button>
                 </li>
               ))}

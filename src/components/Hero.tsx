@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import { useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import HeroField from "./HeroField";
@@ -79,12 +79,8 @@ export default function Hero() {
           </div>
         </div>
 
-        <motion.div
-          className="hero-main"
-          initial={reduceMotion ? false : { opacity: 0, y: 32 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
+        {/* The entrance is a CSS animation (globals.css): it starts with the first paint, not after hydration. */}
+        <div className="hero-main">
           <p className="hero-id" aria-hidden="true">[ 00 ] JOÃO VITOR DE SIQUEIRA CAMPOS</p>
           <h1 id="hero-title" className="glitch-title" aria-label={copy.hero.name}>
             {NAME_LINES.map((line, index) => (
@@ -93,7 +89,7 @@ export default function Hero() {
               </span>
             ))}
           </h1>
-        </motion.div>
+        </div>
 
         <div className="hero-bottom">
           <div className="hero-pitch">
