@@ -15,7 +15,8 @@ const FOCUS_RING_EXTENT = 8;
 // footprint (height + bottom gap) as --cookie-offset: the stylesheet turns it into scroll padding and
 // bottom room so focus scrolling stops above it and the end of the page can still clear it.
 // Browsers skip the focus scroll for an element that is already in the viewport, so a focused element
-// under the banner is nudged up by hand. Accepting or declining removes the offset.
+// under the banner is nudged up by hand. Accepting or declining removes the offset. The open mobile menu
+// panel also reads the offset, as a max-height that keeps it above the banner.
 function reserveBannerSpace(banner: HTMLElement) {
   const root = document.documentElement;
   const publish = () => {
@@ -25,6 +26,9 @@ function reserveBannerSpace(banner: HTMLElement) {
   const keepFocusClear = (event: FocusEvent) => {
     const target = event.target;
     if (!(target instanceof HTMLElement) || banner.contains(target) || target.closest(".project-detail-layer")) return;
+    // The sticky header and its menu panel never move with the page, so scrolling the page cannot uncover
+    // them; the panel scrolls itself between the header and the banner (globals.css .mobile-nav).
+    if (target.closest(".site-header")) return;
     // Keyboard focus only: a pointer press already shows what it hit, and scrolling between mousedown
     // and mouseup would move the control out from under the pointer and lose the click.
     if (!target.matches(":focus-visible")) return;
