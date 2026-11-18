@@ -1,9 +1,9 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import {
-  motion,
-  useAnimationFrame,
-  useMotionValue,
+  useInView,
+  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -11,40 +11,47 @@ import {
   useVelocity,
 } from "motion/react";
 
-function wrap(min: number, max: number, value: number) {
-  const range = max - min;
-  return ((((value - min) % range) + range) % range) + min;
-}
-
-function MarqueeRow({ items, direction }: { items: string[]; direction: 1 | -1 }) {
+// The strip drifts by a CSS animation (globals.css, .stack-track), which the compositor runs without the
+// main thread: parked on the hero, nothing runs per frame in JavaScript (UX-10). Scrolling still speeds
+// it up as before, by changing the animation's playback rate while the scroll velocity changes, and it
+// pauses when it leaves the screen.
+function MarqueeRow({ items, active }: { items: string[]; active: boolean }) {
   const reduceMotion = useReducedMotion();
-  const baseX = useMotionValue(direction === 1 ? -50 : 0);
+  const trackRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, { damping: 48, stiffness: 320 });
   const velocityFactor = useTransform(smoothVelocity, [-1800, 0, 1800], [-4, 0, 4], { clamp: false });
-  const x = useTransform(baseX, (value) => `${wrap(-50, 0, value)}%`);
 
-  useAnimationFrame((_time, delta) => {
-    if (reduceMotion) return;
-    const baseMove = direction * 3.4 * (delta / 1000);
-    const speedBoost = Math.min(5, Math.abs(velocityFactor.get()));
-    baseX.set(baseX.get() + baseMove * (1 + speedBoost));
+  const animation = () => trackRef.current?.getAnimations()[0];
+
+  useMotionValueEvent(velocityFactor, "change", (value) => {
+    const running = animation();
+    if (running) running.playbackRate = 1 + Math.min(5, Math.abs(value));
   });
 
+  useEffect(() => {
+    const running = animation();
+    if (!running || reduceMotion) return;
+    if (active) running.play();
+    else running.pause();
+  }, [active, reduceMotion]);
+
   return (
-    <motion.div className="stack-track" style={{ x: reduceMotion ? "0%" : x }}>
+    <div ref={trackRef} className="stack-track">
       {[...items, ...items].map((item, index) => (
-        <span key={`${direction}-${item}-${index}`}>{item}</span>
+        <span key={`${item}-${index}`}>{item}</span>
       ))}
-    </motion.div>
+    </div>
   );
 }
 
 export default function VelocityMarquee({ items }: { items: string[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref);
   return (
-    <div className="stack-marquee" aria-hidden="true">
-      <MarqueeRow items={items} direction={-1} />
+    <div ref={ref} className="stack-marquee" aria-hidden="true">
+      <MarqueeRow items={items} active={inView} />
     </div>
   );
 }

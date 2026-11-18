@@ -3,6 +3,9 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
+// The field drifts slowly: 24 frames a second look the same as 60 for a fraction of the main-thread cost (UX-10).
+const FRAME_INTERVAL = 1000 / 24;
+
 const POINTS = Array.from({ length: 170 }, (_, index) => ({
   x: ((index * 73) % 997) / 997,
   y: ((index * 131) % 991) / 991,
@@ -25,6 +28,7 @@ export default function HeroField() {
     let width = 0;
     let height = 0;
     let frame = 0;
+    let lastDraw = 0;
     let running = true;
     let visible = false;
     let pointerX = 0;
@@ -45,9 +49,18 @@ export default function HeroField() {
     const draw = (time: number) => {
       frame = 0;
       if (!running || !visible || document.hidden) return;
+      // Skip the frames in between, but keep the loop alive (the tolerance absorbs rAF jitter).
+      const elapsed = time - lastDraw;
+      if (lastDraw && elapsed < FRAME_INTERVAL - 4) {
+        frame = window.requestAnimationFrame(draw);
+        return;
+      }
+      // The pointer easing keeps its 60fps pace whatever the frame rate.
+      const ease = 1 - Math.pow(1 - 0.035, Math.min(elapsed, 100) / (1000 / 60));
+      lastDraw = time;
 
-      pointerX += (targetX - pointerX) * 0.035;
-      pointerY += (targetY - pointerY) * 0.035;
+      pointerX += (targetX - pointerX) * ease;
+      pointerY += (targetY - pointerY) * ease;
       const tick = time * 0.00035;
       context.clearRect(0, 0, width, height);
 

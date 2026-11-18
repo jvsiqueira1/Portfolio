@@ -42,19 +42,21 @@ export default function Hero() {
   const { copy, cvHref } = useLanguage();
   const reduceMotion = useReducedMotion();
   const fullBoot = useMemo(() => copy.hero.boot.join("\n"), [copy.hero.boot]);
-  const [boot, setBoot] = useState(() => fullBoot);
+  const compactBoot = useMemo(() => copy.hero.bootCompact.join("\n"), [copy.hero.bootCompact]);
+  // How many characters are typed; both consoles (desktop and phone, one shown by CSS) type together.
+  const [typed, setTyped] = useState(Number.POSITIVE_INFINITY);
   const name = useScramble(NAME_LINES, !reduceMotion);
 
   useEffect(() => {
     if (reduceMotion || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setBoot(fullBoot);
+      setTyped(Number.POSITIVE_INFINITY);
       return;
     }
     let cursor = 0;
-    setBoot("");
+    setTyped(0);
     const timer = window.setInterval(() => {
       cursor += 1;
-      setBoot(fullBoot.slice(0, cursor));
+      setTyped(cursor);
       if (cursor >= fullBoot.length) window.clearInterval(timer);
     }, 40);
     return () => window.clearInterval(timer);
@@ -66,15 +68,15 @@ export default function Hero() {
       <div className="hero-scanlines" aria-hidden="true" />
       <div className="shell hero-shell">
         <div className="hero-top">
-          <div className="hero-console" aria-hidden="true">
-            {boot.split("\n").map((line, index) => (
-              <span key={index}>{line || " "}</span>
-            ))}
-          </div>
+          {[["hero-console-full", fullBoot], ["hero-console-compact", compactBoot]].map(([variant, text]) => (
+            <div key={variant} className={`hero-console ${variant}`} aria-hidden="true">
+              {text.slice(0, typed).split("\n").map((line, index) => (
+                <span key={index}>{line || " "}</span>
+              ))}
+            </div>
+          ))}
 
           <div className="hero-hud">
-            <span aria-hidden="true">LAT -15.601 · LON -56.097</span>
-            <span aria-hidden="true">{copy.ui.heroRole}</span>
             <strong>{copy.hero.availability}</strong>
           </div>
         </div>
@@ -93,7 +95,11 @@ export default function Hero() {
 
         <div className="hero-bottom">
           <div className="hero-pitch">
-            <p className="hero-headline">{copy.hero.headline}</p>
+            {/* What he does, right under the name and before the tagline (the answer to "who is this?"). */}
+            <div className="hero-copy">
+              <p className="hero-role">{copy.hero.role}</p>
+              <p className="hero-headline">{copy.hero.headline}</p>
+            </div>
             <div className="hero-actions">
               <MagneticLink className="button button-primary" href={cvHref} download>
                 {copy.hero.cvLabel}
@@ -110,7 +116,6 @@ export default function Hero() {
           <div className="hero-meta">
             <a className="hero-scroll" href="#about">
               {copy.ui.scroll} <span aria-hidden="true">↓</span>
-              <span className="hero-scroll-count" aria-hidden="true">001 / 006</span>
             </a>
             <dl className="hero-stats" aria-label={copy.ui.statsLabel}>
               {copy.hero.stats.map((stat) => (

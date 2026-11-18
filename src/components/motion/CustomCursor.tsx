@@ -4,7 +4,9 @@ import { motion, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const INTERACTIVE = "a[href], button:not(:disabled), [role='button']";
+// "[ OPEN ]" promises the project detail: only the cards and rows that open it carry data-cursor-open.
+// Every other control (close, menu, links) keeps the plain crosshair (UX-07).
+const OPENS_DETAIL = "[data-cursor-open]";
 
 export default function CustomCursor() {
   const { copy } = useLanguage();
@@ -34,7 +36,7 @@ export default function CustomCursor() {
       y.set(event.clientY);
       coords.textContent = `${String(Math.round(event.clientX)).padStart(4, "0")} : ${String(Math.round(event.clientY)).padStart(4, "0")}`;
       const target = event.target instanceof Element ? event.target : null;
-      cursor.dataset.state = target?.closest(INTERACTIVE) ? "interactive" : "idle";
+      cursor.dataset.state = target?.closest(OPENS_DETAIL) ? "interactive" : "idle";
       cursor.dataset.visible = "true";
     };
     const hide = () => { cursor.dataset.visible = "false"; };

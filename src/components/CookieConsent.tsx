@@ -26,6 +26,8 @@ function reserveBannerSpace(banner: HTMLElement) {
   const keepFocusClear = (event: FocusEvent) => {
     const target = event.target;
     if (!(target instanceof HTMLElement) || banner.contains(target) || target.closest(".project-detail-layer")) return;
+    // A section focused by an in-page link is only where the next Tab starts; the link's own scroll places it.
+    if (target.hasAttribute("data-anchor-target")) return;
     // The sticky header and its menu panel never move with the page, so scrolling the page cannot uncover
     // them; the panel scrolls itself between the header and the banner (globals.css .mobile-nav).
     if (target.closest(".site-header")) return;

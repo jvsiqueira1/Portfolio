@@ -9,6 +9,7 @@ import {
   projects,
   projectsSection,
   projectStatus,
+  type LocalizedProject,
   type ProjectCategory,
 } from "@/content/projects";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -21,6 +22,9 @@ type Filter = "all" | ProjectCategory;
 const categoryOrder: Filter[] = ["all", "imobiliario", "saas", "pessoal", "landing", "publico"];
 
 const pad = (value: number) => String(value).padStart(3, "0");
+
+// A project opens outside only when it has a public address; the "↗" and the "public site" tag follow it.
+const hasPublicLink = (project: LocalizedProject) => Boolean(project.url) && project.linkStatus === "public";
 
 // The global focus ring reaches 6px past the chip (2px outline + 4px offset); keep 2px of air beyond it.
 const FOCUS_RING_EXTENT = 8;
@@ -139,24 +143,29 @@ export default function Projects() {
                 <div className="system-tags">
                   {project.stack.slice(0, 5).map((technology) => <span key={technology}>{technology}</span>)}
                 </div>
-                <button type="button" className="system-open" onClick={(event) => openProject(project.slug, event.currentTarget)}>
+                <button type="button" className="system-open" data-cursor-open onClick={(event) => openProject(project.slug, event.currentTarget)}>
                   [ {copy.openDetails} ] <ArrowUpRight aria-hidden="true" />
                 </button>
               </div>
               <button
                 type="button"
                 className="featured-system-media"
-                data-kind={project.image.endsWith(".webp") ? "capture" : "generated"}
+                data-cursor-open
                 onClick={(event) => openProject(project.slug, event.currentTarget)}
               >
                 {/* Named by its content, not aria-label: the HUD text drawn over the capture is decoration. */}
                 <span className="sr-only">{copy.openDetails}: {project.name}. </span>
-                <Image src={project.image} alt={project.alt} fill sizes="(max-width: 900px) 100vw, 56vw" />
-                <span className="media-shade" aria-hidden="true" />
-                <span className="rec-label" aria-hidden="true">REC ● {numberOf(project.slug)}</span>
-                <span className="media-data" aria-hidden="true">1600×1000 · {copy.syntheticData}</span>
-                <span className="media-corner media-corner-start" aria-hidden="true" />
-                <span className="media-corner media-corner-end" aria-hidden="true" />
+                <span className="capture-frame">
+                  <Image src={project.image} alt={project.alt} fill sizes="(max-width: 900px) 100vw, 56vw" />
+                </span>
+                <span className="rec-label" aria-hidden="true"><i />REC {numberOf(project.slug)}</span>
+                <span className="media-data" aria-hidden="true">
+                  <span className="media-size">1600×1000 · </span>{hasPublicLink(project) ? copy.publicLabel : copy.syntheticData}
+                </span>
+                <span className="media-corner media-corner-tl" aria-hidden="true" />
+                <span className="media-corner media-corner-tr" aria-hidden="true" />
+                <span className="media-corner media-corner-bl" aria-hidden="true" />
+                <span className="media-corner media-corner-br" aria-hidden="true" />
               </button>
             </Reveal>
           ))}
@@ -183,6 +192,7 @@ export default function Projects() {
                   <button
                     type="button"
                     className="index-row"
+                    data-cursor-open
                     onPointerEnter={(event) => { setHoveredSlug(project.slug); movePreview(event); }}
                     onPointerMove={movePreview}
                     onPointerLeave={() => setHoveredSlug(null)}
@@ -194,7 +204,7 @@ export default function Projects() {
                     <span className="index-stack">{project.stack.slice(0, 2).join(" · ")}</span>
                     <span className="index-year">{project.period.slice(-4)}</span>
                     <span className="index-status" data-status={project.linkStatus}>
-                      {projectStatus(project, copy)} <span aria-hidden="true">↗</span>
+                      {projectStatus(project, copy)}{hasPublicLink(project) && <span aria-hidden="true"> ↗</span>}
                     </span>
                     {/* The name is the row as shown (WCAG 2.5.3), then what the button does. */}
                     <span className="sr-only"> — {copy.openDetails}</span>
@@ -212,9 +222,8 @@ export default function Projects() {
       </div>
 
       {mounted && createPortal(
-        <div ref={previewRef} className="index-preview" data-visible={Boolean(hoveredProject)} data-kind={hoveredProject?.image.endsWith(".webp") ? "capture" : "generated"} aria-hidden="true">
+        <div ref={previewRef} className="index-preview" data-visible={Boolean(hoveredProject)} aria-hidden="true">
           {hoveredProject && <Image src={hoveredProject.image} alt="" fill sizes="340px" />}
-          <span className="media-shade" />
         </div>,
         document.body
       )}

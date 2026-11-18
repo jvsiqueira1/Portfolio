@@ -57,6 +57,13 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
   const titleId = useId();
   const descriptionId = useId();
   const acquirePageScrollLock = usePageScrollLock();
+  const publicUrl = project.url && project.linkStatus === "public" ? project.url : null;
+  const visitLink = publicUrl ? (
+    <a className="button button-primary project-detail-visit" href={publicUrl} target="_blank" rel="noreferrer">
+      {copy.visit}
+      <ArrowUpRight aria-hidden="true" />
+    </a>
+  ) : null;
 
   useEffect(() => {
     const panel = panelRef.current;
@@ -92,9 +99,10 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
       if (!panel) return;
 
       if (event.key === "Tab") {
+        // Rendered-only: "Visit project" exists twice (title line and bottom bar) and CSS shows one per size.
         const focusable = Array.from(
           panel.querySelectorAll<HTMLElement>(focusableSelector)
-        ).filter((element) => !element.hasAttribute("disabled"));
+        ).filter((element) => !element.hasAttribute("disabled") && element.getClientRects().length > 0);
         if (!focusable.length) return;
 
         const first = focusable[0];
@@ -201,20 +209,22 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
 
         <div className="project-detail-content">
           <div className="project-detail-title-row">
-            <div>
-              <p>{project.context}</p>
-              <h3 id={titleId}>{project.name}</h3>
-            </div>
-            <div className="project-detail-status">
-              <span className={`status-${project.linkStatus}`}>
-                {statusLabel(project, copy)}
-              </span>
-              {project.codePrivate && (
-                <span>
-                  <LockKeyhole aria-hidden="true" />
-                  {copy.privateCodeLabel}
+            <p>{project.context}</p>
+            <h3 id={titleId}>{project.name}</h3>
+            {/* The way out to the project sits on the title's line. Without a public link the status holds that place. */}
+            <div className="project-detail-actions">
+              {visitLink}
+              <div className="project-detail-status">
+                <span className={`status-${project.linkStatus}`}>
+                  <span aria-hidden="true">■</span>{statusLabel(project, copy)}
                 </span>
-              )}
+                {project.codePrivate && (
+                  <span>
+                    <LockKeyhole aria-hidden="true" />
+                    {copy.privateCodeLabel}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -254,23 +264,10 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
               ))}
             </div>
           </div>
-
-          {project.url && project.linkStatus === "public" ? (
-            <a
-              className="project-detail-link"
-              href={project.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {copy.visit}
-              <ArrowUpRight aria-hidden="true" />
-            </a>
-          ) : (
-            <p className="project-detail-unavailable">
-              {statusLabel(project, copy)}
-            </p>
-          )}
         </div>
+
+        {/* Phones and tablets: the whole panel scrolls, so the link rides in a bar stuck to its bottom edge. */}
+        {visitLink && <div className="project-detail-bar">{visitLink}</div>}
       </div>
     </div>,
     document.body
