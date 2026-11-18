@@ -15,6 +15,8 @@ export type EducationItem = {
   institution: string;
   period: string;
   status: string;
+  /** Drives the status colour: an ongoing course is highlighted, a completed one is not. */
+  state: "in-progress" | "completed";
   description?: string;
 };
 
@@ -44,6 +46,8 @@ export type SiteContent = {
   };
   hero: {
     boot: string[];
+    /** The console on phones: three short lines that fit 280px. */
+    bootCompact: string[];
     availability: string;
     name: string;
     headline: string;
@@ -86,7 +90,8 @@ export type SiteContent = {
     languages: string[];
     certificates: {
       label: string;
-      title: string;
+      /** Follows the total of hours, which is summed from the items ("1.487 horas certificadas_"). */
+      hoursUnit: string;
       intro: string;
       verify: string;
       items: CertificateItem[];
@@ -106,7 +111,6 @@ export type SiteContent = {
   ui: {
     statsLabel: string;
     statusLabel: string;
-    heroRole: string;
     scroll: string;
     contactShort: string;
     subject: string;

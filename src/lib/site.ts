@@ -28,20 +28,20 @@ const seo: Record<Language, {
   keywords: string[];
 }> = {
   pt: {
-    title: "JVS//SYS | João Vitor",
+    title: "João Vitor · Desenvolvedor Full-Stack | JVS//SYS",
     description:
       "Portfólio de João Vitor, desenvolvedor full-stack e Analista de TI no DETRAN-MT. Projetos, experiência, stack e CV em português e inglês.",
-    socialTitle: "João Vitor | Desenvolvedor Full-Stack",
+    socialTitle: "João Vitor · Desenvolvedor Full-Stack",
     socialDescription: "Sistemas que conectam produto, dados e operação.",
     imageAlt:
       "Cartão JVS//SYS com o nome João Vitor em letras grandes sobre uma malha de pontos e linhas, e a frase: full-stack, sistemas que aguentam o mundo real.",
     keywords: ["João Vitor", "Desenvolvedor Full-Stack", "Node.js", "Nest.js", "React", "Next.js", "PostgreSQL", "Cuiabá"],
   },
   en: {
-    title: "JVS//SYS | João Vitor",
+    title: "João Vitor · Full-Stack Developer | JVS//SYS",
     description:
       "Portfolio of João Vitor, full-stack developer and IT Analyst at DETRAN-MT. Projects, experience, stack and CV in English and Portuguese.",
-    socialTitle: "João Vitor | Full-Stack Developer",
+    socialTitle: "João Vitor · Full-Stack Developer",
     socialDescription: "Systems that connect product, data and operations.",
     imageAlt:
       "JVS//SYS card with the name João Vitor in large type over a mesh of dots and lines, and the Portuguese line: full-stack, systems that hold up in the real world.",

@@ -16,6 +16,8 @@ export default function Header() {
   const [activeSection, setActiveSection] = useState("#top");
   const [clock, setClock] = useState("--:--:-- AMT");
   const lockRef = useRef<{ href: string; settled: boolean } | null>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
   const settleRef = useRef<(() => void) | null>(null);
   const links = useMemo(() => [
     ["#about", copy.nav.about],
@@ -84,6 +86,41 @@ export default function Header() {
     };
   }, []);
 
+  // The open menu closes with Escape (focus goes back to "Menu"), a press outside the panel and its button,
+  // or a page scroll. The panel's own scroll (short landscape screens) is not a page scroll, and the small
+  // allowance ignores the browser's own nudges (toolbar resize, focus kept clear of the cookie banner).
+  useEffect(() => {
+    if (!open) return;
+    const startY = window.scrollY;
+    const close = (returnFocus: boolean) => {
+      const focusWasInside = panelRef.current?.contains(document.activeElement) ?? false;
+      setOpen(false);
+      // The hidden panel would drop focus to <body>: hand it to the button that opened the menu.
+      if (returnFocus || focusWasInside) menuButtonRef.current?.focus({ preventScroll: true });
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      close(true);
+    };
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target instanceof Node ? event.target : null;
+      if (!target || panelRef.current?.contains(target) || menuButtonRef.current?.contains(target)) return;
+      close(false);
+    };
+    const handleScroll = () => {
+      if (Math.abs(window.scrollY - startY) > 24) close(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("pointerdown", handlePointerDown);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [open]);
+
   const selectSection = (href: string) => {
     lockRef.current = { href, settled: false };
     setActiveSection(href);
@@ -115,6 +152,7 @@ export default function Header() {
         <div className="nav-actions">
           <LanguageToggle />
           <button
+            ref={menuButtonRef}
             type="button"
             className="icon-button menu-button"
             onClick={() => setOpen((value) => !value)}
@@ -127,7 +165,7 @@ export default function Header() {
         </div>
       </div>
 
-      <nav id="mobile-navigation" className="mobile-nav" data-open={open} aria-label={copy.nav.mobileLabel} data-lenis-prevent>
+      <nav ref={panelRef} id="mobile-navigation" className="mobile-nav" data-open={open} aria-label={copy.nav.mobileLabel} data-lenis-prevent>
         {links.map(([href, label], index) => (
           <a href={href} key={href} onClick={() => { selectSection(href); setOpen(false); }} data-active={activeSection === href} aria-current={activeSection === href ? "location" : undefined}>
             <span>{String(index + 1).padStart(2, "0")}</span>{label}

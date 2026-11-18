@@ -1,27 +1,21 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { headers } from "next/headers";
+import NotFoundView from "@/components/NotFoundView";
 import SiteDocument from "@/components/SiteDocument";
+import type { Language } from "@/content";
 import { siteViewport } from "@/lib/site";
 
 // With one root layout per language there is no shared layout for unknown URLs; this page keeps the
-// 404 inside the site's document (lang, fonts, styles) and offers both homes.
-// Next.js already marks the not-found response noindex.
+// 404 inside the site's document (lang, fonts, styles). It answers in English under /en (marked by
+// src/middleware.ts) and in Portuguese everywhere else. Next.js also marks the response noindex.
 export const metadata: Metadata = { title: "404 | JVS//SYS" };
 export const viewport = siteViewport;
 
-export default function GlobalNotFound() {
+export default async function GlobalNotFound() {
+  const language: Language = (await headers()).get("x-site-language") === "en" ? "en" : "pt";
   return (
-    <SiteDocument language="pt">
-      <main id="main" className="section">
-        <div className="shell">
-          <p lang="pt-BR">404 · Página não encontrada.</p>
-          <p lang="en">404 · Page not found.</p>
-          <p className="hero-actions">
-            <Link className="button button-primary" href="/">Ir para o início</Link>
-            <Link className="button button-secondary" href="/en" lang="en" hrefLang="en">Go to the English home</Link>
-          </p>
-        </div>
-      </main>
+    <SiteDocument language={language}>
+      <NotFoundView language={language} />
     </SiteDocument>
   );
 }

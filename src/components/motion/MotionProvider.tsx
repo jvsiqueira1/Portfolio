@@ -27,6 +27,17 @@ export function usePageScrollLock() {
   return acquirePageScrollLock;
 }
 
+// Focus an in-page link's target without scrolling (Lenis is already moving the page there). A section is
+// not focusable by itself: it gets tabindex="-1" and data-anchor-target, which hides the ring on the
+// container (globals.css) and tells the cookie banner's focus guard that this is not a control.
+function focusAnchorTarget(target: HTMLElement) {
+  if (!target.matches("a[href], button, input, select, textarea, [tabindex]")) {
+    target.setAttribute("tabindex", "-1");
+    target.setAttribute("data-anchor-target", "");
+  }
+  target.focus({ preventScroll: true });
+}
+
 export default function MotionProvider({ children }: { children: ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
   const resumeFrameRef = useRef(0);
@@ -95,8 +106,13 @@ export default function MotionProvider({ children }: { children: ReactNode }) {
       if (!target) return;
 
       event.preventDefault();
-      lenis.scrollTo(target, { offset: hash === "#top" ? 0 : -84 });
+      // No offset of our own: html's scroll-padding-top already keeps the target below the sticky header,
+      // and Lenis honours it, so both motion modes land in the same place (UX-09).
+      lenis.scrollTo(target);
       window.history.replaceState(null, "", hash);
+      // Move focus with the page, as the browser's own anchor jump does for the next Tab (UX-01): the skip
+      // link and the menu continue from the target, even while the smooth scroll is still running.
+      focusAnchorTarget(target);
     };
 
     document.addEventListener("click", handleAnchor);
