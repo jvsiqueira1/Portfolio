@@ -232,7 +232,7 @@ export const pt: SiteContent = {
     terminalPath: "~/jvs/carreira — zsh — 120×40",
     commits: "commits",
     running: "EM CURSO",
-    certificatesCount: "8 de 25 certificados · sem PDFs públicos",
+    certificatesCount: "8 de 26 certificados · sem PDFs públicos",
     writeTo: "> escreva para",
     build: "Build 26.11.06 · Next.js · feito em Cuiabá/MT",
     cursorOpen: "[ ABRIR ]",

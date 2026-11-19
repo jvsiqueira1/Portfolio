@@ -451,8 +451,14 @@ button, input, textarea, select { font: inherit; }
 
 /* Systems */
 .systems-section { border-top: 1px solid var(--line); }
-.systems-heading { display: grid; grid-template-columns: 1.7fr .75fr; gap: 64px; align-items: end; margin-bottom: 76px; }
-.systems-heading h2 { max-width: 11ch; margin: 0; font-size: clamp(4rem, 8.6vw, 8.5rem); font-weight: 900; letter-spacing: -.04em; line-height: .84; text-transform: uppercase; }
+/* Section titles of Systems, Education and Certificates follow the approved prototype (rev2): its size and
+   spacing at 390 and at 1440, and a straight line between them (calc(px + vw) = the 390 value at 390 and
+   the 1440 value at 1440), held at the 1440 value above it. Below 390 each keeps the rule that fits its
+   widest word in 280px. Systems: 112px at 1440 (rev2 screen 04); the phone screen (05) does not draw
+   the title, so at 390 and below it keeps the size and gaps it had (15.5vw, 22px and 44px). */
+.systems-heading { display: grid; grid-template-columns: 1.7fr .75fr; gap: 64px; align-items: end; margin-bottom: clamp(44px, calc(42.51px + .381vw), 48px); }
+.systems-heading .section-label { margin-bottom: clamp(6.6px, calc(27.72px - 1.4667vw), 22px); }
+.systems-heading h2 { max-width: 11ch; margin: 0; font-size: clamp(2.9rem, min(calc(41.303px + 4.9095vw), 15.5vw), 7rem); font-weight: 900; letter-spacing: -.04em; line-height: .84; text-transform: uppercase; }
 .systems-copy > p { margin: 0 0 24px; color: var(--soft); font-size: 1rem; }
 .project-filters { display: flex; flex-wrap: wrap; gap: 8px; }
 .project-filters button { border: 1px solid var(--line-strong); background: transparent; color: var(--soft); cursor: pointer; padding: 7px 12px; font-family: var(--font-mono), monospace; font-size: .75rem; font-weight: 700; text-transform: uppercase; }
@@ -607,8 +613,14 @@ button, input, textarea, select { font: inherit; }
 .education-section { border-top: 1px solid var(--line); }
 .formation-block { background: #08090b; }
 .formation-grid { display: grid; grid-template-columns: .72fr 1.28fr; gap: clamp(48px, 9vw, 140px); }
-.formation-intro h2 { max-width: 9ch; margin: 0; font-size: clamp(3.5rem, 6vw, 6.1rem); font-weight: 900; letter-spacing: -.035em; line-height: .9; }
-.formation-intro > p:last-child { margin-top: 28px; color: var(--soft); font-family: var(--font-mono), monospace; font-size: .75rem; text-transform: uppercase; }
+/* rev2 screens 08/09: 96px at 1440, 52px at 390, in capitals by CSS only (screen readers keep "Formação").
+   The capitals are a few px wider than the intro's column (FORMAÇÃO 436px in 429px at 1440, as drawn in the
+   prototype): min-width 0 keeps the column, and the list beside it, at their widths; the word runs into the
+   column gap instead. */
+.formation-intro { min-width: 0; }
+.formation-intro .section-label { margin-bottom: clamp(4.6px, calc(3.114px + .381vw), 8.6px); }
+.formation-intro h2 { max-width: 9ch; margin: 0; font-size: clamp(3rem, calc(35.657px + 4.1905vw), 6rem); font-weight: 900; letter-spacing: -.03em; line-height: .9; text-transform: uppercase; }
+.formation-intro > p:last-child { margin-top: clamp(7.2px, calc(4.08px + .8vw), 15.6px); color: var(--soft); font-family: var(--font-mono), monospace; font-size: .75rem; text-transform: uppercase; }
 .education-list { border-top: 1px solid var(--line); }
 .education-item { display: grid; grid-template-columns: 160px minmax(0, 1fr) 110px; grid-template-areas: "period course status"; gap: 16px; align-items: center; border-bottom: 1px solid var(--line); padding-block: 22px; }
 .education-item > span { grid-area: period; }
@@ -620,9 +632,13 @@ button, input, textarea, select { font: inherit; }
 /* The colour follows the status, not the position: only a course still running is highlighted (UX-11). */
 .education-item strong[data-state="in-progress"] { color: var(--accent); }
 .certificates-block { background: var(--surface); }
-.certificates-heading { display: grid; grid-template-columns: 1.45fr .75fr; align-items: end; gap: 56px; margin-bottom: 48px; }
+.certificates-heading { display: grid; grid-template-columns: 1.45fr .75fr; align-items: end; gap: 56px; margin-bottom: 13px; }
+.certificates-heading .section-label { margin-bottom: 6.6px; }
 .certificates-heading > * { min-width: 0; }
-.certificates-heading h2 { max-width: 11ch; margin: 0; font-size: clamp(4.2rem, 8vw, 8.2rem); font-weight: 900; letter-spacing: -.04em; line-height: .84; text-transform: uppercase; }
+/* rev2 screens 08/09: 76px on .86 lines at 1440, 44px on .88 lines at 390. One unitless line height between
+   the two (.87, within 1.6px of both) so it never steps and grows with the text when it is enlarged.
+   "CERTIFICADAS_" (41.9px at 320) still fits 280px without breaking. */
+.certificates-heading h2 { max-width: 11ch; margin: 0; font-size: clamp(2.5rem, calc(32.114px + 3.0476vw), 4.75rem); font-weight: 900; letter-spacing: -.03em; line-height: .87; text-transform: uppercase; }
 .certificates-heading > p { color: var(--soft); }
 .certificates-heading > p strong { display: block; margin-top: 14px; color: var(--accent); font-family: var(--font-mono), monospace; font-size: .75rem; letter-spacing: .04em; text-transform: uppercase; }
 .certificate-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line-strong); border-left: 1px solid var(--line-strong); }
@@ -792,9 +808,6 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
   .about-copy h2 { font-size: 3.2rem; }
   .pillar-row { grid-template-columns: 42px 1fr; }
   .pillar-row p { grid-column: 2; }
-  .systems-heading { margin-bottom: 44px; }
-  /* "PRODUCTION_" (EN) is the widest word: fluid so it fits 280px at 320 without breaking. */
-  .systems-heading h2 { font-size: clamp(2.9rem, 15.5vw, 4rem); }
   .systems-copy > p { display: none; }
   /* Filters stay reachable as a strip that scrolls inside itself, edge to edge of the shell.
      The strip clips its overflow, so its padding must hold the focus ring (2px outline + 4px offset).
@@ -830,11 +843,8 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
   .module-grid { grid-template-columns: 1fr; }
   .module-cell { min-height: 210px; }
   .stack-section h2 { font-size: 5rem; }
-  .formation-intro h2 { font-size: 4rem; }
   /* The status joins the period's line and the course name gets the full width. */
   .education-item { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "period status" "course course"; align-items: baseline; gap: 6px 16px; }
-  /* "CERTIFICADAS_" is the widest word: it must fit 280px (320 viewport) without breaking. */
-  .certificates-heading h2 { font-size: clamp(2.8rem, 14.5vw, 4.15rem); }
   .certificates-heading > p { display: none; }
   .certificate-grid { grid-template-columns: 1fr; border-left: 0; }
   .certificate-card { min-height: 116px; display: grid; grid-template-columns: 76px 1fr; gap: 4px 16px; border-left: 0; border-right: 0; padding: 22px 0; }
@@ -937,6 +947,21 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
 @media (min-width: 641px) and (max-height: 899px) {
   .cookie-banner { bottom: 16px; width: min(760px, calc(100% - 40px)); grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 8px 8px 8px 18px; }
   .cookie-banner p { font-size: .875rem; line-height: 1.4; }
+}
+
+/* Portrait screens under 780px tall: phones with the browser's bars showing (about 550 to 760px, and the
+   height changes as the bars hide on scroll, e.g. 390x664 <-> 390x753). The hero's buttons end 446-500px
+   from the top on the compact hero and lower on the full one, and the floating card (117-145px) covers them
+   up to about 766px of height. Here the card is a bar flush with the bottom edge: the same text at the 12px
+   floor and the same two 44px actions side by side, 87px in all, clear of the hero from 600px up at every
+   width from 320 to 480 (measured, PT and EN). One rule for the whole range, so the banner never switches
+   between card and bar while the bars come and go; taller screens and anything not in portrait keep the
+   card. Below about 565-590px nothing fits under the approved hero, and the bar still covers less than the
+   card. After the laptop-height rule so the bar also wins on wide portrait windows. The hero itself does
+   not change, so accepting or declining moves nothing. */
+@media (max-height: 779px) and (orientation: portrait) {
+  .cookie-banner { right: 0; bottom: 0; width: 100%; gap: 4px; border-width: 1px 0 0; padding: 4px 12px max(4px, env(safe-area-inset-bottom)); box-shadow: 0 -12px 40px rgb(0 0 0 / .45); }
+  .cookie-banner p { font-size: .75rem; line-height: 1.25; }
 }
 
 /* Short viewports (phones in landscape): the stacked banner takes ~155px of a 320px screen, which leaves

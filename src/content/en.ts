@@ -135,7 +135,7 @@ export const en: SiteContent = {
     terminalPath: "~/jvs/career — zsh — 120×40",
     commits: "commits",
     running: "RUNNING",
-    certificatesCount: "8 of 25 certificates · no public PDFs",
+    certificatesCount: "8 of 26 certificates · no public PDFs",
     writeTo: "> write to",
     build: "Build 26.11.06 · Next.js · made in Cuiabá/MT",
     cursorOpen: "[ OPEN ]",
