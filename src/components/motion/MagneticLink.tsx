@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion, useSpring } from "motion/react";
-import type { PointerEvent, ReactNode } from "react";
+import type { MouseEvent, PointerEvent, ReactNode } from "react";
 
 type MagneticLinkProps = {
   children: ReactNode;
@@ -10,6 +10,7 @@ type MagneticLinkProps = {
   download?: boolean;
   target?: "_blank";
   rel?: string;
+  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
 };
 
 export default function MagneticLink({ children, className, ...props }: MagneticLinkProps) {

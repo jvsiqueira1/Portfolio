@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState, type FocusEvent, type PointerEvent } from "react";
 import { createPortal } from "react-dom";
@@ -13,6 +12,7 @@ import {
   type ProjectCategory,
 } from "@/content/projects";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LearnArrow, SkeletonImage } from "./motion";
 import Reveal from "./Reveal";
 import SectionLabel from "./SectionLabel";
 import ProjectDetail from "./projects/ProjectDetail";
@@ -22,6 +22,26 @@ type Filter = "all" | ProjectCategory;
 const categoryOrder: Filter[] = ["all", "imobiliario", "saas", "pessoal", "landing", "publico"];
 
 const pad = (value: number) => String(value).padStart(3, "0");
+
+// transitions.dev: number-pop-in. The index count as one span per digit; `pop` goes up when a filter or
+// "view all" changes the list, which remounts the group and replays the entrance (never on the first paint).
+// The last two digits ride in 1× and 2× --digit-stagger behind, as in the recipe.
+function PopCount({ value, pop }: { value: string; pop: number }) {
+  const chars = value.split("");
+  return (
+    <span key={pop} className={`t-digit-group${pop ? " is-animating" : ""}`}>
+      {chars.map((char, index) => (
+        <span
+          key={index}
+          className="t-digit"
+          data-stagger={index === chars.length - 2 ? "1" : index === chars.length - 1 ? "2" : undefined}
+        >
+          {char}
+        </span>
+      ))}
+    </span>
+  );
+}
 
 // A project opens outside only when it has a public address; the "↗" and the "public site" tag follow it.
 const hasPublicLink = (project: LocalizedProject) => Boolean(project.url) && project.linkStatus === "public";
@@ -55,6 +75,7 @@ export default function Projects() {
   const copy = projectsSection[language];
   const [filter, setFilter] = useState<Filter>("all");
   const [showArchive, setShowArchive] = useState(false);
+  const [countPop, setCountPop] = useState(0);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
@@ -67,11 +88,16 @@ export default function Projects() {
   const localizedProjects = useMemo(() => projects.map((project) => localizeProject(project, language)), [language]);
   const numberOf = (slug: string) => pad(localizedProjects.findIndex((project) => project.slug === slug) + 1);
   const featuredProjects = localizedProjects.filter((project) => project.featured);
-  // "All": featured systems sit above the index and the archive waits behind "view all".
+  // "All": featured systems sit above the index and the archive waits behind "view all" (its rows stay in the
+  // list, collapsed and inert, so they can grow in: transitions.dev accordion).
   // A category: the featured block steps aside and the index lists every match, featured included.
-  const indexProjects = filter === "all"
-    ? localizedProjects.filter((project) => !project.featured && (showArchive || !project.archive))
+  const allSystems = filter === "all";
+  const listedProjects = allSystems
+    ? localizedProjects.filter((project) => !project.featured)
     : localizedProjects.filter((project) => project.category === filter);
+  const indexCount = allSystems
+    ? listedProjects.filter((project) => showArchive || !project.archive).length
+    : listedProjects.length;
   const categoryCount = (category: Filter) => category === "all"
     ? localizedProjects.length
     : localizedProjects.filter((project) => project.category === category).length;
@@ -120,7 +146,15 @@ export default function Projects() {
             <p>{copy.intro}</p>
             <div className="project-filters" role="group" aria-label={copy.filterLabel} onFocus={revealFocusedFilter}>
               {categoryOrder.map((category) => (
-                <button key={category} type="button" aria-pressed={filter === category} onClick={() => setFilter(category)}>
+                <button
+                  key={category}
+                  type="button"
+                  aria-pressed={filter === category}
+                  onClick={() => {
+                    if (category !== filter) setCountPop((value) => value + 1);
+                    setFilter(category);
+                  }}
+                >
                   {copy.filters[category]} <span className="filter-count">{categoryCount(category)}</span>
                 </button>
               ))}
@@ -143,8 +177,8 @@ export default function Projects() {
                 <div className="system-tags">
                   {project.stack.slice(0, 5).map((technology) => <span key={technology}>{technology}</span>)}
                 </div>
-                <button type="button" className="system-open" data-cursor-open onClick={(event) => openProject(project.slug, event.currentTarget)}>
-                  [ {copy.openDetails} ] <ArrowUpRight aria-hidden="true" />
+                <button type="button" className="system-open t-learn" data-cursor-open onClick={(event) => openProject(project.slug, event.currentTarget)}>
+                  [ {copy.openDetails} ] <LearnArrow />
                 </button>
               </div>
               <button
@@ -156,7 +190,8 @@ export default function Projects() {
                 {/* Named by its content, not aria-label: the HUD text drawn over the capture is decoration. */}
                 <span className="sr-only">{copy.openDetails}: {project.name}. </span>
                 <span className="capture-frame">
-                  <Image src={project.image} alt={project.alt} fill sizes="(max-width: 900px) 100vw, 56vw" />
+                  {/* transitions.dev: skeleton-reveal while the capture loads. */}
+                  <SkeletonImage src={project.image} alt={project.alt} fill sizes="(max-width: 900px) 100vw, 56vw" />
                 </span>
                 <span className="rec-label" aria-hidden="true"><i />REC {numberOf(project.slug)}</span>
                 <span className="media-data" aria-hidden="true">
@@ -171,10 +206,10 @@ export default function Projects() {
           ))}
         </div>}
 
-        <div className="systems-index" data-filtered={filter !== "all"}>
+        <div className="systems-index t-acc" data-filtered={!allSystems} data-open={showArchive}>
           <div className="index-heading">
             <h3>{copy.indexTitle}</h3>
-            <span aria-live="polite">[ {String(indexProjects.length).padStart(2, "0")} {copy.systemsUnit} ]</span>
+            <span aria-live="polite">[ <PopCount value={String(indexCount).padStart(2, "0")} pop={countPop} /> {copy.systemsUnit} ]</span>
           </div>
           <div className="index-table">
             <div className="index-table-head" aria-hidden="true">
@@ -185,10 +220,10 @@ export default function Projects() {
               <span>{copy.columns.year}</span>
               <span>{copy.columns.status}</span>
             </div>
-            {indexProjects.length === 0 && <p className="index-empty">{copy.emptyCategory}</p>}
+            {indexCount === 0 && <p className="index-empty">{copy.emptyCategory}</p>}
             <ul className="index-list">
-              {indexProjects.map((project) => (
-                <li key={project.slug}>
+              {listedProjects.map((project) => {
+                const row = (
                   <button
                     type="button"
                     className="index-row"
@@ -209,12 +244,27 @@ export default function Projects() {
                     {/* The name is the row as shown (WCAG 2.5.3), then what the button does. */}
                     <span className="sr-only"> — {copy.openDetails}</span>
                   </button>
-                </li>
-              ))}
+                );
+                if (!(allSystems && project.archive)) return <li key={project.slug}>{row}</li>;
+                // transitions.dev: accordion. Collapsed: no height, inert, out of the accessibility tree.
+                return (
+                  <li key={project.slug} className="t-acc-panel" inert={!showArchive} aria-hidden={showArchive ? undefined : true}>
+                    <div className="t-acc-panel-inner">{row}</div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
-          {filter === "all" && archiveCount > 0 && (
-            <button type="button" className="index-toggle" aria-expanded={showArchive} onClick={() => setShowArchive((value) => !value)}>
+          {allSystems && archiveCount > 0 && (
+            <button
+              type="button"
+              className="index-toggle"
+              aria-expanded={showArchive}
+              onClick={() => {
+                setCountPop((value) => value + 1);
+                setShowArchive((value) => !value);
+              }}
+            >
               [ {showArchive ? copy.viewFewer : `${copy.viewAll} +${archiveCount}`} <span aria-hidden="true">{showArchive ? "↑" : "↓"}</span> ]
             </button>
           )}

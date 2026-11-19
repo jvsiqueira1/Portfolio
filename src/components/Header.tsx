@@ -2,8 +2,9 @@
 
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { cssMs, prefersReducedMotion } from "@/lib/motion";
 import { sectionAtReadingLine } from "@/lib/sections";
 import LanguageToggle from "./LanguageToggle";
 
@@ -13,6 +14,12 @@ const SECTION_IDS = ["top", "about", "projects", "experience", "technologies", "
 export default function Header() {
   const { copy } = useLanguage();
   const [open, setOpen] = useState(false);
+  // transitions.dev: menu-dropdown. Closing keeps the panel drawn (.is-closing) for --dropdown-close-dur so
+  // its closing scale plays; then it is hidden again. Only the picture stays: from the first frame of the
+  // close the panel is inert and aria-hidden (no Tab, no assistive tech). Reduced motion has no closing
+  // picture, so the closed state applies at once, without the timer.
+  const [closing, setClosing] = useState(false);
+  const closingTimerRef = useRef(0);
   const [activeSection, setActiveSection] = useState("#top");
   const [clock, setClock] = useState("--:--:-- AMT");
   const lockRef = useRef<{ href: string; settled: boolean } | null>(null);
@@ -26,6 +33,33 @@ export default function Header() {
     ["#technologies", copy.nav.stack],
     ["#contact", copy.nav.contact],
   ], [copy.nav]);
+
+  const setMenuOpen = useCallback((next: boolean) => {
+    window.clearTimeout(closingTimerRef.current);
+    setOpen(next);
+    const animate = !next && !prefersReducedMotion();
+    setClosing(animate);
+    if (animate) closingTimerRef.current = window.setTimeout(() => setClosing(false), cssMs("--dropdown-close-dur", 150));
+  }, []);
+  useEffect(() => () => window.clearTimeout(closingTimerRef.current), []);
+
+  // Past the CSS breakpoint where the mobile menu stops existing (the Menu button is display: none outside
+  // globals.css's max-width: 900px block), an open or closing menu is reset to closed, without animation, so
+  // it is not there again on the way back to a phone width. The breakpoint is read off the button itself, so
+  // the 900px lives only in the stylesheet.
+  useEffect(() => {
+    if (!open && !closing) return;
+    const resetOnDesktop = () => {
+      const button = menuButtonRef.current;
+      if (!button || window.getComputedStyle(button).display !== "none") return;
+      window.clearTimeout(closingTimerRef.current);
+      setOpen(false);
+      setClosing(false);
+    };
+    resetOnDesktop();
+    window.addEventListener("resize", resetOnDesktop);
+    return () => window.removeEventListener("resize", resetOnDesktop);
+  }, [open, closing]);
 
   useEffect(() => {
     const updateClock = () => {
@@ -94,7 +128,7 @@ export default function Header() {
     const startY = window.scrollY;
     const close = (returnFocus: boolean) => {
       const focusWasInside = panelRef.current?.contains(document.activeElement) ?? false;
-      setOpen(false);
+      setMenuOpen(false);
       // The hidden panel would drop focus to <body>: hand it to the button that opened the menu.
       if (returnFocus || focusWasInside) menuButtonRef.current?.focus({ preventScroll: true });
     };
@@ -119,7 +153,7 @@ export default function Header() {
       document.removeEventListener("pointerdown", handlePointerDown);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [open]);
+  }, [open, setMenuOpen]);
 
   const selectSection = (href: string) => {
     lockRef.current = { href, settled: false };
@@ -155,19 +189,34 @@ export default function Header() {
             ref={menuButtonRef}
             type="button"
             className="icon-button menu-button"
-            onClick={() => setOpen((value) => !value)}
+            onClick={() => setMenuOpen(!open)}
             aria-expanded={open}
             aria-controls="mobile-navigation"
             aria-label={open ? copy.nav.close : copy.nav.menu}
           >
-            {open ? <X aria-hidden="true" /> : <><span>MENU</span><Menu aria-hidden="true" /></>}
+            {!open && <span>MENU</span>}
+            {/* transitions.dev: icon-swap. Both icons share one slot; the label leaves with the open state. */}
+            <span className="t-icon-swap" data-state={open ? "b" : "a"} aria-hidden="true">
+              <span className="t-icon" data-icon="a"><Menu aria-hidden="true" /></span>
+              <span className="t-icon" data-icon="b"><X aria-hidden="true" /></span>
+            </span>
           </button>
         </div>
       </div>
 
-      <nav ref={panelRef} id="mobile-navigation" className="mobile-nav" data-open={open} aria-label={copy.nav.mobileLabel} data-lenis-prevent>
+      <nav
+        ref={panelRef}
+        id="mobile-navigation"
+        className={`mobile-nav t-dropdown${open ? " is-open" : ""}${closing ? " is-closing" : ""}`}
+        data-origin="top-right"
+        data-open={open}
+        inert={!open}
+        aria-hidden={open ? undefined : true}
+        aria-label={copy.nav.mobileLabel}
+        data-lenis-prevent
+      >
         {links.map(([href, label], index) => (
-          <a href={href} key={href} onClick={() => { selectSection(href); setOpen(false); }} data-active={activeSection === href} aria-current={activeSection === href ? "location" : undefined}>
+          <a href={href} key={href} onClick={() => { selectSection(href); setMenuOpen(false); }} data-active={activeSection === href} aria-current={activeSection === href ? "location" : undefined}>
             <span>{String(index + 1).padStart(2, "0")}</span>{label}
           </a>
         ))}

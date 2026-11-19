@@ -1,11 +1,14 @@
 "use client";
 
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { CvDownloadIcon } from "./motion";
 import SectionLabel from "./SectionLabel";
 
 export default function Footer() {
   const { copy, cvHref } = useLanguage();
+  const [cvClicks, setCvClicks] = useState(0);
   return (
     <footer id="contact" className="site-footer">
       <div className="shell footer-main">
@@ -19,7 +22,8 @@ export default function Footer() {
           <div className="footer-links">
             <a href="https://www.linkedin.com/in/joaovitorsiqueira1/" target="_blank" rel="noreferrer">[ {copy.contact.linkedinLabel} ↗ ]</a>
             <a href="https://github.com/jvsiqueira1" target="_blank" rel="noreferrer">[ {copy.contact.githubLabel} ↗ ]</a>
-            <a className="button button-primary" href={cvHref} download>{copy.hero.cvLabel}<ArrowDown aria-hidden="true" /></a>
+            {/* transitions.dev: spinner-check-morph confirms the click (CvDownloadIcon). */}
+            <a className="button button-primary" href={cvHref} download onClick={() => setCvClicks((count) => count + 1)}>{copy.hero.cvLabel}<CvDownloadIcon clicks={cvClicks} /></a>
           </div>
         </div>
       </div>
