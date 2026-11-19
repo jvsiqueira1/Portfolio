@@ -635,6 +635,10 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
 .footer-main { position: relative; }
 .site-footer h2 { max-width: 10ch; margin: 0; font-size: clamp(4.6rem, 13vw, 13rem); font-weight: 900; letter-spacing: -.04em; line-height: .82; text-transform: uppercase; }
 .block-cursor { display: inline-block; width: .34em; height: .7em; margin-left: .14em; background: var(--accent); vertical-align: baseline; }
+/* The negative right margin cancels the footer cursor's advance (.14em + .34em), so it never wraps on its own:
+   it stays right after the last word and only the word decides the line break. Only together with the
+   container-unit sizing below (mobile rule); without container units the footer stays exactly as before. */
+@supports (width: 1cqi) { .site-footer .block-cursor { margin-right: -.48em; } }
 .footer-contact-row { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin-top: 64px; }
 .footer-email-block > p { margin: 0 0 10px; color: var(--mute); font-family: var(--font-mono), monospace; font-size: .75rem; letter-spacing: .05em; text-transform: uppercase; }
 .footer-email { display: inline-flex; align-items: center; gap: 14px; font-size: clamp(1.6rem, 3.2vw, 3.2rem); font-stretch: 75%; font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; text-decoration: none; }
@@ -826,6 +830,15 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
   a.certificate-card .certificate-code { padding-right: 0; }
   .site-footer { padding-top: 88px; }
   .site-footer h2 { font-size: clamp(3.6rem, 19vw, 4.6rem); line-height: .86; }
+  /* The widest last line plus its cursor ("CONSTRUIR▮" 5.0em; "LET'S BUILD▮" 4.97em) must fit the shell
+     (cqi = its width): below 409px (PT) / 407px (EN) the title shrinks just enough, about 5% at 390px and 8%
+     at 320px. Without container units none of this applies and the clamp above sizes the title, as before. */
+  /* Known limit, same as before this change: with the fallback font (web fonts blocked) "CONSTRUIR" alone is wider than the title box, so the cursor still wraps. */
+  @supports (width: 1cqi) {
+    .footer-main { container-type: inline-size; }
+    .site-footer h2 { font-size: min(4.6rem, 100cqi / 5.005); }
+    .site-footer h2:lang(en) { font-size: min(4.6rem, 100cqi / 4.977); }
+  }
   .footer-contact-row { margin-top: 42px; }
   .footer-email { font-size: 1.55rem; }
   .footer-email svg { width: 22px; }
