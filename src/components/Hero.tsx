@@ -1,11 +1,11 @@
 "use client";
 
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import HeroField from "./HeroField";
-import { MagneticLink, VelocityMarquee } from "./motion";
+import { CvDownloadIcon, MagneticLink, SpinningCounter, VelocityMarquee } from "./motion";
 
 const STACK = ["NODE.JS", "NEST.JS", "REACT", "NEXT.JS", "POSTGRESQL", "FASTIFY", "PRISMA", "DOCKER"];
 const NAME_LINES = ["JOÃO", "VITOR"];
@@ -46,6 +46,7 @@ export default function Hero() {
   // How many characters are typed; both consoles (desktop and phone, one shown by CSS) type together.
   const [typed, setTyped] = useState(Number.POSITIVE_INFINITY);
   const name = useScramble(NAME_LINES, !reduceMotion);
+  const [cvClicks, setCvClicks] = useState(0);
 
   useEffect(() => {
     if (reduceMotion || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -81,7 +82,8 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* The entrance is a CSS animation (globals.css): it starts with the first paint, not after hydration. */}
+        {/* The entrance (transitions.dev texts-reveal: name, then role and tagline) is a CSS animation
+            (globals.css): it starts with the first paint, not after hydration. */}
         <div className="hero-main">
           <p className="hero-id" aria-hidden="true">[ 00 ] JOÃO VITOR DE SIQUEIRA CAMPOS</p>
           <h1 id="hero-title" className="glitch-title" aria-label={copy.hero.name}>
@@ -101,9 +103,9 @@ export default function Hero() {
               <p className="hero-headline">{copy.hero.headline}</p>
             </div>
             <div className="hero-actions">
-              <MagneticLink className="button button-primary" href={cvHref} download>
+              <MagneticLink className="button button-primary" href={cvHref} download onClick={() => setCvClicks((count) => count + 1)}>
                 {copy.hero.cvLabel}
-                <ArrowDown aria-hidden="true" />
+                <CvDownloadIcon clicks={cvClicks} />
               </MagneticLink>
               <MagneticLink className="button button-secondary" href={`mailto:${copy.contact.email}`}>
                 <span className="label-long">[ {copy.hero.contactLabel} ]</span>
@@ -121,7 +123,8 @@ export default function Hero() {
               {copy.hero.stats.map((stat) => (
                 <div key={stat.label}>
                   <dt>{stat.label}</dt>
-                  <dd>{stat.value}</dd>
+                  {/* transitions.dev: spinning-counter, once, when the stats come into view. */}
+                  <dd><SpinningCounter value={stat.value} /></dd>
                 </div>
               ))}
             </dl>

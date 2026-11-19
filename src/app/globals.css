@@ -14,6 +14,83 @@
   --glitch-r: #ff2e4d;
   --glitch-c: #2ee6ff;
   --header-height: 64px;
+
+  /* transitions.dev tokens (the owner's Pro recipes, copied without the package). Recipe defaults, except
+     where noted: hover and icon state changes follow the site's 180ms rhythm; the counter's reel cell is
+     the stat's own line (1em); the check's fill colour is the button's ink. The blocks that use them are
+     marked "transitions.dev: <recipe>" below. */
+  --modal-open-dur: 250ms;
+  --modal-close-dur: 150ms;
+  --modal-scale: 0.96;
+  --modal-scale-close: 0.96;
+  --modal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dropdown-open-dur: 250ms;
+  --dropdown-close-dur: 150ms;
+  --dropdown-pre-scale: 0.97;
+  --dropdown-closing-scale: 0.99;
+  --dropdown-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --icon-swap-dur: 180ms;
+  --icon-swap-blur: 2px;
+  --icon-swap-start-scale: 0.25;
+  --icon-swap-ease: ease-in-out;
+  --acc-expand: 250ms;
+  --acc-collapse: 250ms;
+  --acc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --stagger-dur: 500ms;
+  --stagger-distance: 12px;
+  --stagger-stagger: 40ms;
+  --stagger-blur: 3px;
+  --stagger-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --reel-dur: 1400ms;
+  --reel-cell: 1em;
+  --reel-spin-blur: 3px;
+  --reel-stagger: 90ms;
+  --reel-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --learn-shift: 2px;
+  --learn-spread: 8deg;
+  --learn-in: 180ms;
+  --learn-out: 180ms;
+  --learn-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --toast-open: 350ms;
+  --toast-close: 250ms;
+  --toast-distance: 16px;
+  --toast-blur: 2px;
+  --toast-scale: 0.97;
+  --toast-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --check-spin-dur: 900ms;
+  --check-pop-dur: 350ms;
+  --check-pop-ease: cubic-bezier(0.34, 1.96, 0.94, 1);
+  --check-fill-dur: 350ms;
+  --check-fill-ease: cubic-bezier(0.34, 1.35, 0.64, 1);
+  --check-draw-dur: 600ms;
+  --check-draw-delay: 80ms;
+  --check-draw-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --check-hold: 2000ms;
+  --check-revert-dur: 250ms;
+  --check-revert-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --check-hop: 3px;
+  --check-up-dur: 250ms;
+  --check-up-ease: cubic-bezier(0.34, 1.35, 0.64, 1);
+  --check-down-dur: 300ms;
+  --check-down-ease: cubic-bezier(0.14, 2.56, 0.94, 1);
+  --check-pop-scale: 1.09;
+  --check-blur: 0.5px;
+  --check-ring-w: 2.5px;
+  --check-mark-w: 2;
+  --check-green: var(--accent-ink);
+  --pulse-dur: 1000ms;
+  --pulse-count: 1;
+  --pulse-min: 0.5;
+  --reveal-dur: 400ms;
+  --reveal-blur: 2px;
+  --reveal-ease: ease-in-out;
+  --digit-dur: 500ms;
+  --digit-distance: 8px;
+  --digit-stagger: 70ms;
+  --digit-blur: 2px;
+  --digit-ease: cubic-bezier(0.34, 1.45, 0.64, 1);
+  --digit-dir-x: 0;
+  --digit-dir-y: 1;
 }
 
 /* Mono labels, dates, status and codes are information: none of them is set below 12px (.75rem). Where
@@ -450,7 +527,9 @@ button, input, textarea, select { font: inherit; }
 .index-preview img { object-fit: cover; object-position: top center; }
 
 /* Project detail */
-.project-detail-layer { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; background: rgb(3 4 5 / .86); padding: 28px; backdrop-filter: blur(6px); }
+.project-detail-layer { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 28px; }
+/* The dimmed, blurred backdrop is its own layer so it can fade on the modal's clocks (see .t-modal). */
+.project-detail-layer::before { position: absolute; inset: 0; background: rgb(3 4 5 / .86); backdrop-filter: blur(6px); content: ""; }
 .project-detail-panel { position: relative; display: grid; width: min(1180px, 100%); height: min(760px, calc(100dvh - 56px)); grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); overflow: hidden; border: 1px solid var(--line-strong); background: var(--surface); box-shadow: 0 32px 100px rgb(0 0 0 / .55); outline: 0; }
 .project-detail-close { position: absolute; z-index: 5; top: 16px; right: 16px; display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid var(--line-strong); background: var(--bg); cursor: pointer; }
 .project-detail-close:hover { border-color: var(--accent); color: var(--accent); }
@@ -608,8 +687,10 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
   .nav-shell { justify-content: space-between; }
   .nav-actions { margin-left: auto; }
   .menu-button { display: inline-flex; }
-  .mobile-nav { position: absolute; top: 100%; right: 0; left: 0; display: grid; max-height: calc(100dvh - var(--header-height) - var(--cookie-offset, 0px)); overflow-y: auto; overscroll-behavior: contain; scroll-padding-block: 24px; visibility: hidden; border-bottom: 1px solid var(--line); background: var(--bg); opacity: 0; pointer-events: none; transform: translateY(-12px); transition: transform .28s cubic-bezier(.16,1,.3,1), opacity .2s ease, visibility .2s ease; }
-  .mobile-nav[data-open="true"] { visibility: visible; opacity: 1; pointer-events: auto; transform: none; }
+  /* Opening and closing: transitions.dev menu-dropdown (.t-dropdown, below). Hidden from focus and assistive
+     tech once the closing scale has played. */
+  .mobile-nav { position: absolute; top: 100%; right: 0; left: 0; display: grid; max-height: calc(100dvh - var(--header-height) - var(--cookie-offset, 0px)); overflow-y: auto; overscroll-behavior: contain; scroll-padding-block: 24px; visibility: hidden; border-bottom: 1px solid var(--line); background: var(--bg); }
+  .mobile-nav.is-open, .mobile-nav.is-closing { visibility: visible; }
   .mobile-nav a { display: flex; gap: 16px; border-top: 1px solid var(--line); padding: 17px 20px; color: var(--soft); font-family: var(--font-mono), monospace; font-size: .75rem; text-decoration: none; text-transform: uppercase; }
   /* The panel clips its overflow, so the ring sits inside the link instead of past its edges. */
   .mobile-nav a:focus-visible { outline-offset: -6px; }
@@ -709,7 +790,8 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
   .featured-system-copy .system-tags { display: none; }
   .system-open { margin-top: 20px; min-height: 40px; }
   .systems-index { padding-top: 54px; }
-  .index-heading span { flex: 0 0 auto; padding-bottom: 6px; }
+  /* Direct child only: the count's digits (number-pop-in spans) sit inside it. */
+  .index-heading > span { flex: 0 0 auto; padding-bottom: 6px; }
   .index-row { grid-template-columns: 42px minmax(0, 1fr) auto; gap: 6px 10px; }
   .index-toggle { width: 100%; justify-content: center; }
   .project-detail-layer { padding: 0; }
@@ -851,11 +933,424 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
   .certificate-card { min-height: min(245px, calc(100svh - 160px)); }
 }
 
+/* ==========================================================================================================
+   Transitions (transitions.dev Pro recipes, copied into the project; tokens in :root). Only the motion
+   between states lives here: every resting state is the approved design. Each recipe keeps its own
+   prefers-reduced-motion guard; the global guard at the end of the file also shortens the rest.
+   ========================================================================================================== */
+
+/* transitions.dev: modal. The project detail panel scales up from the centre; the backdrop fades on the
+   same clocks. Focus enters the panel on mount, without waiting for the animation (ProjectDetail.tsx). */
+.t-modal {
+  transform-origin: center;
+  transform: scale(var(--modal-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--modal-open-dur) var(--modal-ease),
+    opacity   var(--modal-open-dur) var(--modal-ease);
+  will-change: transform, opacity;
+}
+.t-modal.is-open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.t-modal.is-closing {
+  transform: scale(var(--modal-scale-close));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--modal-close-dur) var(--modal-ease),
+    opacity   var(--modal-close-dur) var(--modal-ease);
+}
+.project-detail-layer::before { opacity: 0; transition: opacity var(--modal-open-dur) var(--modal-ease); }
+.project-detail-layer[data-modal="open"]::before { opacity: 1; }
+.project-detail-layer[data-modal="closing"]::before { opacity: 0; transition: opacity var(--modal-close-dur) var(--modal-ease); }
+
+/* transitions.dev: menu-dropdown, data-origin="top-right" (the Menu button's corner). */
+.t-dropdown {
+  transform-origin: top left;
+  transform: scale(var(--dropdown-pre-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dropdown-open-dur) var(--dropdown-ease),
+    opacity   var(--dropdown-open-dur) var(--dropdown-ease);
+  will-change: transform, opacity;
+}
+.t-dropdown[data-origin="top-right"] { transform-origin: top right; }
+.t-dropdown.is-open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.t-dropdown.is-closing {
+  transform: scale(var(--dropdown-closing-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dropdown-close-dur) var(--dropdown-ease),
+    opacity   var(--dropdown-close-dur) var(--dropdown-ease);
+}
+
+/* transitions.dev: icon-swap. Menu ↔ X in one slot; the slot keeps the 14px icon box of the approved button. */
+.t-icon-swap {
+  position: relative;
+  display: inline-grid;
+}
+.t-icon-swap .t-icon {
+  display: flex;
+  grid-area: 1 / 1;
+  transition:
+    opacity   var(--icon-swap-dur) var(--icon-swap-ease),
+    filter    var(--icon-swap-dur) var(--icon-swap-ease),
+    transform var(--icon-swap-dur) var(--icon-swap-ease);
+}
+/* Resting icon: none instead of blur(0)/scale(1) (they interpolate the same) and no will-change, so the
+   icon is drawn exactly as the approved one, without a layer of its own. */
+.t-icon-swap[data-state="a"] .t-icon[data-icon="a"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="b"] {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+.t-icon-swap[data-state="a"] .t-icon[data-icon="b"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="a"] {
+  opacity: 0;
+  filter: blur(var(--icon-swap-blur));
+  transform: scale(var(--icon-swap-start-scale));
+}
+
+/* transitions.dev: accordion. "View all" grows the archive rows with grid-template-rows 0fr ↔ 1fr, no
+   height measuring. Each archived row is its own panel, so the index stays one list; the collapsed rows are
+   inert and hidden from assistive tech (Projects.tsx). The text arrow ↓/↑ of the approved button stays as
+   it is, so the recipe's chevron flip is not used. */
+.t-acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--acc-collapse) var(--acc-ease);
+}
+.t-acc[data-open="true"] .t-acc-panel {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--acc-expand) var(--acc-ease);
+}
+.t-acc-panel-inner {
+  overflow: hidden;
+  opacity: 0;
+  filter: blur(2px);
+  transition:
+    opacity var(--acc-collapse) var(--acc-ease),
+    filter var(--acc-collapse) var(--acc-ease);
+}
+.t-acc[data-open="true"] .t-acc-panel-inner {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity var(--acc-expand) var(--acc-ease),
+    filter var(--acc-expand) var(--acc-ease);
+}
+
+/* transitions.dev: spinning-counter. Built only while it spins (SpinningCounter.tsx): before and after,
+   the stat is its plain text. An invisible copy of each final digit holds the column's exact box, so the
+   reel never moves the layout; the strip starts on the final digit, spins and lands on it again. */
+.t-reel { display: inline-flex; align-items: baseline; }
+.t-reel-col {
+  position: relative; display: inline-block; height: var(--reel-cell); line-height: 1; overflow: clip;
+  /* Soft-fade the window edges instead of hard-cropping. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+}
+.t-reel-sizer { visibility: hidden; }
+.t-reel-strip { position: absolute; top: 0; left: 50%; display: flex; flex-direction: column; margin-left: -1em; width: 2em; will-change: transform, filter; }
+.t-reel-digit { height: var(--reel-cell); display: flex; align-items: center; justify-content: center; }
+.t-reel-filters { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* transitions.dev: learn-more-hover, adapted to the ↗ of "[ VIEW DETAILS ]" and "Visit project" (lucide's
+   ArrowUpRight). On hover the arrow slides toward where it points and its head, handed over to two arms,
+   spreads about the tip (17, 7). At rest the head is lucide's own polyline (pixel-identical); the hand-over
+   back waits until the arms have closed again. Hover only: focus and touch keep the resting arrow. */
+.t-learn-chevron {
+  display: inline-flex;
+  transition: transform var(--learn-out) var(--learn-ease);
+}
+.t-learn-head { transition: opacity 0s linear var(--learn-out); }
+.t-learn-arm {
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 17px 7px;
+  transition: transform var(--learn-out) var(--learn-ease), opacity 0s linear var(--learn-out);
+}
+@media (hover: hover) {
+  .t-learn:hover .t-learn-chevron { transform: translate(var(--learn-shift), calc(var(--learn-shift) * -1)); transition-duration: var(--learn-in); }
+  .t-learn:hover .t-learn-head { opacity: 0; transition-delay: 0s; }
+  .t-learn:hover .t-learn-arm { opacity: 1; transition: transform var(--learn-in) var(--learn-ease), opacity 0s; }
+  .t-learn:hover .t-learn-arm-top { transform: rotate(var(--learn-spread)); }
+  .t-learn:hover .t-learn-arm-bot { transform: rotate(calc(var(--learn-spread) * -1)); }
+}
+
+/* transitions.dev: toast. The cookie banner rises in on the open clock and leaves on the close clock. */
+.t-toast {
+  opacity: 0;
+  transform: translateY(var(--toast-distance)) scale(var(--toast-scale));
+  filter: blur(var(--toast-blur));
+  will-change: transform, opacity, filter;
+  transition:
+    opacity var(--toast-close) var(--toast-ease),
+    transform var(--toast-close) var(--toast-ease),
+    filter var(--toast-close) var(--toast-ease);
+}
+.t-toast.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition:
+    opacity var(--toast-open) var(--toast-ease),
+    transform var(--toast-open) var(--toast-ease),
+    filter var(--toast-open) var(--toast-ease);
+}
+
+/* transitions.dev: spinner-check-morph (Pro). "Download CV" confirms the click: the arrow gives way to the
+   badge, which morphs from the spinner into the check, holds for --check-hold and hands back to the arrow
+   (CvDownloadLink.tsx). The badge floats over the 16px icon slot, so the button keeps its size. */
+.cv-download-icon { position: relative; display: inline-flex; }
+.cv-download-icon > .lucide { transition: opacity var(--check-revert-dur) var(--check-revert-ease); }
+.cv-download-icon[data-phase="check"] > .lucide { opacity: 0; transition: opacity calc(var(--check-fill-dur) * 0.5) ease; }
+.cv-download-badge { position: absolute; top: 50%; left: 50%; display: inline-flex; margin: -11px 0 0 -11px; pointer-events: none; transition: opacity var(--check-revert-dur) var(--check-revert-ease); }
+.cv-download-icon[data-phase="leaving"] .cv-download-badge { opacity: 0; }
+.t-check-blur-wrap {
+  display: inline-flex;
+  filter: blur(0);
+  transition: filter var(--check-revert-dur) var(--check-revert-ease);
+  will-change: filter;
+}
+.t-check-blur-wrap.is-crossing {
+  filter: blur(var(--check-blur));
+  transition: filter calc(var(--check-fill-dur) * 0.45) var(--check-fill-ease);
+}
+.t-check-badge {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  scale: 1;
+  transition: scale var(--check-revert-dur) var(--check-revert-ease);
+  will-change: scale, transform;
+}
+.t-check-badge[data-state="done"] {
+  scale: var(--check-pop-scale);
+  transition: scale var(--check-pop-dur) var(--check-pop-ease);
+  animation-name: t-check-pop-up, t-check-pop-down;
+  animation-duration: var(--check-up-dur), var(--check-down-dur);
+  animation-timing-function: var(--check-up-ease), var(--check-down-ease);
+  animation-delay: 0ms, var(--check-up-dur);
+  animation-fill-mode: forwards, forwards;
+}
+@keyframes t-check-pop-up {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(var(--check-hop, 3px) * -1)); }
+}
+@keyframes t-check-pop-down {
+  from { transform: translateY(calc(var(--check-hop, 3px) * -1)); }
+  to   { transform: translateY(0); }
+}
+.t-check-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: var(--check-ring-w) solid rgba(0, 0, 0, 0.1);
+  transition: opacity var(--check-revert-dur) ease,
+              filter var(--check-revert-dur) ease;
+}
+.t-check-badge[data-state="done"] .t-check-ring {
+  opacity: 0;
+  transition: opacity calc(var(--check-fill-dur) * 0.7) ease;
+}
+.t-check-fill {
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  background: var(--check-green);
+  box-shadow:
+    0 0 0 0.504px rgba(0, 0, 0, 0.05) inset,
+    0 0.504px 0.504px 0 rgba(0, 0, 0, 0.10),
+    0 0.504px 2.016px 0 rgba(0, 0, 0, 0.08),
+    0 -0.504px 0.504px 0 rgba(0, 0, 0, 0.09) inset;
+  box-shadow:
+    0 0 0 0.504px color(display-p3 0 0 0 / 0.05) inset,
+    0 0.504px 0.504px 0 color(display-p3 0 0 0 / 0.10),
+    0 0.504px 2.016px 0 color(display-p3 0 0 0 / 0.08),
+    0 -0.504px 0.504px 0 color(display-p3 0 0 0 / 0.09) inset;
+  opacity: 0;
+  transition: opacity var(--check-revert-dur) var(--check-revert-ease);
+  will-change: opacity;
+}
+.t-check-badge[data-state="done"] .t-check-fill {
+  opacity: 1;
+  transition: opacity var(--check-fill-dur) var(--check-fill-ease);
+}
+.t-check-arc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: var(--check-ring-w) solid transparent;
+  border-top-color: #7a7a7a;
+  animation-name: t-check-spin;
+  animation-duration: var(--check-spin-dur);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transition: opacity var(--check-revert-dur) var(--check-revert-ease);
+  will-change: transform;
+}
+@keyframes t-check-spin {
+  to { transform: rotate(360deg); }
+}
+.t-check-badge[data-state="done"] .t-check-arc {
+  opacity: 0;
+  animation-play-state: paused;
+  transition: opacity calc(var(--check-fill-dur) * 0.5) ease;
+}
+.t-check-disc {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.cv-download-icon .t-check-disc svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.t-check-mark {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: var(--check-mark-w);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: var(--check-mark-len, 20);
+  stroke-dashoffset: var(--check-mark-len, 20);
+  transition: stroke-dashoffset var(--check-revert-dur) var(--check-revert-ease);
+}
+.t-check-badge[data-state="done"] .t-check-mark {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--check-draw-dur) var(--check-draw-ease)
+    calc(var(--check-fill-dur) + var(--check-draw-delay) - 200ms);
+}
+
+/* transitions.dev: skeleton-reveal. A capture's slot pulses (--pulse-count, once) and holds until the
+   image arrives, then both layers cross-fade. Isolated, so the frame's border and HUD still paint above it.
+   The base rules are the resting state (capture whole and sharp, skeleton gone): that is what the server
+   sends, so the capture shows without JavaScript or before hydration. .is-pending (the recipe's hidden,
+   pre-reveal state) is set only by the client, before its first paint and only for an image without
+   pixels yet (SkeletonImage.tsx); it applies at once, and leaving it plays the recipe's cross-fade. */
+.t-skel { position: absolute; inset: 0; isolation: isolate; }
+.t-skel-skeleton,
+.t-skel-content {
+  position: absolute;
+  inset: 0;
+}
+.t-skel-skeleton {
+  z-index: 1;
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  transition:
+    opacity var(--reveal-dur) var(--reveal-ease),
+    filter  var(--reveal-dur) var(--reveal-ease);
+}
+.t-skel-content {
+  z-index: 2;
+  opacity: 1;
+  /* none, not blur(0): it interpolates the same, and the resting capture is drawn without a filter layer. */
+  filter: none;
+  transition:
+    opacity var(--reveal-dur) var(--reveal-ease),
+    filter  var(--reveal-dur) var(--reveal-ease);
+}
+.t-skel.is-pending .t-skel-skeleton {
+  opacity: 1;
+  filter: blur(0);
+  transition: none;
+}
+.t-skel.is-pending .t-skel-content {
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  transition: none;
+}
+.t-skel-block { position: absolute; inset: 0; background: var(--raised); }
+.t-skel.is-pending .t-skel-block {
+  animation: t-skel-pulse var(--pulse-dur) ease-in-out var(--pulse-count);
+}
+@keyframes t-skel-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: var(--pulse-min); }
+}
+
+/* transitions.dev: number-pop-in. The index count re-enters from below when a filter or "view all"
+   changes it (never on the first paint). */
+@keyframes t-digit-pop-in {
+  0%   {
+    transform: translate(
+      calc(var(--digit-distance) * var(--digit-dir-x)),
+      calc(var(--digit-distance) * var(--digit-dir-y))
+    );
+    opacity: 0;
+    filter: blur(var(--digit-blur));
+  }
+  100% { transform: translate(0, 0); opacity: 1; filter: blur(0); }
+}
+.t-digit-group {
+  display: inline-flex;
+  align-items: baseline;
+}
+.t-digit {
+  display: inline-block;
+}
+.t-digit-group.is-animating .t-digit {
+  animation: t-digit-pop-in var(--digit-dur) var(--digit-ease) both;
+}
+.t-digit-group.is-animating .t-digit[data-stagger="1"] {
+  animation-delay: var(--digit-stagger);
+}
+.t-digit-group.is-animating .t-digit[data-stagger="2"] {
+  animation-delay: calc(var(--digit-stagger) * 2);
+}
+
+/* The recipes' reduced-motion guards: nothing slides, scales, spins, blurs or pulses. The states still
+   change (panel shown, archive listed, check drawn), instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .t-modal, .project-detail-layer::before { transition: none !important; }
+  .t-dropdown { transition: none !important; }
+  .t-icon-swap .t-icon { transition: none !important; }
+  .t-acc-panel, .t-acc-panel-inner { transition: none !important; }
+  .t-reel-strip { transition: none !important; filter: none !important; }
+  .t-learn-chevron, .t-learn-head, .t-learn-arm { transition: none !important; }
+  .t-toast { transition: none !important; }
+  .t-check-arc { animation: none !important; }
+  .t-check-blur-wrap,
+  .t-check-blur-wrap.is-crossing {
+    filter: none !important;
+    transition: none !important;
+  }
+  .t-check-ring, .t-check-arc, .t-check-fill, .cv-download-icon > .lucide, .cv-download-badge { transition: none !important; }
+  .t-check-badge, .t-check-mark {
+    transition: none !important;
+    animation: none !important;
+  }
+  .t-check-badge[data-state="done"] .t-check-mark { stroke-dashoffset: 0; }
+  .t-skel-skeleton, .t-skel-content { transition: none !important; }
+  .t-skel.is-pending .t-skel-block { animation: none !important; }
+  .t-digit-group .t-digit { animation: none !important; }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   /* Switching language is a navigation between "/" and "/en": cross-fade it where supported. */
   @view-transition { navigation: auto; }
-  /* CSS, not JS: the entrance runs from the first paint instead of waiting for hydration. */
-  .hero-main { animation: hero-rise .8s cubic-bezier(.16,1,.3,1) .2s both; }
+  /* transitions.dev: texts-reveal. Name, role and tagline rise with a staggered blur; it replaces the old
+     hero-rise, so the hero keeps a single entrance. The recipe's .is-shown transition runs here as a keyframe
+     with the same values: CSS, not JS, so it starts with the first paint instead of waiting for hydration. */
+  .hero-main, .hero-role, .hero-headline { animation: t-stagger-in var(--stagger-dur) var(--stagger-ease) both; }
+  .hero-role { animation-delay: var(--stagger-stagger); }
+  .hero-headline { animation-delay: calc(var(--stagger-stagger) * 2); }
   /* Residual chromatic offset stays after the entrance; slices pulse every few seconds. */
   .glitch-title { text-shadow: -1.5px 0 var(--glitch-r), 1.5px 0 var(--glitch-c); animation: glitch-settle 1.4s cubic-bezier(.16,1,.3,1) both; }
   .glitch-line::before, .glitch-line::after { animation: glitch-slice 5.2s steps(1, end) 1.4s infinite; }
@@ -880,7 +1375,7 @@ a.certificate-card:hover *, a.certificate-card.is-accent:hover * { color: var(--
   96% { opacity: 0; }
 }
 
-@keyframes hero-rise { from { opacity: 0; transform: translateY(32px); } }
+@keyframes t-stagger-in { from { opacity: 0; transform: translateY(var(--stagger-distance)); filter: blur(var(--stagger-blur)); } }
 
 @keyframes cursor-blink { 0%, 48% { opacity: 1; } 49%, 100% { opacity: 0; } }
 

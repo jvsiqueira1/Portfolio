@@ -1,9 +1,9 @@
 "use client";
 
 import Script from "next/script";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { cssMs, prefersReducedMotion } from "@/lib/motion";
 
 type Consent = "accepted" | "declined" | null;
 const STORAGE_KEY = "cookie-consent";
@@ -63,7 +63,10 @@ export default function CookieConsent() {
   const { copy } = useLanguage();
   const [consent, setConsent] = useState<Consent>(null);
   const [mounted, setMounted] = useState(false);
-  const reduceMotion = useReducedMotion();
+  // transitions.dev: toast. The banner mounts closed, opens on the next style pass (rises in on the open
+  // clock) and, after a choice, stays for --toast-close while it leaves on the close clock.
+  const [toastOpen, setToastOpen] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const bannerRef = useRef<HTMLElement>(null);
   const bannerVisible = mounted && consent === null;
 
@@ -76,12 +79,22 @@ export default function CookieConsent() {
   useEffect(() => {
     const banner = bannerRef.current;
     if (!bannerVisible || !banner) return;
+    void banner.offsetHeight;
+    setToastOpen(true);
     return reserveBannerSpace(banner);
   }, [bannerVisible]);
+
+  useEffect(() => {
+    if (!leaving) return;
+    const timer = window.setTimeout(() => setLeaving(false), cssMs("--toast-close", 250));
+    return () => window.clearTimeout(timer);
+  }, [leaving]);
 
   function choose(value: Exclude<Consent, null>) {
     window.localStorage.setItem(STORAGE_KEY, value);
     setConsent(value);
+    setToastOpen(false);
+    if (!prefersReducedMotion()) setLeaving(true);
   }
 
   return (
@@ -97,24 +110,16 @@ gtag('config', '${GA_ID}');`}
           </Script>
         </>
       )}
-      <AnimatePresence>
-      {bannerVisible && (
-        <motion.aside
-          ref={bannerRef}
-          className="cookie-banner"
-          aria-label="Cookies"
-          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 28, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.97 }}
-        >
+      {(bannerVisible || leaving) && (
+        // Leaving, the banner is only a picture: inert and aria-hidden, so its buttons take no focus.
+        <aside ref={bannerRef} className={`cookie-banner t-toast${toastOpen ? " is-open" : ""}`} aria-label="Cookies" inert={leaving} aria-hidden={leaving ? true : undefined}>
           <p>{copy.cookie.message}</p>
           <div>
             <button type="button" className="button button-secondary" onClick={() => choose("declined")}>{copy.cookie.decline}</button>
             <button type="button" className="button button-primary" onClick={() => choose("accepted")}>{copy.cookie.accept}</button>
           </div>
-        </motion.aside>
+        </aside>
       )}
-      </AnimatePresence>
     </>
   );
 }

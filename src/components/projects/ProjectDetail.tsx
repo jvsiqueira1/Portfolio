@@ -1,10 +1,10 @@
 "use client";
 
-import { ArrowUpRight, LockKeyhole, X } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useId, useRef } from "react";
+import { LockKeyhole, X } from "lucide-react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { usePageScrollLock } from "@/components/motion";
+import { LearnArrow, SkeletonImage, usePageScrollLock } from "@/components/motion";
+import { cssMs, prefersReducedMotion } from "@/lib/motion";
 import { projectStatus, type LocalizedProject, type ProjectSectionCopy as ProjectCopy } from "@/content/projects";
 
 type ProjectDetailProps = {
@@ -57,13 +57,34 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
   const titleId = useId();
   const descriptionId = useId();
   const acquirePageScrollLock = usePageScrollLock();
+  // transitions.dev: modal. Mounted closed, opened on the next style pass (scales up from the centre); a close
+  // request plays the closing dip, then unmounts, which runs the cleanup below (focus back, scroll unlocked).
+  const [modalState, setModalState] = useState<"entering" | "open" | "closing">("entering");
+  const closeTimerRef = useRef(0);
+  const requestClose = useCallback(() => {
+    if (closeTimerRef.current) return;
+    if (prefersReducedMotion()) {
+      closeTimerRef.current = -1;
+      onClose();
+      return;
+    }
+    setModalState("closing");
+    closeTimerRef.current = window.setTimeout(onClose, cssMs("--modal-close-dur", 150));
+  }, [onClose]);
   const publicUrl = project.url && project.linkStatus === "public" ? project.url : null;
   const visitLink = publicUrl ? (
-    <a className="button button-primary project-detail-visit" href={publicUrl} target="_blank" rel="noreferrer">
+    <a className="button button-primary project-detail-visit t-learn" href={publicUrl} target="_blank" rel="noreferrer">
       {copy.visit}
-      <ArrowUpRight aria-hidden="true" />
+      <LearnArrow />
     </a>
   ) : null;
+
+  // Commit the closed state, then open: the transition runs from the first frame. Focus does not wait for it.
+  useEffect(() => {
+    void panelRef.current?.offsetWidth;
+    setModalState("open");
+    return () => window.clearTimeout(closeTimerRef.current);
+  }, []);
 
   useEffect(() => {
     const panel = panelRef.current;
@@ -92,7 +113,7 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        requestClose();
         return;
       }
 
@@ -173,13 +194,13 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
       });
       releasePageScrollLock(scrollPosition.y);
     };
-  }, [acquirePageScrollLock, onClose, project.slug]);
+  }, [acquirePageScrollLock, requestClose, project.slug]);
 
   return createPortal(
-    <div ref={layerRef} className="project-detail-layer" data-lenis-prevent onMouseDown={onClose}>
+    <div ref={layerRef} className="project-detail-layer" data-modal={modalState} data-lenis-prevent onMouseDown={requestClose}>
       <div
         ref={panelRef}
-        className="project-detail-panel"
+        className={`project-detail-panel t-modal${modalState === "open" ? " is-open" : ""}${modalState === "closing" ? " is-closing" : ""}`}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
@@ -190,14 +211,15 @@ export default function ProjectDetail({ project, copy, onClose }: ProjectDetailP
         <button
           type="button"
           className="project-detail-close"
-          onClick={onClose}
+          onClick={requestClose}
           aria-label={copy.closeDetails}
         >
           <X aria-hidden="true" />
         </button>
 
         <div className="project-detail-media">
-          <Image
+          {/* transitions.dev: skeleton-reveal while the capture loads. */}
+          <SkeletonImage
             src={project.image}
             alt={project.alt}
             fill
