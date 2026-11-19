@@ -1,57 +1,101 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import {
-  useInView,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  useVelocity,
-} from "motion/react";
+import { Fragment, useEffect, useRef } from "react";
 
-// The strip drifts by a CSS animation (globals.css, .stack-track), which the compositor runs without the
-// main thread: parked on the hero, nothing runs per frame in JavaScript (UX-10). Scrolling still speeds
-// it up as before, by changing the animation's playback rate while the scroll velocity changes, and it
-// pauses when it leaves the screen.
-function MarqueeRow({ items, active }: { items: string[]; active: boolean }) {
-  const reduceMotion = useReducedMotion();
+// How far the strip slides per pixel scrolled: linear, no easing, no acceleration.
+const SCROLL_FACTOR = 0.25;
+
+// The stack strip rests still with the whole list in view, spread across the shell (globals.css,
+// .stack-marquee). Only scrolling moves it, on desktop and on low landscape screens (CSS sets
+// --strip-scroll to 1 there): it slides 0.25px left per pixel scrolled. Nothing runs per frame and no
+// animation plays at rest. The list is drawn twice: the second copy waits outside the shell window, one
+// item gap after the first, so the slide never opens an empty gap, and the offset wraps by that period.
+// On phones (two rows of four) and under reduced motion the strip never moves.
+export default function VelocityMarquee({ items }: { items: string[] }) {
+  const marqueeRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, { damping: 48, stiffness: 320 });
-  const velocityFactor = useTransform(smoothVelocity, [-1800, 0, 1800], [-4, 0, 4], { clamp: false });
-
-  const animation = () => trackRef.current?.getAnimations()[0];
-
-  useMotionValueEvent(velocityFactor, "change", (value) => {
-    const running = animation();
-    if (running) running.playbackRate = 1 + Math.min(5, Math.abs(value));
-  });
+  const half = Math.ceil(items.length / 2);
+  const rows = [items.slice(0, half), items.slice(half)];
 
   useEffect(() => {
-    const running = animation();
-    if (!running || reduceMotion) return;
-    if (active) running.play();
-    else running.pause();
-  }, [active, reduceMotion]);
+    const marquee = marqueeRef.current;
+    const track = trackRef.current;
+    if (!marquee || !track) return;
+
+    let linked = false;
+    let period = 0;
+    let shift = 0;
+
+    const place = () => {
+      if (!linked || period <= 0) return;
+      const next = (Math.max(0, window.scrollY) * SCROLL_FACTOR) % period;
+      if (next === shift) return;
+      shift = next;
+      track.style.transform = shift ? `translate3d(${-shift}px, 0, 0)` : "";
+    };
+
+    // Reads the layout once per size, font or preference change, never per scroll.
+    const measure = () => {
+      linked = getComputedStyle(marquee).getPropertyValue("--strip-scroll").trim() === "1";
+      shift = 0;
+      track.style.transform = "";
+      if (!linked) {
+        track.style.removeProperty("--strip-space");
+        return;
+      }
+      const [first, second] = track.querySelectorAll<HTMLElement>(".stack-copy");
+      const item = first?.querySelector<HTMLElement>(".stack-item");
+      const star = item?.nextElementSibling;
+      if (!first || !second || !item || !star) return;
+      // The space between an item and its star, so the copy-to-copy joint matches every other gap.
+      const space = star.getBoundingClientRect().left - item.getBoundingClientRect().right;
+      track.style.setProperty("--strip-space", `${Math.max(0, space)}px`);
+      period = second.getBoundingClientRect().left - first.getBoundingClientRect().left;
+      place();
+    };
+
+    const resizeObserver = new ResizeObserver(measure);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    resizeObserver.observe(marquee);
+    reducedMotion.addEventListener("change", measure);
+    document.fonts.addEventListener("loadingdone", measure);
+    window.addEventListener("scroll", place, { passive: true });
+    measure();
+
+    return () => {
+      resizeObserver.disconnect();
+      reducedMotion.removeEventListener("change", measure);
+      document.fonts.removeEventListener("loadingdone", measure);
+      window.removeEventListener("scroll", place);
+    };
+  }, []);
 
   return (
-    <div ref={trackRef} className="stack-track">
-      {[...items, ...items].map((item, index) => (
-        <span key={`${item}-${index}`}>{item}</span>
-      ))}
-    </div>
-  );
-}
-
-export default function VelocityMarquee({ items }: { items: string[] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref);
-  return (
-    <div ref={ref} className="stack-marquee" aria-hidden="true">
-      <MarqueeRow items={items} active={inView} />
+    <div ref={marqueeRef} className="stack-marquee" aria-hidden="true">
+      <div className="shell stack-window">
+        <div ref={trackRef} className="stack-track">
+          {[0, 1].map((copy) => (
+            <Fragment key={copy}>
+              <div className="stack-copy">
+                {rows.map((row, rowIndex) => (
+                  <Fragment key={rowIndex}>
+                    {rowIndex > 0 && <i className="stack-star stack-star-join" />}
+                    <span className="stack-row">
+                      {row.map((item, index) => (
+                        <Fragment key={item}>
+                          {index > 0 && <i className="stack-star" />}
+                          <span className="stack-item">{item}</span>
+                        </Fragment>
+                      ))}
+                    </span>
+                  </Fragment>
+                ))}
+              </div>
+              <i className="stack-star stack-star-loop" />
+            </Fragment>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

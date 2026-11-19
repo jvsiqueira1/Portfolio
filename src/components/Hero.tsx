@@ -2,7 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import HeroField from "./HeroField";
 import { CvDownloadIcon, MagneticLink, SpinningCounter, VelocityMarquee } from "./motion";
@@ -10,6 +10,11 @@ import { CvDownloadIcon, MagneticLink, SpinningCounter, VelocityMarquee } from "
 const STACK = ["NODE.JS", "NEST.JS", "REACT", "NEXT.JS", "POSTGRESQL", "FASTIFY", "PRISMA", "DOCKER"];
 const NAME_LINES = ["JOÃO", "VITOR"];
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#/%&";
+// After the entrance the name rests still. A fine pointer entering it plays one 320ms glitch pass
+// (globals.css, .glitch-title[data-glitch]), at most one per entry and never within 4s of the last one.
+const GLITCH_PASS_MS = 320;
+const GLITCH_COOLDOWN_MS = 4000;
+const GLITCH_POINTER_QUERY = "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 
 // Scrambles each line into the real name; the server render (and LCP) is the real text.
 function useScramble(lines: string[], enabled: boolean) {
@@ -38,6 +43,30 @@ function useScramble(lines: string[], enabled: boolean) {
   return output;
 }
 
+// The name's answer to a mouse: one glitch pass per entry, with a 4s gap after the last pass ends.
+// Touch and keyboard get nothing (the title is not focusable), and neither does reduced motion.
+function useGlitchPass() {
+  const nextPassAt = useRef(0);
+  const passTimer = useRef(0);
+
+  useEffect(() => () => window.clearTimeout(passTimer.current), []);
+
+  // Bound to the lines (as wide as the letters), not to the full-width title; moving from one line
+  // straight to the other is the same entry.
+  return (event: ReactPointerEvent<HTMLSpanElement>) => {
+    const title = event.currentTarget.closest<HTMLElement>(".glitch-title");
+    if (!title || event.pointerType !== "mouse" || !window.matchMedia(GLITCH_POINTER_QUERY).matches) return;
+    if (event.relatedTarget instanceof Element && event.relatedTarget.closest(".glitch-line")) return;
+    const now = performance.now();
+    // The entrance glitch is still settling, or a pass ended less than 4s ago.
+    if (now < nextPassAt.current || title.dataset.glitch) return;
+    if (title.getAnimations().some((animation) => animation instanceof CSSAnimation && animation.animationName === "glitch-settle")) return;
+    nextPassAt.current = now + GLITCH_PASS_MS + GLITCH_COOLDOWN_MS;
+    title.dataset.glitch = "pass";
+    passTimer.current = window.setTimeout(() => { delete title.dataset.glitch; }, GLITCH_PASS_MS);
+  };
+}
+
 export default function Hero() {
   const { copy, cvHref } = useLanguage();
   const reduceMotion = useReducedMotion();
@@ -47,6 +76,7 @@ export default function Hero() {
   const [typed, setTyped] = useState(Number.POSITIVE_INFINITY);
   const name = useScramble(NAME_LINES, !reduceMotion);
   const [cvClicks, setCvClicks] = useState(0);
+  const playGlitchPass = useGlitchPass();
 
   useEffect(() => {
     if (reduceMotion || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -88,7 +118,7 @@ export default function Hero() {
           <p className="hero-id" aria-hidden="true">[ 00 ] JOÃO VITOR DE SIQUEIRA CAMPOS</p>
           <h1 id="hero-title" className="glitch-title" aria-label={copy.hero.name}>
             {NAME_LINES.map((line, index) => (
-              <span key={line} className="glitch-line" data-text={name[index]} aria-hidden="true">
+              <span key={line} className="glitch-line" data-text={name[index]} aria-hidden="true" onPointerEnter={playGlitchPass}>
                 {name[index]}
               </span>
             ))}

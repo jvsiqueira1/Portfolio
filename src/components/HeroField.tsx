@@ -3,15 +3,33 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
-// The field drifts slowly: 24 frames a second look the same as 60 for a fraction of the main-thread cost (UX-10).
-const FRAME_INTERVAL = 1000 / 24;
+// The field is the hero's only ambient motion, and a slow one: 12 frames a second are enough for a drift
+// this calm, for half the main-thread cost of 24 (UX-10).
+const FRAME_INTERVAL = 1000 / 12;
+// Waves, ridges and pulses run three times slower than before (cycles of 22.5s, 33.7s and 18s).
+const TIME_SCALE = 0.00035 / 3;
+// Pointer parallax: up to 9px on the points and 7px on the mesh (a third of the earlier reach).
+const POINT_PARALLAX = 1 / 3;
+const MESH_PARALLAX = 0.35;
+// Behind the text column (0-55% of the width) the field runs at 45%, easing back to full by 62%;
+// on phones the whole field runs at 60%. The poster underneath gets the same zone in CSS
+// (`.hero-field-poster` in globals.css): keep the two in step.
+const CALM_ZONE_END = 0.55;
+const CALM_ZONE_FADE = 0.62;
+const CALM_ZONE_LEVEL = 0.45;
+const PHONE_LEVEL = 0.6;
+const PHONE_QUERY = "(max-width: 640px)";
 
-const POINTS = Array.from({ length: 170 }, (_, index) => ({
-  x: ((index * 73) % 997) / 997,
-  y: ((index * 131) % 991) / 991,
-  size: 0.5 + ((index * 17) % 13) / 10,
-  accent: index % 11 === 0,
-}));
+// 96 points: four of every seven of the earlier 170-point lattice (same positions), four of them green.
+const POINTS = Array.from({ length: 168 }, (_, index) => index)
+  .filter((index) => index % 7 < 4)
+  .slice(0, 96)
+  .map((index) => ({
+    x: ((index * 73) % 997) / 997,
+    y: ((index * 131) % 991) / 991,
+    size: 0.5 + ((index * 17) % 13) / 10,
+    accent: index % 42 === 10,
+  }));
 
 export default function HeroField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -24,6 +42,7 @@ export default function HeroField() {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduced.matches) return;
+    const phone = window.matchMedia(PHONE_QUERY);
 
     let width = 0;
     let height = 0;
@@ -35,6 +54,7 @@ export default function HeroField() {
     let pointerY = 0;
     let targetX = 0;
     let targetY = 0;
+    let calm: CanvasGradient | null = null;
 
     const resize = () => {
       const bounds = canvas.getBoundingClientRect();
@@ -44,6 +64,9 @@ export default function HeroField() {
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      calm = context.createLinearGradient(width * CALM_ZONE_END, 0, width * CALM_ZONE_FADE, 0);
+      calm.addColorStop(0, `rgba(0,0,0,${1 - CALM_ZONE_LEVEL})`);
+      calm.addColorStop(1, "rgba(0,0,0,0)");
     };
 
     const draw = (time: number) => {
@@ -61,13 +84,14 @@ export default function HeroField() {
 
       pointerX += (targetX - pointerX) * ease;
       pointerY += (targetY - pointerY) * ease;
-      const tick = time * 0.00035;
+      const tick = time * TIME_SCALE;
       context.clearRect(0, 0, width, height);
 
       for (const point of POINTS) {
-        const px = point.x * width + pointerX * (18 + point.size * 4);
-        const py = point.y * height * 0.72 + pointerY * 10;
-        const pulse = 0.45 + Math.sin(tick * 3 + point.x * 18) * 0.25;
+        const px = point.x * width + pointerX * (18 + point.size * 4) * POINT_PARALLAX;
+        const py = point.y * height * 0.72 + pointerY * 10 * POINT_PARALLAX;
+        // Pulse 0.10-0.20 on the light points (0.20-0.40 on the green ones, still twice the light).
+        const pulse = 0.3 + Math.sin(tick * 3 + point.x * 18) * 0.1;
         context.fillStyle = point.accent
           ? `rgba(200,255,46,${Math.max(0.18, pulse)})`
           : `rgba(233,236,239,${Math.max(0.08, pulse * 0.5)})`;
@@ -85,14 +109,14 @@ export default function HeroField() {
         for (let col = 0; col <= columns; col += 1) {
           const u = col / columns;
           const spread = Math.pow(depth, 1.65);
-          const x = u * width + pointerX * (8 + spread * 12);
+          const x = u * width + pointerX * (8 + spread * 12) * MESH_PARALLAX;
           const wave = Math.sin(u * 15 + tick * 2.4) * (12 + spread * 38);
           const ridge = Math.sin(u * 6.4 - tick * 1.6) * (5 + spread * 22);
           const y = horizon + spread * height * 0.62 + (wave + ridge) * spread;
           if (col === 0) context.moveTo(x, y);
           else context.lineTo(x, y);
         }
-        context.strokeStyle = `rgba(180,186,194,${0.14 + depth * 0.26})`;
+        context.strokeStyle = `rgba(180,186,194,${0.08 + depth * 0.16})`;
         context.stroke();
       }
 
@@ -102,16 +126,27 @@ export default function HeroField() {
         for (let row = 0; row < rows; row += 1) {
           const depth = row / (rows - 1);
           const spread = Math.pow(depth, 1.65);
-          const x = u * width + pointerX * (8 + spread * 12);
+          const x = u * width + pointerX * (8 + spread * 12) * MESH_PARALLAX;
           const wave = Math.sin(u * 15 + tick * 2.4) * (12 + spread * 38);
           const ridge = Math.sin(u * 6.4 - tick * 1.6) * (5 + spread * 22);
           const y = horizon + spread * height * 0.62 + (wave + ridge) * spread;
           if (row === 0) context.moveTo(x, y);
           else context.lineTo(x, y);
         }
-        context.strokeStyle = "rgba(122,129,139,0.2)";
+        context.strokeStyle = "rgba(122,129,139,0.12)";
         context.stroke();
       }
+
+      // Dim what was just drawn (destination-out keeps that share of its alpha): one fill per frame.
+      context.globalCompositeOperation = "destination-out";
+      if (phone.matches) {
+        context.fillStyle = `rgba(0,0,0,${1 - PHONE_LEVEL})`;
+        context.fillRect(0, 0, width, height);
+      } else if (calm) {
+        context.fillStyle = calm;
+        context.fillRect(0, 0, width * CALM_ZONE_FADE, height);
+      }
+      context.globalCompositeOperation = "source-over";
 
       frame = window.requestAnimationFrame(draw);
     };
